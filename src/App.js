@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {Component} from 'react';
 import './App.css';
+import {List, TabBar, WingBlank} from "antd-mobile";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import {HashRouter as Router, Switch, Route} from 'react-router-dom';
+import Market from "./component/market";
+import Asset from "./component/asset";
+import Trade from "./component/trade";
+
+
+class App extends Component {
+
+    render() {
+        return (
+            <Router>
+                <Switch>
+                    <Route exact path="/" component={Market}/>
+                    <Route exact path="/market" component={Market}/>
+                    {/*<Route exact path="/market/:standard" component={Market}/>*/}
+                    <Route exact path="/trade" component={Trade}/>
+                    <Route exact path="/trade/:standard/:token" component={Trade}/>
+                    <Route exact path="/asset" component={Asset}/>
+                </Switch>
+            </Router>
+        );
+    }
 }
 
 export default App;

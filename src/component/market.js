@@ -1,322 +1,99 @@
-import serojs from 'serojs'
-import seropp from 'sero-pp'
-import BigNumber from 'bignumber.js'
-import {formatDate, decimals} from './utils'
-import {Toast} from "antd-mobile";
+import React, {Component} from 'react';
+import {Button, Carousel, Item, List, Modal, TabBar, WingBlank} from "antd-mobile";
+import BigNumber from "bignumber.js";
 
-const config = {
-    name: "TRADE",
-    contractAddress: "",
-    github: "https://gitee.com/edenworkroom/market",
-    author: "edenworkroom@163.com",
-    url: document.location.href,
-    logo: document.location.protocol + '//' + document.location.host + '/market/logo.png'
-}
+import mAbi from './abi'
+import pairs from "./pairs";
+import {decimals, hashKey} from "./common";
 
-const abi = [{
-    "constant": false,
-    "inputs": [{"name": "token", "type": "bytes32"}, {"name": "value", "type": "uint256"}],
-    "name": "withdraw",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "tokenStr", "type": "string"}, {"name": "cashStr", "type": "string"}],
-    "name": "addPair",
-    "outputs": [{"name": "key", "type": "bytes32"}],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "token", "type": "bytes32"}],
-    "name": "selfAddPair",
-    "outputs": [{"name": "key", "type": "bytes32"}],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "fee", "type": "uint256"}],
-    "name": "setTokenFee",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [{"name": "name", "type": "string"}],
-    "name": "balanceOf",
-    "outputs": [{"name": "", "type": "uint256"}, {"name": "", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "tokenFee",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [],
-    "name": "recharge",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "orderId", "type": "bytes32"}],
-    "name": "orderInfo",
-    "outputs": [{"name": "price", "type": "uint256[2]"}, {"name": "value", "type": "uint256"}, {
-        "name": "dealValue",
-        "type": "uint256"
-    }, {"name": "create_time", "type": "uint256"}, {"name": "status", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "chargeFee",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "owner",
-    "outputs": [{"name": "", "type": "address"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [{"name": "key", "type": "bytes32"}],
-    "name": "orders",
-    "outputs": [{"name": "", "type": "string"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [{"name": "key", "type": "bytes32"}],
-    "name": "pairInfo",
-    "outputs": [{"name": "token", "type": "string"}, {"name": "cash", "type": "string"}, {
-        "name": "buyListJson",
-        "type": "string"
-    }, {"name": "sellListJson", "type": "string"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "orderId", "type": "bytes32"}, {
-        "name": "orderType",
-        "type": "bool"
-    }],
-    "name": "cancel",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256[2]"}, {
-        "name": "value",
-        "type": "uint256"
-    }],
-    "name": "buy",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256[2]"}, {
-        "name": "value",
-        "type": "uint256"
-    }],
-    "name": "sell",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "newOwner", "type": "address"}],
-    "name": "transferOwnership",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {"inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor"}, {
-    "anonymous": false,
-    "inputs": [{"indexed": true, "name": "previousOwner", "type": "address"}, {
-        "indexed": true,
-        "name": "newOwner",
-        "type": "address"
-    }],
-    "name": "OwnershipTransferred",
-    "type": "event"
-}];
-const caddress = config.contractAddress;
-const contract = serojs.callContract(abi, caddress);
+import MTabbar from "./tabbar";
+import MCarousel from './carousel'
 
-class Market {
+const operation = Modal.operation;
 
-    constructor() {
-        let self = this;
-        self.OnInit = new Promise(
-            (resolve, reject) => {
-                seropp.init(config, function (rest) {
-                    if (rest === 'success') {
-                        console.log("init success");
-                        return resolve()
-                    } else {
-                        return reject(rest)
-                    }
-                })
-            }
-        )
+class Market extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            standard: "SERO",
+            pairList: [],
+            onPress: props.onPress
+        }
     }
 
-    accountDetails(pk, callback) {
+    initPairList() {
         let self = this;
-        seropp.getAccountDetail(pk, function (item) {
-            let balance = "0";
-            if (item.Balance.has("SERO")) {
-                balance = decimals(new BigNumber(item.Balance.get("SERO")));
-            }
-            callback({pk: item.PK, mainPKr: item.MainPKr, name: item.Name, balance: balance})
+        const keys = new Array();
+        const map = new Map();
+        pairs.getTokens(this.state.standard).forEach(function (token) {
+            let key = hashKey(token, self.state.standard);
+            keys.push(key);
+            map[key] = token;
         });
-    }
 
-    accountList(callback) {
-        seropp.getAccountList(function (data) {
-            let accounts = [];
-            data.forEach(function (item, index) {
-                let balance = "0";
-                if (item.Balance.has("SERO")) {
-                    balance = decimals(new BigNumber(item.Balance.get("SERO")));
-                }
-                accounts.push({pk: item.PK, mainPKr: item.MainPKr, name: item.Name, balance: balance})
+        mAbi.lastPrice("", keys, function (pairMap) {
+            const pairList = new Array();
+            keys.forEach(key => {
+                pairList.push({
+                    symbol: pairs.getSymbol(map[key]),
+                    tokenName: map[key],
+                    lastPrice: pairMap[key],
+                    decimals: pairs.getDecimals(map[key])
+                })
             });
-            callback(accounts)
+            self.setState({pairList: pairList});
         });
     }
 
-    orders(from, key, callback) {
-        this.callMethod('orders', from, [key], function (json) {
-            callback(JSON.parse(json));
+    componentDidMount() {
+        let self = this;
+        mAbi.init
+            .then(() => {
+                self.timer = setInterval(self.initPairList(), 20 * 1000);
+            })
+    }
+
+    render() {
+        let self = this;
+        const tokenPairs = this.state.pairList.map((item, index) => {
+            return (
+                <List.Item key={item.tokenName} onClick={() => {
+                    console.log("onClick", self.state.onPress);
+                    self.state.onPress([item.tokenName, this.state.standard]);
+                }}>
+                    <div style={{float: "left", width: "40%"}}>{item.symbol}</div>
+                    <div style={{
+                        float: "left",
+                        width: "40%"
+                    }}>{!item.lastPrice ? 0 : decimals(item.lastPrice[0].div(item.lastPrice[1], 1, 3))}</div>
+                    <div style={{float: "right", width: "20%"}}>
+                        <Button type="primary" inline size="small" style={{width: '70px'}}>0</Button>
+                    </div>
+                </List.Item>
+            )
         });
-    }
 
-    orders(from, key, callback) {
-        this.callMethod('orders', from, [key], function (json) {
-            callback(JSON.parse(json));
-        });
-    }
+        return (
+            <div>
+                <div style={{padding: "15px 0px"}}>
+                    <WingBlank>
+                        <MCarousel/>
+                    </WingBlank>
+                    <WingBlank>
+                        <List renderHeader={() => '行情'}>
+                            <List.Item>
+                                <div style={{float: "left", width: "40%"}}>名称</div>
+                                <div style={{float: "left", width: "40%"}}>最新价</div>
+                                <div style={{float: "right", width: "20%", textAlign: "right"}}>跌涨幅</div>
+                            </List.Item>
+                            {tokenPairs}
+                        </List>
+                    </WingBlank>
+                </div>
 
-    pairInfo(from, key, callback) {
-        this.callMethod('pairInfo', from, [key], function (vals) {
-            callback(JSON.parse(vals[2]), JSON.parse(vals[3]));
-        });
-    }
-
-    balanceOf(from, token, callback) {
-        this.callMethod('balanceOf', from, [token], function (vals) {
-            callback(new BigNumber(vals[0]), new BigNumber(vals[1]));
-        });
-    }
-
-    buy(from, mainPKr, key, price, value, callback) {
-        this.executeMethod('buy', from, mainPKr, [key, price, value], 0, callback);
-    }
-
-    sell(from, mainPKr, key, price, value, callback) {
-        this.executeMethod('sell', from, mainPKr, [key, price, value], 0, callback);
-    }
-
-    cancel(from, mainPKr, key, orderId, orderType, callback) {
-        this.executeMethod('cancel', from, mainPKr, [key, orderId, orderType], 0, callback);
-    }
-
-    recharge(from, mainPKr, value, callback) {
-        this.executeMethod('recharge', from, mainPKr, [], value, callback);
-    }
-
-    withdraw(from, mainPKr, tokenName, value, callback) {
-        this.executeMethod('withdraw', from, mainPKr, [tokenName, value], 0, callback);
-    }
-
-    selfAddPair(from, mainPKr, tokenName, callback) {
-        this.executeMethod('withdraw', from, mainPKr, [tokenName], 0, callback);
-    }
-
-
-    callMethod(_method, from, _args, callback) {
-        let that = this;
-        let packData = contract.packData(_method, _args);
-        let callParams = {
-            from: from,
-            to: caddress,
-            data: packData
-        }
-
-        seropp.call(callParams, function (callData) {
-            if (callData !== "0x") {
-                let res = contract.unPackData(_method, callData);
-                if (callback) {
-                    callback(res);
-                }
-            } else {
-                callback("0x0");
-            }
-        });
-    }
-
-    executeMethod(_method, from, mainPKr, args, value, callback) {
-        let that = this;
-
-        let packData = contract.packData(_method, args);
-        let executeData = {
-            from: from,
-            to: caddress,
-            value: "0x" + value.toString(16),
-            data: packData,
-            gasPrice: "0x" + new BigNumber("1000000000").toString(16),
-            cy: "SERO",
-        };
-        let estimateParam = {
-            from: mainPKr,
-            to: caddress,
-            value: "0x" + value.toString(16),
-            data: packData,
-            gasPrice: "0x" + new BigNumber("1000000000").toString(16),
-            cy: "SERO",
-        }
-        seropp.estimateGas(estimateParam, function (gas, error) {
-            if (error) {
-                Toast.fail("Failed to execute smart contract")
-            } else {
-                executeData["gas"] = gas;
-                seropp.executeContract(executeData, function (res) {
-                    if (callback) {
-                        callback(res)
-                    }
-                })
-            }
-
-        });
+                <MTabbar selectedTab="market"/>
+            </div>)
     }
 }
 
-const tradeplace = new Market();
-export default tradeplace;
+export default Market
