@@ -210,7 +210,7 @@ class Trade extends Component {
                                     </div>
                                 </div>
                             </Flex>
-                           
+
                             <Flex>
                                 <Flex.Item>
                                     <div>
