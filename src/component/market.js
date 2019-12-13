@@ -53,6 +53,7 @@ class Market extends Component {
             })
     }
 
+
     render() {
         let self = this;
         const tokenPairs = this.state.pairList.map((item, index) => {

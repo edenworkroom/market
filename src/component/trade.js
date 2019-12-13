@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, Button, InputItem, List, WhiteSpace, WingBlank, Card} from "antd-mobile";
+import {Modal, Button, InputItem, List, WhiteSpace, WingBlank, Card, Flex} from "antd-mobile";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
 
@@ -122,6 +122,12 @@ class Trade extends Component {
         });
     }
 
+    cancel(orderId, orderType) {
+        // let self = this;
+        // mAbi.cancel(this.state.account.pk, this.state.account.mainPKr, this.state.key, orderId, orderType==0);
+    }
+
+
     render() {
         let self = this;
         let decimal = pairs.getDecimals(this.state.pair[0])
@@ -143,11 +149,11 @@ class Trade extends Component {
             return <div className="item" style={{paddingTop: '15px', clear: 'both'}}>
                 <div className="content">
                     <div className="header">
-                        <span style={{
-                            fontSize: '18px',
-                            fontWeight: 'bold',
-                            color: self.state.type ? '#D01919' : '#21BA45'
-                        }}>卖出</span>
+                        {
+                            item.type === 0 ?
+                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#D01919'}}>卖出</span> :
+                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#21BA45'}}>买入</span>
+                        }
                         <span style={{
                             paddingLeft: '3px',
                             fontSize: '18px',
@@ -157,9 +163,9 @@ class Trade extends Component {
                             fontSize: '15px',
                             paddingLeft: '5px'
                         }}>{formatDate(new Date(item.createTime * 1000))}</span>
-                        <a style={{float: 'right'}}>撤消</a>
+                        <a style={{float: 'right'}} onClick={this.cancel(this, item.id, item.type)}>撤消</a>
                     </div>
-                    <div className='extra' style={{paddingTop:'8px'}}>
+                    <div className='extra' style={{paddingTop: '8px'}}>
                         <div style={{width: '100%'}}>
                             <div style={{float: 'left', width: '45%'}}>
                                 <div style={{color: '#A8A8A8', fontSize: '13px',}}>价格({self.state.pair[1]})</div>
@@ -193,37 +199,45 @@ class Trade extends Component {
                     </List>
                     <span></span>
                 </WingBlank>
+
                 <WingBlank style={{paddingTop: '10px'}}>
                     <div>
-                        <div style={{float: 'left', width: '58%'}}>
-                            <div role="list" className="ui list">
-                                <div role="listitem" className="item">
-                                    <img src={trade_buy} className="ui avatar image"/>
-                                    <div className="content" style={{paddingTop: '5px', fontSize: '17px'}}>
-                                        <span className="header">{this.state.pair[0]}/{this.state.pair[1]}</span>
+                        <div style={{float: 'left', width: '65%'}}>
+                            <Flex>
+                                <div className="ui breadcrumb">
+                                    <div className="active section"> <img src={trade_buy} className="ui avatar image"/></div>
+                                    <div className="active section"> <span className="header">{this.state.pair[0]}/{this.state.pair[1]}</span>
                                     </div>
                                 </div>
-                                <div role="listitem" className="item" style={{paddingTop: '10px'}}>
-                                    <div style={{float: "left"}}>
+                            </Flex>
+                           
+                            <Flex>
+                                <Flex.Item>
+                                    <div>
                                         <button className={this.state.type ? "ui positive button" : "ui button"}
-                                                style={{width: '105px'}}
+                                                style={{width: '100%'}}
                                                 onClick={() => {
                                                     this.click(true);
                                                 }}>买入
                                         </button>
                                     </div>
-                                    <div style={{float: "right"}}>
+                                </Flex.Item>
+                                <Flex.Item>
+                                    <div>
                                         <button className={!this.state.type ? "ui negative button" : "ui button"}
-                                                style={{width: '105px'}}
+                                                style={{width: '100%'}}
                                                 onClick={() => {
                                                     this.click(false);
                                                 }}>卖出
                                         </button>
                                     </div>
-                                </div>
-                                <div role="listitem" className="item" style={{paddingTop: '10px'}}>
+                                </Flex.Item>
+                            </Flex>
+                            <WhiteSpace size="lg" />
+                            <Flex>
+                                <Flex.Item>
                                     <div className="ui right labeled input">
-                                        <input type="text" pattern="[0-9]*" placeholder="价格" style={{width: '150px'}}
+                                        <input type="number" placeholder="价格" style={{width: '70%'}}
                                                value={this.state.currentPrice} onChange={(event) => {
                                             let value = event.target.value;
                                             if (value) {
@@ -233,7 +247,7 @@ class Trade extends Component {
                                                 this.setState({currentPrice: ""});
                                             }
                                         }}/>
-                                        <div className="ui basic label label" style={{width: '70px'}}>
+                                        <div className="ui basic label label" style={{width: '30%'}}>
                                             <div style={{float: 'left', width: '45%'}}>
                                                 <a onClick={this.updatePrice.bind(this, 0.001)}>
                                                     <img src={trade_price_add} className="ui avatar image"
@@ -258,11 +272,14 @@ class Trade extends Component {
                                     <div style={{paddingTop: '5px'}}>
                                         <span></span>
                                     </div>
-                                </div>
-                                <div role="listitem" className="item" style={{paddingTop: '10px'}}>
+                                </Flex.Item>
+                            </Flex>
+                            <WhiteSpace size="lg" />
+                            <Flex>
+                                <Flex.Item>
                                     <div className="ui right labeled input">
-                                        <input type="text" pattern="[0-9]*" value={this.state.value} placeholder="数量"
-                                               style={{width: '150px'}}
+                                        <input type="number" value={this.state.value} placeholder="数量"
+                                               style={{width: '70%'}}
                                                onChange={(event) => {
                                                    let value = event.target.value;
                                                    if (value) {
@@ -273,38 +290,33 @@ class Trade extends Component {
                                                    }
                                                }}/>
                                         <div className="ui basic label label"
-                                             style={{width: '70px'}}>{this.state.pair[0]}</div>
+                                             style={{width: '30%'}}>{this.state.pair[0]}</div>
                                     </div>
-                                    <div style={{paddingTop: '5px'}}>
+                                    <div style={{paddingTop: '5px', fontSize:'12px',color: '#A8A8A8'}}>
                                         {
                                             this.state.type ?
                                                 <span>可用 {this.balanceOf(this.state.pair[1])} {this.state.pair[1]}</span> :
                                                 <span>可用 {this.balanceOf(this.state.pair[0])} {this.state.pair[0]}</span>
                                         }
                                     </div>
-
-                                </div>
-
-                                <div role="listitem" className="item" style={{paddingTop: '15px'}}>
-                                    <div>
-                                        <span>交易额:</span>
-                                    </div>
-                                </div>
-                                <div role="listitem" className="item" style={{paddingTop: '10px'}}>
+                                </Flex.Item>
+                            </Flex>
+                            <WhiteSpace size="lg" />
+                            <Flex>
+                                <Flex.Item>
                                     <div>
                                         {
 
                                             this.state.type ? <button className="ui positive button"
-                                                                      style={{width: '220px'}}
+                                                                      style={{width: '100%'}}
                                                                       onClick={this.submit.bind(this)}>买入</button> :
                                                 <button className="ui negative button"
                                                         style={{width: '220px'}}
                                                         onClick={this.submit.bind(this)}>卖出</button>
                                         }
-
                                     </div>
-                                </div>
-                            </div>
+                                </Flex.Item>
+                            </Flex>
                         </div>
                         <div style={{float: 'right', width: '30%', paddingTop: '8px'}}>
                             <div role="list" className="ui list">

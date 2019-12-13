@@ -8,17 +8,21 @@ import pairs from "./pairs";
 import mAbi from "./abi";
 import {decimals, showPK, tokenToBytes} from "./common";
 
-const prompt = Modal.prompt;
 const operation = Modal.operation;
 
 class Asset extends React.Component {
     constructor(props) {
         super(props);
 
+        let tokens = new Array();
+        pairs.TOKENS.forEach(function (val, token) {
+            tokens.push(token);
+        });
+
         this.state = {
             pk: "",
             mainPKr: "",
-            tokens: [],
+            tokens: tokens,
             balanceMap: {}
         };
     }
@@ -38,13 +42,8 @@ class Asset extends React.Component {
 
     initBalances(mainPKr) {
         let self = this;
-        let tokens = new Array();
-
-        pairs.TOKENS.forEach(function (val, token) {
-            tokens.push(token);
-        });
-        mAbi.balanceOf(mainPKr, tokens, function (maps) {
-            self.setState({tokens: tokens, balanceMap: maps});
+        mAbi.balanceOf(mainPKr, this.state.tokens, function (maps) {
+            self.setState({balanceMap: maps});
         })
     }
 
@@ -69,9 +68,22 @@ class Asset extends React.Component {
     op(token, type) {
         let self = this;
         let title = (type === "recharge" ? "充值 " : "提现 ") + token;
-        let input = <InputItem ref={el => {
-            this.valueInput = el
-        }} type="money" moneyKeyboardAlign="left" placeholder="请输入金额"></InputItem>
+        let input = <div className="ui input">
+            <input type="number" value={this.state.value} placeholder="数量"
+                   ref={el => {
+                       this.valueInput = el
+                   }}
+                   onChange={(event) => {
+                       let value = event.target.value;
+                       if (value) {
+                           value = (value.match(/^\d*(\.?\d{0,3})/g)[0]) || null
+                           this.setState({value: value.toString()})
+                       } else {
+                           this.setState({value: ""});
+                       }
+                   }}/>
+        </div>
+
         Modal.alert(title, input,
             [
                 {text: <span>取消</span>},
@@ -93,8 +105,10 @@ class Asset extends React.Component {
     render() {
         let self = this;
         let rows = this.state.tokens.map((token, index) => {
-
             let balance = this.state.balanceMap[token];
+            if (!this.state.balanceMap[token]) {
+                balance = [0, 0];
+            }
             let decimal = pairs.getDecimals(token);
             let symbol = pairs.getSymbol(token);
 
@@ -141,7 +155,7 @@ class Asset extends React.Component {
                             <div className="header">账号</div>
                             <div className="meta">
                                 <span>{showPK(this.state.pk, 12)}</span>
-                                <a className="ui right aligned primary button"
+                                <a className="ui right aligned primary" style={{float: 'right'}}
                                    onClick={this.changAccount.bind(this)}>切换</a>
                             </div>
                             <div className="description">
@@ -153,7 +167,6 @@ class Asset extends React.Component {
                 </div>
                 <MTabbar selectedTab="asset"/>
             </WingBlank>
-
         );
     }
 }
