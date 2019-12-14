@@ -6,7 +6,7 @@ import {decimals, tokenToBytes} from "./common";
 
 const config = {
     name: "DMarket",
-    contractAddress: "5doTBjS2uBVPezABzavV6PufKACGvuC1Uq4Y4zPPPATawFxvucSwJ22CCpFyB4MShZczbwQwPJkP5q7ZGAajheV",
+    contractAddress: "2sk7NaBbUm7VkfaH4d7SLNdsgGMdLcmJnYES9CS2TNa9hZNhjkBkxu23nZzYwZwBvKCraLy1YNek1nBRmQBWoLQC",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
@@ -206,11 +206,15 @@ class MAbi {
 
     pairInfo(from, key, callback) {
         this.callMethod('pairInfo', from, [key], function (vals) {
-            let buyList = JSON.parse(vals[1]).sort(function (a, b) {
+            let buyList = JSON.parse(vals[1]).filter(function (item, index, list) {
+                return item.status == 0;
+            }).sort(function (a, b) {
                 return a.price[1] * b.price[0] - a.price[0] * b.price[1];
             });
 
-            let sellList = JSON.parse(vals[2]).sort(function (a, b) {
+            let sellList = JSON.parse(vals[2]).filter(function (item, index, list) {
+                return item.status == 0;
+            }).sort(function (a, b) {
                 return a.price[1] * b.price[0] - a.price[0] * b.price[1];
             });
 

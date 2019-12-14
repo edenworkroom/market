@@ -79,6 +79,9 @@ class Trade extends Component {
     }
 
     submit() {
+        if (this.state.currentPrice == 0 || this.state.value == 0) {
+            return;
+        }
         let price = Number(this.state.currentPrice);
         let value = new BigNumber(this.state.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0]))).toFixed(0);
         let priceVal = [price * 1000, 1000];
@@ -124,29 +127,22 @@ class Trade extends Component {
     }
 
     cancel(orderId, orderType) {
-        // let self = this;
-        // mAbi.cancel(this.state.account.pk, this.state.account.mainPKr, this.state.key, orderId, orderType==0);
+        let self = this;
+        mAbi.cancel(this.state.account.pk, this.state.account.mainPKr, this.state.key, orderId, orderType == 0);
     }
-
 
     render() {
         let self = this;
         let decimal = pairs.getDecimals(this.state.pair[0]);
 
-        let buyOrderItems = this.state.pairInfo.buyList.sort(function (a, b) {
-            let b1 = a.price[0] * b.price[1] < a.price[1] * b.price[0];
-            console.log(b1);
-            return b1;
-        }).map((item, index) => {
+        let buyOrderItems = this.state.pairInfo.buyList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
                 <div style={{float: 'right'}}>{decimals((item.value - item.dealValue), decimal, 2)}</div>
             </div>
         });
 
-        let sellOrderItems = this.state.pairInfo.sellList.sort(function (a, b) {
-            return a.price[0] * b.price[1] > a.price[1] * b.price[0];
-        }).map((item, index) => {
+        let sellOrderItems = this.state.pairInfo.sellList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
                 <div style={{float: 'right'}}>{decimals((item.value - item.dealValue), decimal, 2)}</div>
@@ -154,10 +150,7 @@ class Trade extends Component {
         });
 
         let myOrders = this.state.orders.map((item, index) => {
-            if (item.status === 1) {
-
-            }
-            return <div className="item" style={{paddingTop: '15px', clear: 'both'}}>
+            return <div key={index} className="item" style={{paddingTop: '15px', clear: 'both'}}>
                 <div className="content">
                     <div className="header">
                         {
@@ -176,7 +169,7 @@ class Trade extends Component {
                         }}>{formatDate(new Date(item.createTime * 1000))}</span>
                         {
                             item.status == 0 &&
-                            <a style={{float: 'right'}} onClick={self.cancel(this, item.id, item.type)}>撤消</a>
+                            <a style={{float: 'right'}} onClick={self.cancel.bind(this, item.id, item.type)}>撤消</a>
                         }
                         {
                             item.status == 1 && <a style={{float: 'right'}}>已完成</a>
@@ -268,7 +261,8 @@ class Trade extends Component {
                                             } else {
                                                 this.setState({currentPrice: ""});
                                             }
-                                            this.spanInput.html = value * this.state.value;
+                                            console.log("sss", this.spanInput);
+                                            this.spanValue.innerHTML = value * this.state.value;
                                         }}/>
                                         <div className="ui basic label label" style={{width: '30%'}}>
                                             <div style={{float: 'left', width: '45%'}}>
@@ -311,7 +305,7 @@ class Trade extends Component {
                                                    } else {
                                                        this.setState({value: ""});
                                                    }
-                                                   this.spanInput.text = value * this.state.currentPrice;
+                                                   this.spanValue.innerHTML = value * this.state.currentPrice;
                                                }}/>
                                         <div className="ui basic label label"
                                              style={{width: '30%'}}>{this.state.pair[0]}</div>
@@ -328,10 +322,11 @@ class Trade extends Component {
                             <WhiteSpace size="lg"/>
                             <Flex>
                                 <Flex.Item>
-                                    <div >
-                                        交易额:<span ref={el => this.spanInput = el}></span>
+                                    <div>
+                                        交易额:<span style={{padding: '0px 5px'}}
+                                                  ref={el => this.spanValue = el}>0</span>{this.state.pair[1]}
                                     </div>
-                                    <div style={{paddingTop:'5px'}}>
+                                    <div style={{paddingTop: '5px'}}>
                                         {
 
                                             this.state.type ? <button className="ui positive button"
