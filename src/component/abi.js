@@ -13,7 +13,148 @@ const config = {
     logo: document.location.protocol + '//' + document.location.host + '/market/logo.png'
 }
 
-const abiJson = [{"constant":false,"inputs":[{"name":"tokenStr","type":"string"},{"name":"cashStr","type":"string"}],"name":"addPair","outputs":[{"name":"key","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"tokenStr","type":"string"},{"name":"value","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"fee","type":"uint256"}],"name":"setTokenFee","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"tokenFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"recharge","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"keys","type":"bytes32[]"}],"name":"lastPrice","outputs":[{"name":"json","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"chargeFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tokens","type":"bytes32[]"}],"name":"balanceOf","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"bytes32"}],"name":"orders","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"bytes32"}],"name":"pairInfo","outputs":[{"name":"price","type":"uint256[]"},{"name":"buyListJson","type":"string"},{"name":"sellListJson","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"orderId","type":"bytes32"},{"name":"orderType","type":"bool"}],"name":"cancel","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"price","type":"uint256[]"},{"name":"value","type":"uint256"}],"name":"sell","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"price","type":"uint256[]"},{"name":"value","type":"uint256"}],"name":"buy","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"}];
+const abiJson = [{
+    "constant": false,
+    "inputs": [{"name": "tokenStr", "type": "string"}, {"name": "cashStr", "type": "string"}],
+    "name": "addPair",
+    "outputs": [{"name": "key", "type": "bytes32"}],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{"name": "tokenStr", "type": "string"}, {"name": "value", "type": "uint256"}],
+    "name": "withdraw",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{"name": "fee", "type": "uint256"}],
+    "name": "setTokenFee",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [],
+    "name": "tokenFee",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [],
+    "name": "recharge",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{"name": "keys", "type": "bytes32[]"}],
+    "name": "lastPrice",
+    "outputs": [{"name": "json", "type": "string"}],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [],
+    "name": "chargeFee",
+    "outputs": [{"name": "", "type": "uint256"}],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{"name": "", "type": "address"}],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{"name": "tokens", "type": "bytes32[]"}],
+    "name": "balanceOf",
+    "outputs": [{"name": "", "type": "string"}],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{"name": "key", "type": "bytes32"}],
+    "name": "orders",
+    "outputs": [{"name": "", "type": "string"}],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": true,
+    "inputs": [{"name": "key", "type": "bytes32"}],
+    "name": "pairInfo",
+    "outputs": [{"name": "price", "type": "uint256[]"}, {
+        "name": "buyListJson",
+        "type": "string"
+    }, {"name": "sellListJson", "type": "string"}],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "orderId", "type": "bytes32"}, {
+        "name": "orderType",
+        "type": "bool"
+    }],
+    "name": "cancel",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256[]"}, {
+        "name": "value",
+        "type": "uint256"
+    }],
+    "name": "sell",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{"name": "newOwner", "type": "address"}],
+    "name": "transferOwnership",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256[]"}, {
+        "name": "value",
+        "type": "uint256"
+    }],
+    "name": "buy",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+}, {"inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor"}, {
+    "anonymous": false,
+    "inputs": [{"indexed": true, "name": "previousOwner", "type": "address"}, {
+        "indexed": true,
+        "name": "newOwner",
+        "type": "address"
+    }],
+    "name": "OwnershipTransferred",
+    "type": "event"
+}];
 const caddress = config.contractAddress;
 const contract = serojs.callContract(abiJson, caddress);
 
@@ -59,18 +200,24 @@ class MAbi {
 
     orders(from, key, callback) {
         this.callMethod('orders', from, [key], function (json) {
-            console.log("orders", json);
             callback(JSON.parse(json));
         });
     }
 
     pairInfo(from, key, callback) {
         this.callMethod('pairInfo', from, [key], function (vals) {
-            console.log("pairInfo", vals);
+            let buyList = JSON.parse(vals[1]).sort(function (a, b) {
+                return a.price[1] * b.price[0] - a.price[0] * b.price[1];
+            });
+
+            let sellList = JSON.parse(vals[2]).sort(function (a, b) {
+                return a.price[1] * b.price[0] - a.price[0] * b.price[1];
+            });
+
             callback({
                 lastPrice: vals[0],
-                buyList: JSON.parse(vals[1]),
-                sellList: JSON.parse(vals[2])
+                buyList: buyList.slice(0, 5),
+                sellList: sellList.slice(-5)
             });
         });
     }
@@ -88,7 +235,6 @@ class MAbi {
             list.push(tokenToBytes(token));
         });
         this.callMethod('balanceOf', from, [list], function (json) {
-            console.log("balanceOf", tokens, json);
             callback(JSON.parse(json));
         });
     }

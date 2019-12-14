@@ -69,17 +69,15 @@ class Asset extends React.Component {
         let self = this;
         let title = (type === "recharge" ? "充值 " : "提现 ") + token;
         let input = <div className="ui input">
-            <input type="number" value={this.state.value} placeholder="数量"
-                   ref={el => {
-                       this.valueInput = el
-                   }}
+            <input type="number" placeholder="数量"
+                   ref={el => this.valueInput = el}
                    onChange={(event) => {
                        let value = event.target.value;
                        if (value) {
                            value = (value.match(/^\d*(\.?\d{0,3})/g)[0]) || null
-                           this.setState({value: value.toString()})
+                           this.valueInput.value = value;
                        } else {
-                           this.setState({value: ""});
+                           this.valueInput.value = "";
                        }
                    }}/>
         </div>
@@ -90,7 +88,8 @@ class Asset extends React.Component {
                 {
                     text: <span>确定</span>, onPress: () => {
                         let decmail = pairs.getDecimals(token);
-                        let value = new BigNumber(this.valueInput.state.value).multipliedBy(new BigNumber(10).pow(decmail));
+                        console.log(this.valueInput);
+                        let value = new BigNumber(this.valueInput.value).multipliedBy(new BigNumber(10).pow(decmail));
                         if (type === "recharge") {
                             mAbi.recharge(self.state.pk, self.state.mainPKr, token, value);
                         } else {

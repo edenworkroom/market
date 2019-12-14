@@ -46,7 +46,7 @@ class Trade extends Component {
 
     }
 
-    init() {
+    init(mainPkr) {
         let self = this;
         mAbi.balanceOf(self.state.account.mainPKr, self.state.pair, function (maps) {
             self.setState({balances: maps});
@@ -54,7 +54,7 @@ class Trade extends Component {
         mAbi.pairInfo(self.state.account.mainPKr, self.state.key, function (info) {
             self.setState({pairInfo: info});
         });
-        mAbi.orders(self.state.account.mainPKr, this.state.key, function (orders) {
+        mAbi.orders(mainPkr, this.state.key, function (orders) {
             self.setState({orders: orders});
         })
     }
@@ -64,10 +64,10 @@ class Trade extends Component {
         mAbi.init.then(() => {
             mAbi.accountList(function (accounts) {
                 self.setState({account: {pk: accounts[0].pk, mainPKr: accounts[0].mainPKr}});
-                self.init();
+                self.init(accounts[0].mainPKr);
 
                 setInterval(function () {
-                    self.init();
+                    self.init(self.state.account.mainPKr);
                 }, 20 * 1000);
             });
         })
@@ -114,6 +114,7 @@ class Trade extends Component {
                     {
                         text: <span>{account.name + ":" + showPK(account.pk)}</span>, onPress: () => {
                             self.setState({account: {pk: account.pk, mainPKr: account.mainPKr}});
+                            self.init(account.mainPKr);
                         }
                     }
                 );
@@ -130,22 +131,32 @@ class Trade extends Component {
 
     render() {
         let self = this;
-        let decimal = pairs.getDecimals(this.state.pair[0])
-        let buyOrderItems = this.state.pairInfo.buyList.map((item, index) => {
-            return <div key={index} role="listitem" className="item">
+        let decimal = pairs.getDecimals(this.state.pair[0]);
+
+        let buyOrderItems = this.state.pairInfo.buyList.sort(function (a, b) {
+            let b1 = a.price[0] * b.price[1] < a.price[1] * b.price[0];
+            console.log(b1);
+            return b1;
+        }).map((item, index) => {
+            return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
                 <div style={{float: 'right'}}>{decimals((item.value - item.dealValue), decimal, 2)}</div>
             </div>
         });
 
-        let sellOrderItems = this.state.pairInfo.sellList.map((item, index) => {
-            return <div key={index} role="listitem" className="item">
+        let sellOrderItems = this.state.pairInfo.sellList.sort(function (a, b) {
+            return a.price[0] * b.price[1] > a.price[1] * b.price[0];
+        }).map((item, index) => {
+            return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
                 <div style={{float: 'right'}}>{decimals((item.value - item.dealValue), decimal, 2)}</div>
             </div>
         });
 
         let myOrders = this.state.orders.map((item, index) => {
+            if (item.status === 1) {
+
+            }
             return <div className="item" style={{paddingTop: '15px', clear: 'both'}}>
                 <div className="content">
                     <div className="header">
@@ -163,7 +174,16 @@ class Trade extends Component {
                             fontSize: '15px',
                             paddingLeft: '5px'
                         }}>{formatDate(new Date(item.createTime * 1000))}</span>
-                        <a style={{float: 'right'}} onClick={this.cancel(this, item.id, item.type)}>撤消</a>
+                        {
+                            item.status == 0 &&
+                            <a style={{float: 'right'}} onClick={self.cancel(this, item.id, item.type)}>撤消</a>
+                        }
+                        {
+                            item.status == 1 && <a style={{float: 'right'}}>已完成</a>
+                        }
+                        {
+                            item.status == 2 && <a style={{float: 'right'}}>已撤消</a>
+                        }
                     </div>
                     <div className='extra' style={{paddingTop: '8px'}}>
                         <div style={{width: '100%'}}>
@@ -176,7 +196,7 @@ class Trade extends Component {
                                 <div>{decimals(item.value, decimal, 9)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>已成交</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>实际成交({self.state.pair[0]})</div>
                                 <div>{decimals(item.dealValue, decimal, 9)}</div>
                             </div>
                         </div>
@@ -205,8 +225,10 @@ class Trade extends Component {
                         <div style={{float: 'left', width: '65%'}}>
                             <Flex>
                                 <div className="ui breadcrumb">
-                                    <div className="active section"> <img src={trade_buy} className="ui avatar image"/></div>
-                                    <div className="active section"> <span className="header">{this.state.pair[0]}/{this.state.pair[1]}</span>
+                                    <div className="active section"><img src={trade_buy} className="ui avatar image"/>
+                                    </div>
+                                    <div className="active section"><span
+                                        className="header">{this.state.pair[0]}/{this.state.pair[1]}</span>
                                     </div>
                                 </div>
                             </Flex>
@@ -233,10 +255,10 @@ class Trade extends Component {
                                     </div>
                                 </Flex.Item>
                             </Flex>
-                            <WhiteSpace size="lg" />
+                            <WhiteSpace size="lg"/>
                             <Flex>
                                 <Flex.Item>
-                                    <div className="ui right labeled input">
+                                    <div className="ui right labeled input" style={{width: '100%'}}>
                                         <input type="number" placeholder="价格" style={{width: '70%'}}
                                                value={this.state.currentPrice} onChange={(event) => {
                                             let value = event.target.value;
@@ -246,6 +268,7 @@ class Trade extends Component {
                                             } else {
                                                 this.setState({currentPrice: ""});
                                             }
+                                            this.spanInput.html = value * this.state.value;
                                         }}/>
                                         <div className="ui basic label label" style={{width: '30%'}}>
                                             <div style={{float: 'left', width: '45%'}}>
@@ -274,10 +297,10 @@ class Trade extends Component {
                                     </div>
                                 </Flex.Item>
                             </Flex>
-                            <WhiteSpace size="lg" />
+                            <WhiteSpace size="lg"/>
                             <Flex>
                                 <Flex.Item>
-                                    <div className="ui right labeled input">
+                                    <div className="ui right labeled input" style={{width: '100%'}}>
                                         <input type="number" value={this.state.value} placeholder="数量"
                                                style={{width: '70%'}}
                                                onChange={(event) => {
@@ -288,11 +311,12 @@ class Trade extends Component {
                                                    } else {
                                                        this.setState({value: ""});
                                                    }
+                                                   this.spanInput.text = value * this.state.currentPrice;
                                                }}/>
                                         <div className="ui basic label label"
                                              style={{width: '30%'}}>{this.state.pair[0]}</div>
                                     </div>
-                                    <div style={{paddingTop: '5px', fontSize:'12px',color: '#A8A8A8'}}>
+                                    <div style={{paddingTop: '5px', fontSize: '12px', color: '#A8A8A8'}}>
                                         {
                                             this.state.type ?
                                                 <span>可用 {this.balanceOf(this.state.pair[1])} {this.state.pair[1]}</span> :
@@ -301,10 +325,13 @@ class Trade extends Component {
                                     </div>
                                 </Flex.Item>
                             </Flex>
-                            <WhiteSpace size="lg" />
+                            <WhiteSpace size="lg"/>
                             <Flex>
                                 <Flex.Item>
-                                    <div>
+                                    <div >
+                                        交易额:<span ref={el => this.spanInput = el}></span>
+                                    </div>
+                                    <div style={{paddingTop:'5px'}}>
                                         {
 
                                             this.state.type ? <button className="ui positive button"
