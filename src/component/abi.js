@@ -6,7 +6,7 @@ import {decimals, tokenToBytes} from "./common";
 
 const config = {
     name: "DMarket",
-    contractAddress: "2sk7NaBbUm7VkfaH4d7SLNdsgGMdLcmJnYES9CS2TNa9hZNhjkBkxu23nZzYwZwBvKCraLy1YNek1nBRmQBWoLQC",
+    contractAddress: "4gdb1526NV8rYyptYk33dJR57rdmGUuFJo8hEkdv65JXxiq6Nivg3c9yiCXAwcRJ4K8Tg9mruSimbBSwHtCoJ19b",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,

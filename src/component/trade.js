@@ -172,10 +172,10 @@ class Trade extends Component {
                             <a style={{float: 'right'}} onClick={self.cancel.bind(this, item.id, item.type)}>撤消</a>
                         }
                         {
-                            item.status == 1 && <a style={{float: 'right'}}>已完成</a>
+                            item.status == 1 && <a style={{float: 'right', color: '#A8A8A8'}}>已完成</a>
                         }
                         {
-                            item.status == 2 && <a style={{float: 'right'}}>已撤消</a>
+                            item.status == 2 && <a style={{float: 'right', color: '#A8A8A8'}}>已撤消</a>
                         }
                     </div>
                     <div className='extra' style={{paddingTop: '8px'}}>
@@ -196,7 +196,7 @@ class Trade extends Component {
                     </div>
                 </div>
             </div>
-        })
+        });
         return (
             <div>
                 <WingBlank>
@@ -261,8 +261,7 @@ class Trade extends Component {
                                             } else {
                                                 this.setState({currentPrice: ""});
                                             }
-                                            console.log("sss", this.spanInput);
-                                            this.spanValue.innerHTML = value * this.state.value;
+                                            this.spanValue.innerHTML = new BigNumber(value * this.state.value).toFixed(3);
                                         }}/>
                                         <div className="ui basic label label" style={{width: '30%'}}>
                                             <div style={{float: 'left', width: '45%'}}>
@@ -305,7 +304,7 @@ class Trade extends Component {
                                                    } else {
                                                        this.setState({value: ""});
                                                    }
-                                                   this.spanValue.innerHTML = value * this.state.currentPrice;
+                                                   this.spanValue.innerHTML = new BigNumber(value * this.state.currentPrice).toFixed(3);
                                                }}/>
                                         <div className="ui basic label label"
                                              style={{width: '30%'}}>{this.state.pair[0]}</div>
