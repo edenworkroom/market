@@ -10,6 +10,7 @@ import {decimals, showPK, tokenToBytes} from "./common";
 
 const operation = Modal.operation;
 
+
 class Asset extends React.Component {
     constructor(props) {
         super(props);
@@ -113,7 +114,7 @@ class Asset extends React.Component {
 
             return (<div key={index} className="ui card" style={{width: '100%'}}>
                 <div className="content">
-                    <img src="/images/avatar/large/steve.jpg" className="ui mini left floated image"/>
+                    <img src={require('../icon/' + token + '.png')} style={{width:'30px', height:'30px'}} className="ui mini left floated image"/>
                     <div className="header">{symbol}</div>
                     <div className="meta">{token}</div>
                     <div className="description">
@@ -149,7 +150,7 @@ class Asset extends React.Component {
         return (
             <div>
                 <WingBlank>
-                    <div className="ui cards" style={{paddingTop: '15px', paddingBottom:'40px'}}>
+                    <div className="ui cards" style={{paddingTop: '15px', paddingBottom: '40px'}}>
                         <div className="ui card green" style={{width: '100%'}}>
                             <div className="content">
                                 <div className="header">账号</div>

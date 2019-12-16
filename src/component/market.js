@@ -35,7 +35,6 @@ class Market extends Component {
             const pairList = new Array();
             console.log("keys", keys);
             keys.forEach(key => {
-                console.log(key, pairMap[key]);
                 let lastPrice = [0, 1];
                 if (pairMap[key] && pairMap[key].length == 2) {
                     lastPrice = pairMap[key];
@@ -63,7 +62,6 @@ class Market extends Component {
     render() {
         let self = this;
         const tokenPairs = this.state.pairList.map((item, index) => {
-            console.log(index, item);
             return (
                 <List.Item key={item.tokenName}>
                     <div style={{float: "left", width: "40%"}}>{item.symbol}</div>

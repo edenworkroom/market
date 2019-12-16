@@ -5,7 +5,7 @@ import {Toast} from "antd-mobile";
 import {decimals, tokenToBytes} from "./common";
 
 const config = {
-    name: "DMarket",
+    name: "Market",
     contractAddress: "5AkexDqLB5v93PZfufM3z9sQynFmfLUP1RGQLmFUBNoK5KPGfmQVWbxZcjNhYHGyau1V92REBGR5yiNa378acFC1",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
@@ -228,7 +228,6 @@ class MAbi {
 
     lastPrice(from, keys, callback) {
         this.callMethod('lastPrice', from, [keys], function (json) {
-            console.log("lastPrice",json)
             callback(JSON.parse(json));
         });
     }
