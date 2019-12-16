@@ -16,7 +16,7 @@ class Pairs {
         }],
         ["FFFF", {
             symbol: "FFFF",
-            decimals: 18,
+            decimals: 9,
         }],
     ])
 

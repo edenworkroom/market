@@ -52,7 +52,7 @@ class Trade extends Component {
         mAbi.balanceOf(self.state.account.mainPKr, self.state.pair, function (maps) {
             self.setState({balances: maps});
         });
-        mAbi.pairInfo(self.state.account.mainPKr, self.state.key, function (info) {
+        mAbi.pairInfo(self.state.account.mainPKr, self.state.key, 1, function (info) {
             self.setState({pairInfo: info});
         });
         mAbi.orders(mainPkr, this.state.key, function (orders) {
@@ -80,22 +80,21 @@ class Trade extends Component {
     }
 
     submit() {
-        if (this.state.currentPrice == 0 || this.state.value == 0) {
+        let price = Number(this.state.currentPrice) * 1000;
+        let value = new BigNumber(this.state.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0]))).toFixed(0);
+        if (price === 0 || value === "0") {
             return;
         }
-        let price = Number(this.state.currentPrice);
-        let value = new BigNumber(this.state.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0]))).toFixed(0);
-        let priceVal = [price * 1000, 1000];
         if (this.state.type) {
-            mAbi.buy(this.state.account.pk, this.state.account.mainPKr, this.state.key, priceVal, value);
+            mAbi.buy(this.state.account.pk, this.state.account.mainPKr, this.state.key, price, value);
         } else {
-            mAbi.sell(this.state.account.pk, this.state.account.mainPKr, this.state.key, priceVal, value);
+            mAbi.sell(this.state.account.pk, this.state.account.mainPKr, this.state.key, price, value);
         }
 
     }
 
     updatePrice(step) {
-        if (this.state.currentPrice === 0 && step < 0) {
+        if (Number(this.state.currentPrice) === 0 && step < 0) {
             return;
         }
         this.setState((state) => ({currentPrice: (Number(state.currentPrice) + step).toFixed(3)}));
@@ -139,18 +138,21 @@ class Trade extends Component {
         let buyOrderItems = this.state.pairInfo.buyList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value - item.dealValue), decimal, 2)}</div>
+                <div style={{float: 'right'}}>{decimals((item.value), decimal, 2)}</div>
             </div>
         });
 
         let sellOrderItems = this.state.pairInfo.sellList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value - item.dealValue), decimal, 2)}</div>
+                <div style={{float: 'right'}}>{decimals((item.value), decimal, 2)}</div>
             </div>
         });
 
         let myOrders = this.state.orders.map((item, index) => {
+            if(item.status != 0) {
+                return;
+            }
             return <div key={index} className="item" style={{paddingTop: '15px', clear: 'both'}}>
                 <div className="content">
                     <div className="header">
@@ -183,7 +185,7 @@ class Trade extends Component {
                         <div style={{width: '100%'}}>
                             <div style={{float: 'left', width: '45%'}}>
                                 <div style={{color: '#A8A8A8', fontSize: '13px',}}>价格({self.state.pair[1]})</div>
-                                <div>{decimals(item.price[0] / item.price[1], 0, 3)}</div>
+                                <div>{showPrice(item.price, 3)}</div>
                             </div>
                             <div style={{float: 'left'}}>
                                 <div style={{color: '#A8A8A8', fontSize: '13px',}}>数量({self.state.pair[0]})</div>
@@ -351,7 +353,7 @@ class Trade extends Component {
                                 {sellOrderItems}
                             </div>
                             <div>
-                                <span>{showPrice(this.state.pairInfo.lastPrice)}</span>
+                                <span>{showPrice(this.state.pairInfo.lastPrice, 3)}</span>
                             </div>
 
                             <div role="list" className="ui list" style={{color: '#21BA45'}}>
@@ -361,7 +363,7 @@ class Trade extends Component {
                     </div>
                 </WingBlank>
                 <WhiteSpace size="lg"/>
-                <WingBlank style={{paddingTop: '15px', clear: 'both'}}>
+                <WingBlank style={{paddingTop: '15px',paddingBottom: '100px', clear: 'both'}}>
                     <div>
                         <div>
                             <span style={{float: 'left', fontSize: '17px'}}>当前委托</span>

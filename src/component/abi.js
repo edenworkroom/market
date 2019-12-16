@@ -6,7 +6,7 @@ import {decimals, tokenToBytes} from "./common";
 
 const config = {
     name: "Market",
-    contractAddress: "5AkexDqLB5v93PZfufM3z9sQynFmfLUP1RGQLmFUBNoK5KPGfmQVWbxZcjNhYHGyau1V92REBGR5yiNa378acFC1",
+    contractAddress: "4z77P3AqyDGGtpfSMe5Sy82hF1iQSBn3uiaQZtBK9QfkFennWcWWDvmnPCm7Auq4FE8c1typya5La5wHo2PPWha7",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
@@ -31,22 +31,6 @@ const abiJson = [{
     "type": "function"
 }, {
     "constant": false,
-    "inputs": [{"name": "fee", "type": "uint256"}],
-    "name": "setTokenFee",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "tokenFee",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": false,
     "inputs": [],
     "name": "recharge",
     "outputs": [],
@@ -68,6 +52,17 @@ const abiJson = [{
     "outputs": [{"name": "", "type": "uint256"}],
     "payable": false,
     "stateMutability": "view",
+    "type": "function"
+}, {
+    "constant": false,
+    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256"}, {
+        "name": "value",
+        "type": "uint256"
+    }],
+    "name": "sell",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
 }, {
     "constant": true,
@@ -97,7 +92,7 @@ const abiJson = [{
     "constant": true,
     "inputs": [{"name": "key", "type": "bytes32"}],
     "name": "pairInfo",
-    "outputs": [{"name": "price", "type": "uint256[]"}, {
+    "outputs": [{"name": "price", "type": "uint256"}, {
         "name": "buyListJson",
         "type": "string"
     }, {"name": "sellListJson", "type": "string"}],
@@ -117,17 +112,6 @@ const abiJson = [{
     "type": "function"
 }, {
     "constant": false,
-    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256[]"}, {
-        "name": "value",
-        "type": "uint256"
-    }],
-    "name": "sell",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
     "inputs": [{"name": "newOwner", "type": "address"}],
     "name": "transferOwnership",
     "outputs": [],
@@ -136,7 +120,7 @@ const abiJson = [{
     "type": "function"
 }, {
     "constant": false,
-    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256[]"}, {
+    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256"}, {
         "name": "value",
         "type": "uint256"
     }],
@@ -204,18 +188,34 @@ class MAbi {
         });
     }
 
-    pairInfo(from, key, callback) {
+    pairInfo(from, key, level, callback) {
         this.callMethod('pairInfo', from, [key], function (vals) {
-            let buyList = JSON.parse(vals[1]).filter(function (item, index, list) {
+            let buyList = new Array();
+            JSON.parse(vals[1]).filter(function (item, index, list) {
                 return item.status == 0;
             }).sort(function (a, b) {
-                return a.price[1] * b.price[0] - a.price[0] * b.price[1];
+                return b.price - a.price;
+            }).forEach(function (item, index) {
+                let buyPrice = item.price - item.price % level
+                if (buyList.length == 0 || buyPrice != buyList[buyList.length - 1].price) {
+                    buyList.push({price: buyPrice, value: item.value - item.dealValue});
+                } else {
+                    buyList[buyList.length - 1].value += item.value - item.dealValue;
+                }
             });
 
-            let sellList = JSON.parse(vals[2]).filter(function (item, index, list) {
+            let sellList = new Array()
+            JSON.parse(vals[2]).filter(function (item, index, list) {
                 return item.status == 0;
             }).sort(function (a, b) {
-                return a.price[1] * b.price[0] - a.price[0] * b.price[1];
+                return b.price - a.price;
+            }).forEach(function (item, index) {
+                let sellPrice = item.price - item.price % level
+                if (sellList.length == 0 || sellPrice != sellList[sellList.length - 1].price) {
+                    sellList.push({price: sellPrice, value: item.value - item.dealValue});
+                } else {
+                    sellList[sellList.length - 1].value += item.value - item.dealValue;
+                }
             });
 
             callback({
@@ -252,6 +252,7 @@ class MAbi {
     }
 
     cancel(pk, mainPKr, key, orderId, orderType, callback) {
+        console.log("cancel",key, orderId, orderType );
         this.executeMethod('cancel', pk, mainPKr, [key, orderId, orderType], "SERO", 0, callback);
     }
 

@@ -2,4 +2,3 @@ package-lock.json
 build
 node_modules
 .idea
-deploy.sh

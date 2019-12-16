@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import mAbi from "./abi";
-import {decimals, formatDate, hashKey} from "./common";
+import {decimals, formatDate, hashKey, showPrice} from "./common";
 import {WingBlank} from "antd-mobile";
 import pairs from "./pairs";
 import MTabbar from "./tabbar";
@@ -68,7 +68,7 @@ class OrderList extends Component {
                         <div style={{width: '100%'}}>
                             <div style={{float: 'left', width: '45%'}}>
                                 <div style={{color: '#A8A8A8', fontSize: '13px',}}>价格({self.state.pair[1]})</div>
-                                <div>{decimals(item.price[0] / item.price[1], 0, 3)}</div>
+                                <div>{showPrice(item.price,  3)}</div>
                             </div>
                             <div style={{float: 'left'}}>
                                 <div style={{color: '#A8A8A8', fontSize: '13px',}}>数量({self.state.pair[0]})</div>

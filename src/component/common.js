@@ -10,6 +10,7 @@ function getDate(num) {
         return num;
     }
 }
+
 export function formatDate(time) {
     const Y = time.getFullYear();
     const M = getDate(time.getMonth() + 1);
@@ -20,9 +21,10 @@ export function formatDate(time) {
     return `${h}:${m} ${Y}/${M}/${d}`;
 
 }
+
 export function showPrice(price, decimalPlaces) {
-    if (price && price.length == 2) {
-        let ret = new BigNumber(price[0]).dividedBy(new BigNumber(price[1])).toFixed(decimalPlaces);
+    if (price) {
+        let ret = new BigNumber(price).dividedBy(new BigNumber("1000")).toFixed(decimalPlaces);
         return trimNumber(ret);
     } else {
         return "0.000";

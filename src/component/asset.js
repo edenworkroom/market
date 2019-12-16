@@ -3,6 +3,7 @@ import {Modal, default as Toast, WingBlank, InputItem} from 'antd-mobile';
 import MTabbar from "./tabbar";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
+import {createHashHistory} from 'history'
 
 import pairs from "./pairs";
 import mAbi from "./abi";
@@ -11,7 +12,7 @@ import {decimals, showPK, tokenToBytes} from "./common";
 const operation = Modal.operation;
 
 
-class Asset extends React.Component {
+class Asset extends Component {
     constructor(props) {
         super(props);
 
@@ -114,7 +115,8 @@ class Asset extends React.Component {
 
             return (<div key={index} className="ui card" style={{width: '100%'}}>
                 <div className="content">
-                    <img src={require('../icon/' + token + '.png')} style={{width:'30px', height:'30px'}} className="ui mini left floated image"/>
+                    <img src={require('../icon/' + token + '.png')} style={{width: '30px', height: '30px'}}
+                         className="ui mini left floated image"/>
                     <div className="header">{symbol}</div>
                     <div className="meta">{token}</div>
                     <div className="description">
@@ -142,7 +144,10 @@ class Asset extends React.Component {
                         </button>
                         <button className="ui green basic button" onClick={self.op.bind(self, token, "withdraw")}>提现
                         </button>
-                        <button className="ui green basic button">交易</button>
+                        <button className="ui green basic button" onClick={() => {
+                            createHashHistory().push("/trade/SERO/" + token);
+                        }}>交易
+                        </button>
                     </div>
                 </div>
             </div>)
@@ -160,7 +165,7 @@ class Asset extends React.Component {
                                        onClick={this.changAccount.bind(this)}>切换</a>
                                 </div>
                                 <div className="description">
-                                    Leverage agile frameworks to provide a robust synopsis for high level overviews.
+
                                 </div>
                             </div>
                         </div>

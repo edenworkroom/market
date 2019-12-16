@@ -5,7 +5,7 @@ import {createHashHistory} from 'history'
 
 import mAbi from './abi'
 import pairs from "./pairs";
-import {decimals, hashKey} from "./common";
+import {decimals, hashKey, showPrice} from "./common";
 
 import MTabbar from "./tabbar";
 import MCarousel from './carousel'
@@ -33,10 +33,9 @@ class Market extends Component {
 
         mAbi.lastPrice("", keys, function (pairMap) {
             const pairList = new Array();
-            console.log("keys", keys);
             keys.forEach(key => {
-                let lastPrice = [0, 1];
-                if (pairMap[key] && pairMap[key].length == 2) {
+                let lastPrice = 0;
+                if (pairMap[key]) {
                     lastPrice = pairMap[key];
                 }
                 pairList.push({
@@ -66,7 +65,7 @@ class Market extends Component {
                 <List.Item key={item.tokenName}>
                     <div style={{float: "left", width: "40%"}}>{item.symbol}</div>
                     <div style={{float: "left", width: "40%"}}>
-                        {!item.lastPrice ? 0 : decimals(item.lastPrice[0] / (item.lastPrice[1]), 0, 3)}
+                        {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
                     </div>
                     <div style={{float: "right", width: "20%"}}>
                         <Button type="primary" inline size="small" style={{width: '70px'}} onClick={() => {
@@ -79,7 +78,7 @@ class Market extends Component {
 
         return (
             <div>
-                <div style={{padding: "15px 0px"}}>
+                <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
                     <WingBlank>
                         <MCarousel/>
                     </WingBlank>
