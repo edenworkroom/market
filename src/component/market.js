@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Button, Carousel, Item, List, Modal, TabBar, WingBlank} from "antd-mobile";
 import BigNumber from "bignumber.js";
+import {createHashHistory} from 'history'
 
 import mAbi from './abi'
 import pairs from "./pairs";
@@ -17,7 +18,6 @@ class Market extends Component {
         this.state = {
             standard: "SERO",
             pairList: [],
-            onPress: props.onPress
         }
     }
 
@@ -33,11 +33,17 @@ class Market extends Component {
 
         mAbi.lastPrice("", keys, function (pairMap) {
             const pairList = new Array();
+            console.log("keys", keys);
             keys.forEach(key => {
+                console.log(key, pairMap[key]);
+                let lastPrice = [0, 1];
+                if (pairMap[key] && pairMap[key].length == 2) {
+                    lastPrice = pairMap[key];
+                }
                 pairList.push({
                     symbol: pairs.getSymbol(map[key]),
                     tokenName: map[key],
-                    lastPrice: pairMap[key],
+                    lastPrice: lastPrice,
                     decimals: pairs.getDecimals(map[key])
                 })
             });
@@ -57,18 +63,17 @@ class Market extends Component {
     render() {
         let self = this;
         const tokenPairs = this.state.pairList.map((item, index) => {
+            console.log(index, item);
             return (
-                <List.Item key={item.tokenName} onClick={() => {
-                    console.log("onClick", self.state.onPress);
-                    self.state.onPress([item.tokenName, this.state.standard]);
-                }}>
+                <List.Item key={item.tokenName}>
                     <div style={{float: "left", width: "40%"}}>{item.symbol}</div>
-                    <div style={{
-                        float: "left",
-                        width: "40%"
-                    }}>{!item.lastPrice ? 0 : decimals(item.lastPrice[0].div(item.lastPrice[1], 1, 3))}</div>
+                    <div style={{float: "left", width: "40%"}}>
+                        {!item.lastPrice ? 0 : decimals(item.lastPrice[0] / (item.lastPrice[1]), 0, 3)}
+                    </div>
                     <div style={{float: "right", width: "20%"}}>
-                        <Button type="primary" inline size="small" style={{width: '70px'}}>0</Button>
+                        <Button type="primary" inline size="small" style={{width: '70px'}} onClick={() => {
+                            createHashHistory().push("/trade/SERO/" + item.tokenName);
+                        }}>交易</Button>
                     </div>
                 </List.Item>
             )
@@ -85,7 +90,7 @@ class Market extends Component {
                             <List.Item>
                                 <div style={{float: "left", width: "40%"}}>名称</div>
                                 <div style={{float: "left", width: "40%"}}>最新价</div>
-                                <div style={{float: "right", width: "20%", textAlign: "right"}}>跌涨幅</div>
+                                <div style={{float: "right", width: "20%", textAlign: "right"}}></div>
                             </List.Item>
                             {tokenPairs}
                         </List>

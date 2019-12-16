@@ -6,7 +6,7 @@ import {decimals, tokenToBytes} from "./common";
 
 const config = {
     name: "DMarket",
-    contractAddress: "4gdb1526NV8rYyptYk33dJR57rdmGUuFJo8hEkdv65JXxiq6Nivg3c9yiCXAwcRJ4K8Tg9mruSimbBSwHtCoJ19b",
+    contractAddress: "5AkexDqLB5v93PZfufM3z9sQynFmfLUP1RGQLmFUBNoK5KPGfmQVWbxZcjNhYHGyau1V92REBGR5yiNa378acFC1",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
@@ -228,6 +228,7 @@ class MAbi {
 
     lastPrice(from, keys, callback) {
         this.callMethod('lastPrice', from, [keys], function (json) {
+            console.log("lastPrice",json)
             callback(JSON.parse(json));
         });
     }

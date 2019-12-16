@@ -6,6 +6,7 @@ import {HashRouter as Router, Switch, Route} from 'react-router-dom';
 import Market from "./component/market";
 import Asset from "./component/asset";
 import Trade from "./component/trade";
+import OrderList from "./component/orders";
 
 
 class App extends Component {
@@ -17,9 +18,10 @@ class App extends Component {
                     <Route exact path="/" component={Market}/>
                     <Route exact path="/market" component={Market}/>
                     {/*<Route exact path="/market/:standard" component={Market}/>*/}
-                    <Route exact path="/trade" component={Trade}/>
                     <Route exact path="/trade/:standard/:token" component={Trade}/>
+                    <Route exact path="/trade" component={Trade}/>
                     <Route exact path="/asset" component={Asset}/>
+                    <Route exact path="/orders/:standard/:token/:mainPKr" component={OrderList}/>
                 </Switch>
             </Router>
         );

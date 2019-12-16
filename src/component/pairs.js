@@ -3,7 +3,7 @@ class Pairs {
     SERO = {
         symbol: "SERO",
         decimals: 18,
-        tokens: ["TTTT"]
+        tokens: ["TTTT", "FFFF"]
     };
     TOKENS = new Map([
         ["SERO", {
@@ -12,6 +12,10 @@ class Pairs {
         }],
         ["TTTT", {
             symbol: "TTTT",
+            decimals: 18,
+        }],
+        ["FFFF", {
+            symbol: "FFFF",
             decimals: 18,
         }],
     ])

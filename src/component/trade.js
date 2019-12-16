@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Modal, Button, InputItem, List, WhiteSpace, WingBlank, Card, Flex} from "antd-mobile";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
+import {createHashHistory} from 'history'
 
 import trade_buy from '../icon/trade_buy.png';
 import trade_sell from '../icon/trade_sell.png';
@@ -18,11 +19,11 @@ const operation = Modal.operation;
 class Trade extends Component {
     constructor(props) {
         super(props);
-        let token;
-        let standard;
-        if (!props.token || !props.standard) {
-            token = "TTTT";
-            standard = "SERO";
+        let token = pairs.SERO.tokens[0];
+        let standard = "SERO";
+        if (props.match.params.token && props.match.params.standard) {
+            token = props.match.params.token;
+            standard = props.match.params.standard;
         }
         let key = hashKey(token, standard);
         this.state = {
@@ -365,7 +366,9 @@ class Trade extends Component {
                         <div>
                             <span style={{float: 'left', fontSize: '17px'}}>当前委托</span>
                         </div>
-                        <div style={{float: 'right'}}>全部</div>
+                        <div style={{float: 'right'}}><a onClick={() => {
+                            createHashHistory().push(`/orders/${self.state.pair[1]}/${self.state.pair[0]}/${self.state.account.mainPKr}`);
+                        }}>全部</a></div>
                     </div>
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>
                     {myOrders}

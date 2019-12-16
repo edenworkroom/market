@@ -147,25 +147,30 @@ class Asset extends React.Component {
             </div>)
         });
         return (
-            <WingBlank>
-                <div className="ui cards" style={{paddingTop: '15px'}}>
-                    <div className="ui card green" style={{width: '100%'}}>
-                        <div className="content">
-                            <div className="header">账号</div>
-                            <div className="meta">
-                                <span>{showPK(this.state.pk, 12)}</span>
-                                <a className="ui right aligned primary" style={{float: 'right'}}
-                                   onClick={this.changAccount.bind(this)}>切换</a>
-                            </div>
-                            <div className="description">
-                                Leverage agile frameworks to provide a robust synopsis for high level overviews.
+            <div>
+                <WingBlank>
+                    <div className="ui cards" style={{paddingTop: '15px', paddingBottom:'40px'}}>
+                        <div className="ui card green" style={{width: '100%'}}>
+                            <div className="content">
+                                <div className="header">账号</div>
+                                <div className="meta">
+                                    <span>{showPK(this.state.pk, 12)}</span>
+                                    <a className="ui right aligned primary" style={{float: 'right'}}
+                                       onClick={this.changAccount.bind(this)}>切换</a>
+                                </div>
+                                <div className="description">
+                                    Leverage agile frameworks to provide a robust synopsis for high level overviews.
+                                </div>
                             </div>
                         </div>
+                        {rows}
                     </div>
-                    {rows}
-                </div>
+
+                </WingBlank>
                 <MTabbar selectedTab="asset"/>
-            </WingBlank>
+            </div>
+
+
         );
     }
 }
