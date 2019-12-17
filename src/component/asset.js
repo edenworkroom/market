@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, default as Toast, WingBlank, InputItem} from 'antd-mobile';
+import {Modal, WingBlank} from 'antd-mobile';
 import MTabbar from "./tabbar";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
@@ -67,9 +67,9 @@ class Asset extends Component {
         });
     }
 
-    op(token, type) {
+    op(token, symbol, type) {
         let self = this;
-        let title = (type === "recharge" ? "充值 " : "提现 ") + token;
+        let title = (type === "recharge" ? "充值 " : "提现 ") + symbol;
         let input = <div className="ui input">
             <input type="number" placeholder="数量"
                    ref={el => this.valueInput = el}
@@ -140,12 +140,16 @@ class Asset extends Component {
                 </div>
                 <div className="extra content">
                     <div className="ui three buttons">
-                        <button className="ui green basic button" onClick={self.op.bind(self, token, "recharge")}>充值
+                        <button className="ui green basic button"
+                                onClick={self.op.bind(self, token, symbol, "recharge")}>充值
                         </button>
-                        <button className="ui green basic button" onClick={self.op.bind(self, token, "withdraw")}>提现
+                        <button className="ui green basic button"
+                                onClick={self.op.bind(self, token, symbol, "withdraw")}>提现
                         </button>
                         <button className="ui green basic button" onClick={() => {
-                            createHashHistory().push("/trade/SERO/" + token);
+                            if (token !== "SERO") {
+                                createHashHistory().push("/trade/SERO/" + token);
+                            }
                         }}>交易
                         </button>
                     </div>

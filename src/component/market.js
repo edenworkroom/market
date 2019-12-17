@@ -1,16 +1,14 @@
 import React, {Component} from 'react';
-import {Button, Carousel, Item, List, Modal, TabBar, WingBlank} from "antd-mobile";
-import BigNumber from "bignumber.js";
+import {Button, List, WingBlank} from "antd-mobile";
 import {createHashHistory} from 'history'
 
 import mAbi from './abi'
 import pairs from "./pairs";
-import {decimals, hashKey, showPrice} from "./common";
+import {hashKey, showPrice} from "./common";
 
 import MTabbar from "./tabbar";
 import MCarousel from './carousel'
 
-const operation = Modal.operation;
 
 class Market extends Component {
     constructor(props) {
@@ -41,6 +39,7 @@ class Market extends Component {
                 pairList.push({
                     symbol: pairs.getSymbol(map[key]),
                     tokenName: map[key],
+                    name: pairs.getName(map[key]),
                     lastPrice: lastPrice,
                     decimals: pairs.getDecimals(map[key])
                 })
@@ -63,7 +62,12 @@ class Market extends Component {
         const tokenPairs = this.state.pairList.map((item, index) => {
             return (
                 <List.Item key={item.tokenName}>
-                    <div style={{float: "left", width: "40%"}}>{item.symbol}</div>
+                    <div style={{float: "left", width: "40%"}}>
+                        {item.symbol} <span style={{fontSize: '14px'}}>{item.name} </span>
+                        <div style={{fontSize: '10px', color: '#A8A8A8'}}>
+                            {item.tokenName}
+                        </div>
+                    </div>
                     <div style={{float: "left", width: "40%"}}>
                         {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
                     </div>

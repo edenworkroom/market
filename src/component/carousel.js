@@ -13,7 +13,7 @@ class MCarousel extends Component {
 
     componentDidMount() {
         this.setState({
-            data: ['AiyWuByWklrrUDlFignR', 'TekJlZRVCjLFexlOCuWn', 'IJOtIlfsYdTyaDTRVrLI'],
+            data: ['1'],
         });
     }
 

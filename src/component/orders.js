@@ -38,6 +38,7 @@ class OrderList extends Component {
 
     render() {
         let self = this;
+        let symbol = pairs.getSymbol(this.state.pair[0]);
         let decimal = pairs.getDecimals(this.state.pair[0]);
         let myOrders = this.state.orders.map((item, index) => {
             return <div key={index} className="item" style={{paddingTop: '15px', clear: 'both'}}>
@@ -52,7 +53,7 @@ class OrderList extends Component {
                             paddingLeft: '3px',
                             fontSize: '18px',
                             fontWeight: 'bold'
-                        }}>{self.state.pair[0]}/{self.state.pair[1]}</span>
+                        }}>{symbol}/{self.state.pair[1]}</span>
                         <span style={{
                             fontSize: '15px',
                             paddingLeft: '5px'
@@ -71,11 +72,11 @@ class OrderList extends Component {
                                 <div>{showPrice(item.price,  3)}</div>
                             </div>
                             <div style={{float: 'left'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>数量({self.state.pair[0]})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>数量({symbol})</div>
                                 <div>{decimals(item.value, decimal, 9)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>实际成交({self.state.pair[0]})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>实际成交({symbol})</div>
                                 <div>{decimals(item.dealValue, decimal, 9)}</div>
                             </div>
                         </div>

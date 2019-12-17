@@ -1,31 +1,35 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "f2a3c6c89db054ad16cedc6981428e55",
+    "revision": "1d9187f8fc020dfce68195edef049ef3",
     "url": "./index.html"
   },
   {
-    "revision": "78414aed4088eedd6d32",
-    "url": "./static/css/2.e8d888ea.chunk.css"
+    "revision": "4ce5d83504907d8db75f",
+    "url": "./static/css/2.07861606.chunk.css"
   },
   {
-    "revision": "b8ab9be26408b9b8cf46",
+    "revision": "9aa442717afc8c056154",
     "url": "./static/css/main.564b014d.chunk.css"
   },
   {
-    "revision": "78414aed4088eedd6d32",
-    "url": "./static/js/2.9733a010.chunk.js"
+    "revision": "4ce5d83504907d8db75f",
+    "url": "./static/js/2.35cf11f4.chunk.js"
   },
   {
     "revision": "b3934cd7722aadc070d63814975c9022",
-    "url": "./static/js/2.9733a010.chunk.js.LICENSE"
+    "url": "./static/js/2.35cf11f4.chunk.js.LICENSE"
   },
   {
-    "revision": "b8ab9be26408b9b8cf46",
-    "url": "./static/js/main.c6e03b38.chunk.js"
+    "revision": "9aa442717afc8c056154",
+    "url": "./static/js/main.cbd092ea.chunk.js"
   },
   {
     "revision": "5ab5aacceb7847d6c205",
     "url": "./static/js/runtime-main.b25960d3.js"
+  },
+  {
+    "revision": "6bc43dc11fcdf24b58c1478844f1c538",
+    "url": "./static/media/1.6bc43dc1.png"
   },
   {
     "revision": "e9d408bd0f5a858a11f33cbdf14b892f",
@@ -34,6 +38,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "e9d408bd0f5a858a11f33cbdf14b892f",
     "url": "./static/media/SERO.e9d408bd.png"
+  },
+  {
+    "revision": "faf7618d93de2fe4a8e4b929b2429073",
+    "url": "./static/media/THE_FIRST_PRIVACY_COIN.faf7618d.png"
   },
   {
     "revision": "e9d408bd0f5a858a11f33cbdf14b892f",
@@ -82,6 +90,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "faff92145777a3cbaf8e7367b4807987",
     "url": "./static/media/icons.faff9214.woff"
+  },
+  {
+    "revision": "4d887f835d954566b707f6e95b08f794",
+    "url": "./static/media/logo.4d887f83.png"
   },
   {
     "revision": "701ae6abd4719e9c2ada3535a497b341",

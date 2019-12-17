@@ -5,140 +5,15 @@ import {Toast} from "antd-mobile";
 import {decimals, tokenToBytes} from "./common";
 
 const config = {
-    name: "Market",
-    contractAddress: "4z77P3AqyDGGtpfSMe5Sy82hF1iQSBn3uiaQZtBK9QfkFennWcWWDvmnPCm7Auq4FE8c1typya5La5wHo2PPWha7",
+    name: "Rhino Market",
+    contractAddress: "3WT76ES37RD8DYmarEmuQujT7iMrhU1eULad9hyAnxsA2FhhW1H3UmrwQjE9bse1f7AyBv8DyDeFb5DHATrSGxXS",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
     logo: document.location.protocol + '//' + document.location.host + '/market/logo.png'
 }
 
-const abiJson = [{
-    "constant": false,
-    "inputs": [{"name": "tokenStr", "type": "string"}, {"name": "cashStr", "type": "string"}],
-    "name": "addPair",
-    "outputs": [{"name": "key", "type": "bytes32"}],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "tokenStr", "type": "string"}, {"name": "value", "type": "uint256"}],
-    "name": "withdraw",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [],
-    "name": "recharge",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [{"name": "keys", "type": "bytes32[]"}],
-    "name": "lastPrice",
-    "outputs": [{"name": "json", "type": "string"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "chargeFee",
-    "outputs": [{"name": "", "type": "uint256"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256"}, {
-        "name": "value",
-        "type": "uint256"
-    }],
-    "name": "sell",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [],
-    "name": "owner",
-    "outputs": [{"name": "", "type": "address"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [{"name": "tokens", "type": "bytes32[]"}],
-    "name": "balanceOf",
-    "outputs": [{"name": "", "type": "string"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [{"name": "key", "type": "bytes32"}],
-    "name": "orders",
-    "outputs": [{"name": "", "type": "string"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": true,
-    "inputs": [{"name": "key", "type": "bytes32"}],
-    "name": "pairInfo",
-    "outputs": [{"name": "price", "type": "uint256"}, {
-        "name": "buyListJson",
-        "type": "string"
-    }, {"name": "sellListJson", "type": "string"}],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "orderId", "type": "bytes32"}, {
-        "name": "orderType",
-        "type": "bool"
-    }],
-    "name": "cancel",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "newOwner", "type": "address"}],
-    "name": "transferOwnership",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {
-    "constant": false,
-    "inputs": [{"name": "key", "type": "bytes32"}, {"name": "price", "type": "uint256"}, {
-        "name": "value",
-        "type": "uint256"
-    }],
-    "name": "buy",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-}, {"inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor"}, {
-    "anonymous": false,
-    "inputs": [{"indexed": true, "name": "previousOwner", "type": "address"}, {
-        "indexed": true,
-        "name": "newOwner",
-        "type": "address"
-    }],
-    "name": "OwnershipTransferred",
-    "type": "event"
-}];
+const abiJson = [{"constant":false,"inputs":[{"name":"tokenStr","type":"string"},{"name":"standardStr","type":"string"}],"name":"addPair","outputs":[{"name":"key","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"tokenStr","type":"string"},{"name":"value","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"recharge","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"keys","type":"bytes32[]"}],"name":"lastPrice","outputs":[{"name":"json","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"chargeFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"price","type":"uint256"},{"name":"value","type":"uint256"}],"name":"sell","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tokens","type":"bytes32[]"}],"name":"balanceOf","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"bytes32"}],"name":"orders","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"bytes32"}],"name":"pairInfo","outputs":[{"name":"price","type":"uint256"},{"name":"buyListJson","type":"string"},{"name":"sellListJson","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"orderIds","type":"bytes32[]"}],"name":"cancel","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"price","type":"uint256"},{"name":"value","type":"uint256"}],"name":"buy","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"}];
 const caddress = config.contractAddress;
 const contract = serojs.callContract(abiJson, caddress);
 
@@ -251,9 +126,8 @@ class MAbi {
         this.executeMethod('sell', pk, mainPKr, [key, price, value], "SERO", 0, callback);
     }
 
-    cancel(pk, mainPKr, key, orderId, orderType, callback) {
-        console.log("cancel",key, orderId, orderType );
-        this.executeMethod('cancel', pk, mainPKr, [key, orderId, orderType], "SERO", 0, callback);
+    cancel(pk, mainPKr, key, orderIds, callback) {
+        this.executeMethod('cancel', pk, mainPKr, [key, orderIds], "SERO", 0, callback);
     }
 
     recharge(pk, mainPKr, tokenName, value, callback) {

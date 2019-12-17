@@ -1,16 +1,15 @@
 import React, {Component} from 'react';
-import {Modal, Button, InputItem, List, WhiteSpace, WingBlank, Card, Flex} from "antd-mobile";
+import {Modal, List, WhiteSpace, WingBlank, Flex} from "antd-mobile";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
 import {createHashHistory} from 'history'
 
 import trade_buy from '../icon/trade_buy.png';
-import trade_sell from '../icon/trade_sell.png';
 import trade_price_add from '../icon/trade_price_add.png'
 import trade_price_reduce from '../icon/trade_price_reduce.png'
 
 import mAbi from './abi'
-import {decimals, showPrice, showPK, hashKey, tokenToBytes, formatDate} from "./common";
+import {decimals, showPrice, showPK, hashKey, formatDate} from "./common";
 import pairs from "./pairs";
 import MTabbar from "./tabbar";
 
@@ -126,13 +125,14 @@ class Trade extends Component {
         });
     }
 
-    cancel(orderId, orderType) {
+    cancel(orderIds) {
         let self = this;
-        mAbi.cancel(this.state.account.pk, this.state.account.mainPKr, this.state.key, orderId, orderType == 0);
+        mAbi.cancel(this.state.account.pk, this.state.account.mainPKr, this.state.key, orderIds);
     }
 
     render() {
         let self = this;
+        let symbol = pairs.getSymbol(this.state.pair[0]);
         let decimal = pairs.getDecimals(this.state.pair[0]);
 
         let buyOrderItems = this.state.pairInfo.buyList.map((item, index) => {
@@ -149,10 +149,12 @@ class Trade extends Component {
             </div>
         });
 
+        let orderIds = [];
         let myOrders = this.state.orders.map((item, index) => {
-            if(item.status != 0) {
+            if (item.status != 0) {
                 return;
             }
+            orderIds.push(item.id);
             return <div key={index} className="item" style={{paddingTop: '15px', clear: 'both'}}>
                 <div className="content">
                     <div className="header">
@@ -165,14 +167,14 @@ class Trade extends Component {
                             paddingLeft: '3px',
                             fontSize: '18px',
                             fontWeight: 'bold'
-                        }}>{self.state.pair[0]}/{self.state.pair[1]}</span>
+                        }}>{symbol}/{self.state.pair[1]}</span>
                         <span style={{
                             fontSize: '15px',
                             paddingLeft: '5px'
                         }}>{formatDate(new Date(item.createTime * 1000))}</span>
                         {
                             item.status == 0 &&
-                            <a style={{float: 'right'}} onClick={self.cancel.bind(this, item.id, item.type)}>撤消</a>
+                            <a style={{float: 'right'}} onClick={self.cancel.bind(this, [item.id])}>撤消</a>
                         }
                         {
                             item.status == 1 && <a style={{float: 'right', color: '#A8A8A8'}}>已完成</a>
@@ -188,11 +190,11 @@ class Trade extends Component {
                                 <div>{showPrice(item.price, 3)}</div>
                             </div>
                             <div style={{float: 'left'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>数量({self.state.pair[0]})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>数量({symbol})</div>
                                 <div>{decimals(item.value, decimal, 9)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>实际成交({self.state.pair[0]})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>实际成交({symbol})</div>
                                 <div>{decimals(item.dealValue, decimal, 9)}</div>
                             </div>
                         </div>
@@ -216,7 +218,7 @@ class Trade extends Component {
                     <span></span>
                 </WingBlank>
 
-                <WingBlank style={{paddingTop: '10px'}}>
+                <WingBlank style={{paddingTop: '2px'}}>
                     <div>
                         <div style={{float: 'left', width: '65%'}}>
                             <Flex>
@@ -224,7 +226,7 @@ class Trade extends Component {
                                     <div className="active section"><img src={trade_buy} className="ui avatar image"/>
                                     </div>
                                     <div className="active section"><span
-                                        className="header">{this.state.pair[0]}/{this.state.pair[1]}</span>
+                                        className="header">{symbol}/{this.state.pair[1]}</span>
                                     </div>
                                 </div>
                             </Flex>
@@ -310,13 +312,13 @@ class Trade extends Component {
                                                    this.spanValue.innerHTML = new BigNumber(value * this.state.currentPrice).toFixed(3);
                                                }}/>
                                         <div className="ui basic label label"
-                                             style={{width: '30%'}}>{this.state.pair[0]}</div>
+                                             style={{width: '30%'}}>{symbol}</div>
                                     </div>
                                     <div style={{paddingTop: '5px', fontSize: '12px', color: '#A8A8A8'}}>
                                         {
                                             this.state.type ?
                                                 <span>可用 {this.balanceOf(this.state.pair[1])} {this.state.pair[1]}</span> :
-                                                <span>可用 {this.balanceOf(this.state.pair[0])} {this.state.pair[0]}</span>
+                                                <span>可用 {this.balanceOf(this.state.pair[0])} {symbol}</span>
                                         }
                                     </div>
                                 </Flex.Item>
@@ -335,7 +337,7 @@ class Trade extends Component {
                                                                       style={{width: '100%'}}
                                                                       onClick={this.submit.bind(this)}>买入</button> :
                                                 <button className="ui negative button"
-                                                        style={{width: '220px'}}
+                                                        style={{width: '100%'}}
                                                         onClick={this.submit.bind(this)}>卖出</button>
                                         }
                                     </div>
@@ -363,7 +365,7 @@ class Trade extends Component {
                     </div>
                 </WingBlank>
                 <WhiteSpace size="lg"/>
-                <WingBlank style={{paddingTop: '15px',paddingBottom: '100px', clear: 'both'}}>
+                <WingBlank style={{paddingTop: '15px', paddingBottom: '100px', clear: 'both'}}>
                     <div>
                         <div>
                             <span style={{float: 'left', fontSize: '17px'}}>当前委托</span>
@@ -374,6 +376,12 @@ class Trade extends Component {
                     </div>
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>
                     {myOrders}
+                    {
+                        orderIds.length > 0 && <div className="item">
+                            <button className="ui fluid button" onClick={self.cancel.bind(this, orderIds)}>全部撤消</button>
+                        </div>
+                    }
+
                 </WingBlank>
                 <MTabbar selectedTab="trade"/>
             </div>
