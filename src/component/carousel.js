@@ -13,7 +13,7 @@ class MCarousel extends Component {
 
     componentDidMount() {
         this.setState({
-            data: ['1'],
+            data: ['1','1'],
         });
     }
 
@@ -39,7 +39,7 @@ class MCarousel extends Component {
                         }}
                     >
                         <img
-                            src={require(`../icon/${val}.png`)}
+                            src={require(`../icon/${val}.jpeg`)}
                             alt=""
                             style={{width: '100%', verticalAlign: 'top'}}
                             onLoad={() => {

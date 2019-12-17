@@ -40,7 +40,6 @@ class Pairs {
     }
 
     getDecimals(token) {
-        console.log(token);
         let decimals = this.TOKENS.get(token).decimals;
         if (!decimals) {
             throw new Error("not find " + token);

@@ -6,7 +6,7 @@ import {decimals, tokenToBytes} from "./common";
 
 const config = {
     name: "Rhino Market",
-    contractAddress: "3WT76ES37RD8DYmarEmuQujT7iMrhU1eULad9hyAnxsA2FhhW1H3UmrwQjE9bse1f7AyBv8DyDeFb5DHATrSGxXS",
+    contractAddress: "2VxjYcWGsK6DyZad6dJyz5K1wQGYcMCUX7hSvzvyDmWPReaMBVvzaVpiGwUBrhhrtkKDrh9Ft1hAPBfmTPfk4Ein",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
@@ -69,7 +69,8 @@ class MAbi {
             JSON.parse(vals[1]).filter(function (item, index, list) {
                 return item.status == 0;
             }).sort(function (a, b) {
-                return b.price - a.price;
+                // return b.price - a.price;
+                return false
             }).forEach(function (item, index) {
                 let buyPrice = item.price - item.price % level
                 if (buyList.length == 0 || buyPrice != buyList[buyList.length - 1].price) {
@@ -83,7 +84,8 @@ class MAbi {
             JSON.parse(vals[2]).filter(function (item, index, list) {
                 return item.status == 0;
             }).sort(function (a, b) {
-                return b.price - a.price;
+                // return b.price - a.price;
+                return false
             }).forEach(function (item, index) {
                 let sellPrice = item.price - item.price % level
                 if (sellList.length == 0 || sellPrice != sellList[sellList.length - 1].price) {
@@ -95,8 +97,8 @@ class MAbi {
 
             callback({
                 lastPrice: vals[0],
-                buyList: buyList.slice(0, 5),
-                sellList: sellList.slice(-5)
+                buyList: buyList,//.slice(0, 5),
+                sellList: sellList,//.slice(-5)
             });
         });
     }

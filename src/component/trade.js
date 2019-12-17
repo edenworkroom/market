@@ -377,7 +377,7 @@ class Trade extends Component {
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>
                     {myOrders}
                     {
-                        orderIds.length > 0 && <div className="item">
+                        orderIds.length > 0 && <div className="item" >
                             <button className="ui fluid button" onClick={self.cancel.bind(this, orderIds)}>全部撤消</button>
                         </div>
                     }
