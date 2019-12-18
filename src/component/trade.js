@@ -130,14 +130,14 @@ class Trade extends Component {
         let buyOrderItems = this.state.pairInfo.buyList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value), decimal, 2)}</div>
+                <div style={{float: 'right'}}>{decimals((item.value), decimal, 5)}</div>
             </div>
         });
 
         let sellOrderItems = this.state.pairInfo.sellList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value), decimal, 2)}</div>
+                <div style={{float: 'right'}}>{decimals((item.value), decimal, 5)}</div>
             </div>
         });
 
@@ -349,7 +349,7 @@ class Trade extends Component {
                             <span style={{float: 'left', fontSize: '17px'}}>当前委托</span>
                         </div>
                         <div style={{float: 'right'}}><a onClick={() => {
-                            createHashHistory().push(`/orders/${self.state.pair[1]}/${self.state.pair[0]}/${self.state.mainPKr}`);
+                            createHashHistory().push(`/orders/${self.state.pair[1]}/${self.state.pair[0]}/${this.state.pk}/${self.state.mainPKr}`);
                         }}>全部</a></div>
                     </div>
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>

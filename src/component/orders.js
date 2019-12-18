@@ -90,7 +90,7 @@ class OrderList extends Component {
                 <WingBlank style={{paddingTop: '15px', clear: 'both'}}>
                     {myOrders}
                 </WingBlank>
-                <MTabbar selectedTab="trade"/>
+                <MTabbar selectedTab="trade" pk={this.props.match.params.pk}/>
             </div>
 
         )

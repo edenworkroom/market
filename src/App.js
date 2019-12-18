@@ -20,7 +20,7 @@ class App extends Component {
                     <Route exact path="/trade/:pk/:standard/:token" component={Trade}/>
                     <Route exact path="/trade/:pk" component={Trade}/>
                     <Route exact path="/asset/:pk" component={Asset}/>
-                    <Route exact path="/orders/:standard/:token/:mainPKr" component={OrderList}/>
+                    <Route exact path="/orders/:standard/:token/:pk/:mainPKr" component={OrderList}/>
                 </Switch>
             </Router>
         );
