@@ -31,10 +31,8 @@ class Trade extends Component {
             type: true,
             currentPrice: "0.000",
             value: "0",
-            account: {
-                pk: "",
-                mainPKr: "",
-            },
+            pk: props.match.params.pk,
+            mainPKr: "",
             balances: {},
             pairInfo: {
                 buyList: [],
@@ -43,15 +41,15 @@ class Trade extends Component {
             },
             orders: [],
         }
-
     }
 
     init(mainPkr) {
         let self = this;
-        mAbi.balanceOf(self.state.account.mainPKr, self.state.pair, function (maps) {
+        self.setState({balances: {}})
+        mAbi.balanceOf(self.state.mainPKr, self.state.pair, function (maps) {
             self.setState({balances: maps});
         });
-        mAbi.pairInfo(self.state.account.mainPKr, self.state.key, 1, function (info) {
+        mAbi.pairInfo(self.state.mainPKr, self.state.key, 1, function (info) {
             self.setState({pairInfo: info});
         });
         mAbi.orders(mainPkr, this.state.key, function (orders) {
@@ -62,14 +60,15 @@ class Trade extends Component {
     componentDidMount() {
         let self = this;
         mAbi.init.then(() => {
-            mAbi.accountList(function (accounts) {
-                self.setState({account: {pk: accounts[0].pk, mainPKr: accounts[0].mainPKr}});
-                self.init(accounts[0].mainPKr);
-
+            mAbi.accountDetails(this.state.pk, function (account) {
+                self.setState({mainPKr: account.mainPKr})
+                self.init(account.mainPKr);
                 setInterval(function () {
-                    self.init(self.state.account.mainPKr);
+                    self.init(self.state.mainPKr);
                 }, 20 * 1000);
             });
+
+
         })
     }
 
@@ -80,16 +79,27 @@ class Trade extends Component {
 
     submit() {
         let price = Number(this.state.currentPrice) * 1000;
-        let value = new BigNumber(this.state.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0]))).toFixed(0);
+        let value = new BigNumber(this.state.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0])));
         if (price === 0 || value === "0") {
             return;
         }
         if (this.state.type) {
-            mAbi.buy(this.state.account.pk, this.state.account.mainPKr, this.state.key, price, value);
+            if (Number(this.state.value) * price / 1000 > Number(this.balanceOf(this.state.pair[1]))) {
+                Modal.alert('', '余额不足，请充值', [
+                    {text: 'OK', onPress: () => console.log('ok')},
+                ])
+                return;
+            }
+            mAbi.buy(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
         } else {
-            mAbi.sell(this.state.account.pk, this.state.account.mainPKr, this.state.key, price, value);
+            if (Number(this.state.value) > Number(this.balanceOf(this.state.pair[0]))) {
+                Modal.alert('', '余额不足，请充值', [
+                    {text: 'OK', onPress: () => console.log('ok')},
+                ])
+                return;
+            }
+            mAbi.sell(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
         }
-
     }
 
     updatePrice(step) {
@@ -107,27 +117,9 @@ class Trade extends Component {
         return 0;
     }
 
-    changAccount() {
-        let self = this;
-        mAbi.accountList(function (accounts) {
-            let actions = [];
-            accounts.forEach(function (account, index) {
-                actions.push(
-                    {
-                        text: <span>{account.name + ":" + showPK(account.pk)}</span>, onPress: () => {
-                            self.setState({account: {pk: account.pk, mainPKr: account.mainPKr}});
-                            self.init(account.mainPKr);
-                        }
-                    }
-                );
-            });
-            operation(actions);
-        });
-    }
-
     cancel(orderIds) {
         let self = this;
-        mAbi.cancel(this.state.account.pk, this.state.account.mainPKr, this.state.key, orderIds);
+        mAbi.cancel(this.state.pk, this.state.mainPKr, this.state.key, orderIds);
     }
 
     render() {
@@ -204,20 +196,6 @@ class Trade extends Component {
         });
         return (
             <div>
-                <WingBlank>
-                    <List>
-                        <List.Item>
-                            <div>
-                                <div>
-                                    <span style={{float: 'left'}}>账号 : {showPK(this.state.account.pk)}</span>
-                                </div>
-                                <div style={{float: 'right'}}><a onClick={this.changAccount.bind(this)}>切换</a></div>
-                            </div>
-                        </List.Item>
-                    </List>
-                    <span></span>
-                </WingBlank>
-
                 <WingBlank style={{paddingTop: '2px'}}>
                     <div>
                         <div style={{float: 'left', width: '65%'}}>
@@ -371,19 +349,19 @@ class Trade extends Component {
                             <span style={{float: 'left', fontSize: '17px'}}>当前委托</span>
                         </div>
                         <div style={{float: 'right'}}><a onClick={() => {
-                            createHashHistory().push(`/orders/${self.state.pair[1]}/${self.state.pair[0]}/${self.state.account.mainPKr}`);
+                            createHashHistory().push(`/orders/${self.state.pair[1]}/${self.state.pair[0]}/${self.state.mainPKr}`);
                         }}>全部</a></div>
                     </div>
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>
                     {myOrders}
                     {
-                        orderIds.length > 0 && <div className="item" >
+                        orderIds.length > 0 && <div className="item">
                             <button className="ui fluid button" onClick={self.cancel.bind(this, orderIds)}>全部撤消</button>
                         </div>
                     }
 
                 </WingBlank>
-                <MTabbar selectedTab="trade"/>
+                <MTabbar selectedTab="trade" pk={this.state.pk}/>
             </div>
         )
     }

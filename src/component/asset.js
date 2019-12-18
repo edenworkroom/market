@@ -22,7 +22,7 @@ class Asset extends Component {
         });
 
         this.state = {
-            pk: "",
+            pk: props.match.params.pk,
             mainPKr: "",
             tokens: tokens,
             balanceMap: {}
@@ -32,9 +32,9 @@ class Asset extends Component {
     componentDidMount() {
         let self = this;
         mAbi.init.then(() => {
-            mAbi.accountList(function (accounts) {
-                self.setState({pk: accounts[0].pk, mainPKr: accounts[0].mainPKr});
-                self.initBalances(accounts[0].mainPKr);
+            mAbi.accountDetails(this.state.pk, function (account) {
+                self.setState({mainPKr: account.mainPKr})
+                self.initBalances(account.mainPKr);
                 setInterval(function () {
                     self.initBalances(self.state.mainPKr);
                 }, 20 * 1000)
@@ -49,24 +49,6 @@ class Asset extends Component {
         })
     }
 
-    changAccount() {
-        let self = this;
-        mAbi.accountList(function (accounts) {
-            let actions = [];
-            accounts.forEach(function (account, index) {
-                actions.push(
-                    {
-                        text: <span>{account.name + ":" + showPK(account.pk)}</span>, onPress: () => {
-                            self.setState({pk: account.pk, mainPKr: account.mainPKr});
-                            self.initBalances(account.mainPKr);
-                        }
-                    }
-                );
-            });
-            operation(actions);
-        });
-    }
-
     op(token, symbol, type) {
         let self = this;
         let title = (type === "recharge" ? "充值 " : "提现 ") + symbol;
@@ -76,7 +58,7 @@ class Asset extends Component {
                    onChange={(event) => {
                        let value = event.target.value;
                        if (value) {
-                           value = (value.match(/^\d*(\.?\d{0,3})/g)[0]) || null
+                           value = (value.match(/^\d*(\.?\d{0,9})/g)[0]) || null
                            this.valueInput.value = value;
                        } else {
                            this.valueInput.value = "";
@@ -148,7 +130,7 @@ class Asset extends Component {
                         </button>
                         <button className="ui green basic button" onClick={() => {
                             if (token !== "SERO") {
-                                createHashHistory().push("/trade/SERO/" + token);
+                                createHashHistory().push(`/trade/${this.state.pk}/SERO/${token}`);
                             }
                         }}>交易
                         </button>
@@ -162,22 +144,15 @@ class Asset extends Component {
                     <div className="ui cards" style={{paddingTop: '15px', paddingBottom: '40px'}}>
                         <div className="ui card green" style={{width: '100%'}}>
                             <div className="content">
-                                <div className="header">账号</div>
-                                <div className="meta">
-                                    <span>{showPK(this.state.pk, 12)}</span>
-                                    <a className="ui right aligned primary" style={{float: 'right'}}
-                                       onClick={this.changAccount.bind(this)}>切换</a>
-                                </div>
-                                <div className="description">
-
-                                </div>
+                                <div className="header">账号: <span
+                                    style={{paddingLeft: '10px'}}>{showPK(this.state.pk, 12)}</span></div>
                             </div>
                         </div>
                         {rows}
                     </div>
 
                 </WingBlank>
-                <MTabbar selectedTab="asset"/>
+                <MTabbar selectedTab="asset" pk={this.state.pk}/>
             </div>
 
 

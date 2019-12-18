@@ -10,14 +10,13 @@ import tabbar_trade from '../icon/tabbar_trade.png'
 import tabbar_trade_light from '../icon/tabbar_trade_light.png'
 
 class MTabbar extends Component {
+
     constructor(props) {
         super(props);
-        this.state = {
-            selectedTab: props.selectedTab
-        }
     }
 
     render() {
+        let self = this;
         return (
             <div style={{
                 position: 'fixed',
@@ -27,35 +26,35 @@ class MTabbar extends Component {
             }}>
                 <TabBar unselectedTintColor="#949494" tintColor="#33A3F4" barTintColor="white">
                     <TabBar.Item title="行情" key="market"
-                                 selected={this.state.selectedTab === 'market'}
+                                 selected={self.props.selectedTab === 'market'}
                                  icon={<img src={tabbar_markets} style={{width: '22px', height: '22px'}}/>}
                                  selectedIcon={<img src={tabbar_markets_light}
                                                     style={{width: '22px', height: '22px'}}/>}
                                  onPress={() => {
-                                     createHashHistory().push("/market")
+                                     createHashHistory().push(`/market/${self.props.pk}`)
                                  }}
                     >
 
                     </TabBar.Item>
                     <TabBar.Item title="交易"
                                  key="trade"
-                                 selected={this.state.selectedTab === 'trade'}
+                                 selected={self.props.selectedTab === 'trade'}
                                  icon={<img src={tabbar_trade} style={{width: '22px', height: '22px'}}/>}
                                  selectedIcon={<img src={tabbar_trade_light} style={{width: '22px', height: '22px'}}/>}
                                  onPress={() => {
-                                     createHashHistory().push("/trade")
+                                     createHashHistory().push(`/trade/${self.props.pk}`)
                                  }}
                     >
 
                     </TabBar.Item>
                     <TabBar.Item title="资产"
                                  key="asset"
-                                 selected={this.state.selectedTab === 'asset'}
+                                 selected={self.props.selectedTab === 'asset'}
                                  icon={<img src={tabbar_banlance} style={{width: '22px', height: '22px'}}/>}
                                  selectedIcon={<img src={tabbar_banlance_light}
                                                     style={{width: '22px', height: '22px'}}/>}
                                  onPress={() => {
-                                     createHashHistory().push("/asset")
+                                     createHashHistory().push(`/asset/${self.props.pk}`)
                                  }}
                     >
 

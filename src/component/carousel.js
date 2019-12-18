@@ -13,7 +13,7 @@ class MCarousel extends Component {
 
     componentDidMount() {
         this.setState({
-            data: ['1','1'],
+            data: ['1','1', '1'],
         });
     }
 

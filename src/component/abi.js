@@ -69,8 +69,7 @@ class MAbi {
             JSON.parse(vals[1]).filter(function (item, index, list) {
                 return item.status == 0;
             }).sort(function (a, b) {
-                // return b.price - a.price;
-                return false
+                return b.price - a.price;
             }).forEach(function (item, index) {
                 let buyPrice = item.price - item.price % level
                 if (buyList.length == 0 || buyPrice != buyList[buyList.length - 1].price) {
@@ -84,8 +83,7 @@ class MAbi {
             JSON.parse(vals[2]).filter(function (item, index, list) {
                 return item.status == 0;
             }).sort(function (a, b) {
-                // return b.price - a.price;
-                return false
+                return b.price - a.price;
             }).forEach(function (item, index) {
                 let sellPrice = item.price - item.price % level
                 if (sellList.length == 0 || sellPrice != sellList[sellList.length - 1].price) {
@@ -97,8 +95,8 @@ class MAbi {
 
             callback({
                 lastPrice: vals[0],
-                buyList: buyList,//.slice(0, 5),
-                sellList: sellList,//.slice(-5)
+                buyList: buyList.slice(0, 5),
+                sellList: sellList.slice(-5)
             });
         });
     }

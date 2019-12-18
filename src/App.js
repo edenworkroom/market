@@ -16,11 +16,10 @@ class App extends Component {
             <Router>
                 <Switch>
                     <Route exact path="/" component={Market}/>
-                    <Route exact path="/market" component={Market}/>
-                    {/*<Route exact path="/market/:standard" component={Market}/>*/}
-                    <Route exact path="/trade/:standard/:token" component={Trade}/>
-                    <Route exact path="/trade" component={Trade}/>
-                    <Route exact path="/asset" component={Asset}/>
+                    <Route exact path="/market/:pk" component={Market}/>
+                    <Route exact path="/trade/:pk/:standard/:token" component={Trade}/>
+                    <Route exact path="/trade/:pk" component={Trade}/>
+                    <Route exact path="/asset/:pk" component={Asset}/>
                     <Route exact path="/orders/:standard/:token/:mainPKr" component={OrderList}/>
                 </Switch>
             </Router>

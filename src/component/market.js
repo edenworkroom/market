@@ -1,14 +1,15 @@
 import React, {Component} from 'react';
-import {Button, List, WingBlank} from "antd-mobile";
+import {Button, List, Modal, WingBlank} from "antd-mobile";
 import {createHashHistory} from 'history'
 
 import mAbi from './abi'
 import pairs from "./pairs";
-import {hashKey, showPrice} from "./common";
+import {hashKey, showPK, showPrice} from "./common";
 
 import MTabbar from "./tabbar";
 import MCarousel from './carousel'
 
+const operation = Modal.operation;
 
 class Market extends Component {
     constructor(props) {
@@ -16,6 +17,7 @@ class Market extends Component {
         this.state = {
             standard: "SERO",
             pairList: [],
+            pk: "",
         }
     }
 
@@ -52,8 +54,28 @@ class Market extends Component {
         let self = this;
         mAbi.init
             .then(() => {
-                self.timer = setInterval(self.initPairList(), 20 * 1000);
+                mAbi.accountList(function (accounts) {
+                    self.setState({pk: accounts[0].pk});
+                });
+                self.timer = setInterval(self.initPairList(), 30 * 1000);
             })
+    }
+
+    changAccount() {
+        let self = this;
+        mAbi.accountList(function (accounts) {
+            let actions = [];
+            accounts.forEach(function (account, index) {
+                actions.push(
+                    {
+                        text: <span>{account.name + ":" + showPK(account.pk)}</span>, onPress: () => {
+                            self.setState({pk: account.pk});
+                        }
+                    }
+                );
+            });
+            operation(actions);
+        });
     }
 
 
@@ -73,13 +95,13 @@ class Market extends Component {
                     </div>
                     <div style={{float: "right", width: "20%"}}>
                         <Button type="primary" inline size="small" style={{width: '70px'}} onClick={() => {
-                            createHashHistory().push("/trade/SERO/" + item.tokenName);
+                            createHashHistory().push(`/trade/${this.state.pk}/SERO/${item.tokenName}`);
                         }}>交易</Button>
                     </div>
                 </List.Item>
             )
         });
-
+        console.log("pk",this.state.pk);
         return (
             <div>
                 <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
@@ -87,6 +109,13 @@ class Market extends Component {
                         <MCarousel/>
                     </WingBlank>
                     <WingBlank>
+                        <div style={{paddingTop:'15px'}}>
+                            <div>
+                                <span style={{float: 'left'}}>账号 : {showPK(this.state.pk)}</span>
+                            </div>
+                            <div style={{float: 'right'}}><a onClick={this.changAccount.bind(this)}>切换</a></div>
+                        </div>
+                        <div style={{clear:'both'}}></div>
                         <List renderHeader={() => '行情'}>
                             <List.Item>
                                 <div style={{float: "left", width: "40%"}}>名称</div>
@@ -98,7 +127,7 @@ class Market extends Component {
                     </WingBlank>
                 </div>
 
-                <MTabbar selectedTab="market"/>
+                <MTabbar selectedTab="market" pk={this.state.pk}/>
             </div>)
     }
 }
