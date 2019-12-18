@@ -80,7 +80,7 @@ class Trade extends Component {
     submit() {
         let price = Number(this.state.currentPrice) * 1000;
         let value = new BigNumber(this.state.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0])));
-        if (price === 0 || value === "0") {
+        if (price === 0 || value.isZero()) {
             return;
         }
         if (this.state.type) {
@@ -355,7 +355,7 @@ class Trade extends Component {
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>
                     {myOrders}
                     {
-                        orderIds.length > 0 && <div className="item">
+                        orderIds.length > 0 && <div className="item" style={{paddingTop: '15px', clear: 'both'}}>
                             <button className="ui fluid button" onClick={self.cancel.bind(this, orderIds)}>全部撤消</button>
                         </div>
                     }

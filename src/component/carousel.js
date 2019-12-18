@@ -39,7 +39,7 @@ class MCarousel extends Component {
                         }}
                     >
                         <img
-                            src={require(`../icon/${val}.jpeg`)}
+                            src={require(`../icon/${val}.png`)}
                             alt=""
                             style={{width: '100%', verticalAlign: 'top'}}
                             onLoad={() => {

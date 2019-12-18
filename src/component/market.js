@@ -110,8 +110,8 @@ class Market extends Component {
                     </WingBlank>
                     <WingBlank>
                         <div style={{paddingTop:'15px'}}>
-                            <div>
-                                <span style={{float: 'left'}}>账号 : {showPK(this.state.pk)}</span>
+                            <div style={{padding:'0px 15px'}}>
+                                <span style={{float: 'left'}}>账号 : {showPK(this.state.pk,15)}</span>
                             </div>
                             <div style={{float: 'right'}}><a onClick={this.changAccount.bind(this)}>切换</a></div>
                         </div>
