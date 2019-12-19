@@ -87,17 +87,17 @@ class Market extends Component {
         const tokenPairs = this.state.pairList.map((item, index) => {
             return (
                 <List.Item key={item.tokenName}>
-                    <div style={{float: "left", width: "40%"}}>
+                    <div style={{float: "left", width: "50%"}}>
                         {item.symbol} <span style={{fontSize: '14px'}}>{item.name} </span>
                         <div style={{fontSize: '10px', color: '#A8A8A8'}}>
                             {item.tokenName}
                         </div>
                     </div>
-                    <div style={{float: "left", width: "40%"}}>
+                    <div style={{float: "left", width: "30%"}}>
                         {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
                     </div>
-                    <div style={{float: "right", width: "20%"}}>
-                        <Button type="primary" inline size="small" style={{float: "right"}} onClick={() => {
+                    <div style={{float: "right", width: "20%", textAlign: "right"}}>
+                        <Button type="primary" inline size="small" onClick={() => {
                             createHashHistory().push(`/trade/${this.state.pk}/SERO/${item.tokenName}`);
                         }}>交易</Button>
                     </div>
@@ -121,7 +121,7 @@ class Market extends Component {
                         <div style={{clear: 'both'}}></div>
                         <List renderHeader={() => '行情'}>
                             <List.Item>
-                                <div style={{float: "left", width: "40%"}}>名称</div>
+                                <div style={{float: "left", width: "50%"}}>名称</div>
                                 <div style={{float: "left", width: "30%"}}>最新价</div>
                                 <div style={{float: "right", width: "20%", textAlign: "right"}}></div>
                             </List.Item>
