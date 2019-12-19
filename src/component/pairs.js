@@ -3,7 +3,7 @@ class Pairs {
     SERO = {
         symbol: "SERO",
         decimals: 18,
-        tokens: ["THE_FIRST_PRIVACY_COIN", "TTTT", "FFFF"]
+        tokens: ["THE_FIRST_PRIVACY_COIN"]
     };
     TOKENS = new Map([
         ["SERO", {
@@ -14,18 +14,8 @@ class Pairs {
         ["THE_FIRST_PRIVACY_COIN", {
             symbol: "TFPC",
             decimals: 18,
-            name:"记念币"
-        }],
-        ["TTTT", {
-            symbol: "TTTT",
-            decimals: 18,
-            name:"测试币"
-        }],
-        ["FFFF", {
-            symbol: "FFFF",
-            decimals: 9,
-            name:"测试币"
-        }],
+            name:"纪念币"
+        }]
     ])
 
 
