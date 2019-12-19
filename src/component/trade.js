@@ -77,13 +77,13 @@ class Trade extends Component {
 
     submit() {
         let price = Number(this.priceValue.value) * 1000;
-        let value = new BigNumber(this.state.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0])));
+        let value = new BigNumber(this.numValue.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0])));
         if (price === 0 || value.isZero()) {
             return;
         }
-        console.log(price, value);
+        console.log(price, value.toNumber());
         if (this.state.type) {
-            if (Number(this.state.value) * price / 1000 > Number(this.balanceOf(this.state.pair[1]))) {
+            if (Number(this.numValue.value) * price / 1000 > Number(this.balanceOf(this.state.pair[1]))) {
                 Modal.alert('', '余额不足，请充值', [
                     {text: 'OK', onPress: () => console.log('ok')},
                 ])
@@ -91,7 +91,7 @@ class Trade extends Component {
             }
             mAbi.buy(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
         } else {
-            if (Number(this.state.value) > Number(this.balanceOf(this.state.pair[0]))) {
+            if (Number(this.numValue.value) > Number(this.balanceOf(this.state.pair[0]))) {
                 Modal.alert('', '余额不足，请充值', [
                     {text: 'OK', onPress: () => console.log('ok')},
                 ])
@@ -102,10 +102,10 @@ class Trade extends Component {
     }
 
     updatePrice(step) {
-        if (Number(this.state.currentPrice) === 0 && step < 0) {
+        if (Number(this.priceValue.value) === 0 && step < 0) {
             return;
         }
-        this.setState((state) => ({currentPrice: (Number(state.currentPrice) + step).toFixed(3)}));
+        this.priceValue.value = (Number(this.priceValue.value) + step).toFixed(3);
     }
 
     balanceOf(token) {
@@ -287,8 +287,8 @@ class Trade extends Component {
                                                    } else {
                                                        this.setState({value: ""});
                                                    }
-                                                   this.numValue = value;
-                                                   this.spanValue.innerHTML = new BigNumber(value * this.priceValue.value).toFixed(3);
+                                                   this.numValue.value = value;
+                                                   this.spanValue.innerHTML = new BigNumber(value * Number(this.priceValue.value)).toFixed(3);
                                                }}/>
                                         <div className="ui basic label label"
                                              style={{width: '30%'}}>{symbol}</div>
