@@ -123,7 +123,7 @@ class Market extends Component {
                             <List.Item>
                                 <div style={{float: "left", width: "40%"}}>名称</div>
                                 <div style={{float: "left", width: "30%"}}>最新价</div>
-                                <div style={{float: "right", width: "20%", textAlign: "right"}}></div>
+                                <div style={{float: "right", width: "20%", paddingRight:'10px', textAlign: "right"}}></div>
                             </List.Item>
                             {tokenPairs}
                         </List>
