@@ -81,7 +81,7 @@ class Trade extends Component {
         if (price === 0 || value.isZero()) {
             return;
         }
-        console.log(price, value.toNumber());
+
         if (this.state.type) {
             if (Number(this.numValue.value) * price / 1000 > Number(this.balanceOf(this.state.pair[1]))) {
                 Modal.alert('', '余额不足，请充值', [
