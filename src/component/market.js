@@ -119,7 +119,7 @@ class Market extends Component {
                             <div style={{float: 'right'}}><a onClick={this.changAccount.bind(this)}>选择账号</a></div>
                         </div>
                         <div style={{clear: 'both'}}></div>
-                        <List renderHeader={() => '行情'}>
+                        <List style={{paddingTop:'15px'}}>
                             <List.Item>
                                 <div style={{float: "left", width: "50%"}}>名称</div>
                                 <div style={{float: "left", width: "30%"}}>最新价</div>
