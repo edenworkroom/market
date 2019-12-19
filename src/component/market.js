@@ -93,10 +93,10 @@ class Market extends Component {
                             {item.tokenName}
                         </div>
                     </div>
-                    <div style={{float: "left", width: "40%"}}>
+                    <div style={{float: "left", width: "30%"}}>
                         {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
                     </div>
-                    <div style={{float: "right", width: "20%"}}>
+                    <div style={{float: "right", width: "20%",paddingRight:'10px'}}>
                         <Button type="primary" inline size="small" style={{width: '70px'}} onClick={() => {
                             createHashHistory().push(`/trade/${this.state.pk}/SERO/${item.tokenName}`);
                         }}>交易</Button>
@@ -123,7 +123,7 @@ class Market extends Component {
                             <List.Item>
                                 <div style={{float: "left", width: "40%"}}>名称</div>
                                 <div style={{float: "left", width: "30%"}}>最新价</div>
-                                <div style={{float: "right", width: "20%", paddingRight:'10px', textAlign: "right"}}></div>
+                                <div style={{float: "right", width: "20%", textAlign: "right"}}></div>
                             </List.Item>
                             {tokenPairs}
                         </List>
