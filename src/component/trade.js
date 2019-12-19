@@ -29,8 +29,6 @@ class Trade extends Component {
             pair: [token, standard],
             key: key,
             type: true,
-            currentPrice: "0.000",
-            value: "0",
             pk: props.match.params.pk,
             mainPKr: "",
             balances: {},
@@ -78,11 +76,12 @@ class Trade extends Component {
     }
 
     submit() {
-        let price = Number(this.state.currentPrice) * 1000;
+        let price = Number(this.priceValue.value) * 1000;
         let value = new BigNumber(this.state.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0])));
         if (price === 0 || value.isZero()) {
             return;
         }
+        console.log(price, value);
         if (this.state.type) {
             if (Number(this.state.value) * price / 1000 > Number(this.balanceOf(this.state.pair[1]))) {
                 Modal.alert('', '余额不足，请充值', [
@@ -235,8 +234,8 @@ class Trade extends Component {
                             <Flex>
                                 <Flex.Item>
                                     <div className="ui right labeled input" style={{width: '100%'}}>
-                                        <input type="number" placeholder="价格" style={{width: '70%'}}
-                                               value={this.state.currentPrice} onChange={(event) => {
+                                        <input type="number" placeholder="委托价格(SERO)" style={{width: '70%'}}
+                                               ref={el => this.priceValue = el}  onChange={(event) => {
                                             let value = event.target.value;
                                             if (value) {
                                                 value = (value.match(/^\d*(\.?\d{0,3})/g)[0]) || null
@@ -244,7 +243,8 @@ class Trade extends Component {
                                             } else {
                                                 this.setState({currentPrice: ""});
                                             }
-                                            this.spanValue.innerHTML = new BigNumber(value * this.state.value).toFixed(3);
+                                            this.priceValue.value = value;
+                                            this.spanValue.innerHTML = new BigNumber(value * this.numValue.value).toFixed(3);
                                         }}/>
                                         <div className="ui basic label label" style={{width: '30%'}}>
                                             <div style={{float: 'left', width: '45%'}}>
@@ -277,7 +277,7 @@ class Trade extends Component {
                             <Flex>
                                 <Flex.Item>
                                     <div className="ui right labeled input" style={{width: '100%'}}>
-                                        <input type="number" value={this.state.value} placeholder="数量"
+                                        <input type="number" ref={el => this.numValue = el} placeholder="数量"
                                                style={{width: '70%'}}
                                                onChange={(event) => {
                                                    let value = event.target.value;
@@ -287,7 +287,8 @@ class Trade extends Component {
                                                    } else {
                                                        this.setState({value: ""});
                                                    }
-                                                   this.spanValue.innerHTML = new BigNumber(value * this.state.currentPrice).toFixed(3);
+                                                   this.numValue = value;
+                                                   this.spanValue.innerHTML = new BigNumber(value * this.priceValue.value).toFixed(3);
                                                }}/>
                                         <div className="ui basic label label"
                                              style={{width: '30%'}}>{symbol}</div>
