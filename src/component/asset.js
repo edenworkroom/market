@@ -128,7 +128,7 @@ class Asset extends Component {
                         <button className="ui green basic button"
                                 onClick={self.op.bind(self, token, symbol, "withdraw")}>提现
                         </button>
-                        <button className="ui green basic button" onClick={() => {
+                        <button disabled={token=="SERO"} className="ui green basic button" onClick={() => {
                             if (token !== "SERO") {
                                 createHashHistory().push(`/trade/${this.state.pk}/SERO/${token}`);
                             }
@@ -142,12 +142,12 @@ class Asset extends Component {
             <div>
                 <WingBlank>
                     <div className="ui cards" style={{paddingTop: '15px', paddingBottom: '40px'}}>
-                        <div className="ui card green" style={{width: '100%'}}>
-                            <div className="content">
-                                <div className="header">账号: <span
-                                    style={{paddingLeft: '10px'}}>{showPK(this.state.pk, 12)}</span></div>
-                            </div>
-                        </div>
+                        {/*<div className="ui card green" style={{width: '100%'}}>*/}
+                        {/*    <div className="content">*/}
+                        {/*        <div className="header">账号: <span*/}
+                        {/*            style={{paddingLeft: '10px'}}>{showPK(this.state.pk, 12)}</span></div>*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                         {rows}
                     </div>
 

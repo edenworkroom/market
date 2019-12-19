@@ -87,7 +87,7 @@ class OrderList extends Component {
 
         return (
             <div>
-                <WingBlank style={{paddingTop: '15px', clear: 'both'}}>
+                <WingBlank style={{paddingTop: '15px'}}>
                     {myOrders}
                 </WingBlank>
                 <MTabbar selectedTab="trade" pk={this.props.match.params.pk}/>

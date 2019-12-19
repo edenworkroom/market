@@ -17,7 +17,7 @@ class Market extends Component {
         this.state = {
             standard: "SERO",
             pairList: [],
-            pk: "",
+            pk: props.match.params.pk,
         }
     }
 
@@ -54,10 +54,13 @@ class Market extends Component {
         let self = this;
         mAbi.init
             .then(() => {
-                mAbi.accountList(function (accounts) {
-                    self.setState({pk: accounts[0].pk});
-                });
-                self.timer = setInterval(self.initPairList(), 30 * 1000);
+                if (!self.props.match.params.pk) {
+                    mAbi.accountList(function (accounts) {
+                        self.setState({pk: accounts[0].pk});
+                    });
+                }
+
+                self.timer = setInterval(self.initPairList(), 2 * 60 * 1000);
             })
     }
 
@@ -101,7 +104,7 @@ class Market extends Component {
                 </List.Item>
             )
         });
-        console.log("pk",this.state.pk);
+
         return (
             <div>
                 <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
@@ -109,17 +112,17 @@ class Market extends Component {
                         <MCarousel/>
                     </WingBlank>
                     <WingBlank>
-                        <div style={{paddingTop:'15px'}}>
-                            <div style={{padding:'0px 15px'}}>
-                                <span style={{float: 'left'}}>账号 : {showPK(this.state.pk,15)}</span>
+                        <div style={{paddingTop: '15px'}}>
+                            <div style={{padding: '0px 15px'}}>
+                                <span style={{float: 'left'}}>账号 : {showPK(this.state.pk, 12)}</span>
                             </div>
-                            <div style={{float: 'right'}}><a onClick={this.changAccount.bind(this)}>切换</a></div>
+                            <div style={{float: 'right'}}><a onClick={this.changAccount.bind(this)}>选择账号</a></div>
                         </div>
-                        <div style={{clear:'both'}}></div>
+                        <div style={{clear: 'both'}}></div>
                         <List renderHeader={() => '行情'}>
                             <List.Item>
                                 <div style={{float: "left", width: "40%"}}>名称</div>
-                                <div style={{float: "left", width: "40%"}}>最新价</div>
+                                <div style={{float: "left", width: "30%"}}>最新价</div>
                                 <div style={{float: "right", width: "20%", textAlign: "right"}}></div>
                             </List.Item>
                             {tokenPairs}
