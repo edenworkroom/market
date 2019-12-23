@@ -106,7 +106,7 @@ class Market extends Component {
         });
 
         return (
-            <div>
+            <div style={{height:document.documentElement.clientHeight}}>
                 <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
                     <WingBlank>
                         <MCarousel/>
