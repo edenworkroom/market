@@ -109,7 +109,10 @@ class Market extends Component {
             <div style={{height:document.documentElement.clientHeight}}>
                 <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
                     <WingBlank>
-                        <MCarousel/>
+                        <div>
+                            <img style={{width: '100%',height: '200px'}} src={require('../icon/1.png')}/>
+                        </div>
+                        {/*<MCarousel/>*/}
                     </WingBlank>
                     <WingBlank>
                         <div style={{paddingTop: '15px'}}>
