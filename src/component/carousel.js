@@ -6,15 +6,15 @@ class MCarousel extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: [],
+            data: ['1','1', '1'],
             imgHeight: 176,
         }
     }
 
     componentDidMount() {
-        this.setState({
-            data: ['1','1', '1'],
-        });
+        // this.setState({
+        //     data: ['1','1', '1'],
+        // });
     }
 
     render() {
