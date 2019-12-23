@@ -81,6 +81,13 @@ class Market extends Component {
         });
     }
 
+    isIOS() {
+        var u = navigator.userAgent, app = navigator.appVersion;
+        var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
+        var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+        return isIOS;
+    }
+
 
     render() {
         let self = this;
@@ -106,13 +113,15 @@ class Market extends Component {
         });
 
         return (
-            <div style={{height:document.documentElement.clientHeight}}>
+            <div style={{height: document.documentElement.clientHeight}}>
                 <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
                     <WingBlank>
-                        <div>
-                            <img style={{width: '100%',height: '200px'}} src={require('../icon/1.png')}/>
-                        </div>
-                        {/*<MCarousel/>*/}
+                        {
+                            self.isIOS() ? <div>
+                                <img style={{width: '100%', height: '180px'}} src={require('../icon/1.png')}/>
+                            </div> : <MCarousel/>
+
+                        }
                     </WingBlank>
                     <WingBlank>
                         <div style={{paddingTop: '15px'}}>
@@ -122,7 +131,7 @@ class Market extends Component {
                             <div style={{float: 'right'}}><a onClick={this.changAccount.bind(this)}>选择账号</a></div>
                         </div>
                         <div style={{clear: 'both'}}></div>
-                        <List style={{paddingTop:'15px'}}>
+                        <List style={{paddingTop: '15px'}}>
                             <List.Item>
                                 <div style={{float: "left", width: "50%"}}>名称</div>
                                 <div style={{float: "left", width: "30%"}}>最新价</div>
