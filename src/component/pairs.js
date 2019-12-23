@@ -29,7 +29,7 @@ class Pairs {
         ["NBHBOS", {
             symbol: "NBHBOS",
             decimals: 18,
-            name:"牛包币黄金"
+            name:"牛宝币黄金"
         }]
     ])
 
