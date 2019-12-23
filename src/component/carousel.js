@@ -28,29 +28,27 @@ class MCarousel extends Component {
                       afterChange={index => this.setState({slideIndex: index})}
             >
                 {this.state.data.map((val, index) => (
-                    <div style={{height: '150px',width:'auto'}}>
-                        <a
-                            key={val}
-                            style={{
-                                // display: 'block',
-                                position: 'relative',
-                                top: this.state.slideIndex === index ? -10 : 0,
-                                height: this.state.imgHeight,
-                                boxShadow: '2px 1px 1px rgba(0, 0, 0, 0.2)',
+                    <a
+                        key={val}
+                        style={{
+                            display: 'block',
+                            position: 'relative',
+                            top: this.state.slideIndex === index ? -10 : 0,
+                            height: this.state.imgHeight,
+                            boxShadow: '2px 1px 1px rgba(0, 0, 0, 0.2)',
+                        }}
+                    >
+                        <img
+                            src={require(`../icon/${val}.png`)}
+                            alt=""
+                            style={{width: '100%', verticalAlign: 'top'}}
+                            onLoad={() => {
+                                // fire window resize event to change height
+                                window.dispatchEvent(new Event('resize'));
+                                this.setState({imgHeight: 'auto'});
                             }}
-                        >
-                            <img
-                                src={require(`../icon/${val}.png`)}
-                                alt=""
-                                style={{width: '100%', verticalAlign: 'top'}}
-                                onLoad={() => {
-                                    // fire window resize event to change height
-                                    window.dispatchEvent(new Event('resize'));
-                                    this.setState({imgHeight: 'auto'});
-                                }}
-                            />
-                        </a>
-                    </div>
+                        />
+                    </a>
 
                 ))}
             </Carousel>
