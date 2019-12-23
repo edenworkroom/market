@@ -31,7 +31,7 @@ class MCarousel extends Component {
                     <a
                         key={val}
                         style={{
-                            display: 'block',
+                            // display: 'block',
                             position: 'relative',
                             top: this.state.slideIndex === index ? -10 : 0,
                             height: this.state.imgHeight,
