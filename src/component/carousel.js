@@ -28,7 +28,7 @@ class MCarousel extends Component {
                       afterChange={index => this.setState({slideIndex: index})}
             >
                 {this.state.data.map((val, index) => (
-                    <div style={{height: '150px'}}>
+                    <div style={{height: '150px',width:'auto'}}>
                         <a
                             key={val}
                             style={{
