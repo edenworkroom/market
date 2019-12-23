@@ -34,17 +34,18 @@ class MCarousel extends Component {
                             display: 'block',
                             position: 'relative',
                             top: this.state.slideIndex === index ? -10 : 0,
-                            height: 'auto',
+                            height: this.state.imgHeight,
                             boxShadow: '2px 1px 1px rgba(0, 0, 0, 0.2)',
                         }}
                     >
                         <img
                             src={require(`../icon/${val}.png`)}
                             alt=""
-                            style={{width: '250px',height:'133px', verticalAlign: 'top'}}
+                            style={{width: '100%', verticalAlign: 'top'}}
                             onLoad={() => {
                                 // fire window resize event to change height
                                 window.dispatchEvent(new Event('resize'));
+                                this.setState({ imgHeight: 'auto' });
                             }}
                         />
                     </a>
