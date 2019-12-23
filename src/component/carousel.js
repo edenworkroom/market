@@ -41,7 +41,7 @@ class MCarousel extends Component {
                         <img
                             src={require(`../icon/${val}.png`)}
                             alt=""
-                            style={{width: '100%', height:'150px', verticalAlign: 'top'}}
+                            style={{width: '100%', verticalAlign: 'top'}}
                             onLoad={() => {
                                 // fire window resize event to change height
                                 window.dispatchEvent(new Event('resize'));
