@@ -31,7 +31,7 @@ class Market extends Component {
             map[key] = token;
         });
 
-        mAbi.lastPrice("", keys, function (pairMap) {
+        mAbi.lastPrice("2JurSKqbpUMMrpxfzHNajLec6QQ3E7XrhrYCQfDPNBxfXcsgytr5xaB63984AEBAuHRV3h5KwKazNmBTA5PYFTiDSLSeFqq2FvoaXZnCyMburKSe5wk43Yid8DWa48214BuT", keys, function (pairMap) {
             const pairList = new Array();
             keys.forEach(key => {
                 let lastPrice = 0;
