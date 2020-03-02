@@ -116,6 +116,10 @@ class Market extends Component {
             <div style={{height: document.documentElement.clientHeight}}>
                 <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
                     <WingBlank>
+                        <span style={{color:"red", fontSize:"20px"}}>公告：由于去中心化犀牛交易所需要进行技术升级，请务必将所有订单取消，并将所有资产进行提现。
+谢谢配合！。</span>
+                    </WingBlank>
+                    <WingBlank>
                         {
                             self.isIOS() ? <div>
                                 <img style={{width: '100%', height: '180px'}} src={require('../icon/1.png')}/>
