@@ -116,8 +116,9 @@ class Market extends Component {
             <div style={{height: document.documentElement.clientHeight}}>
                 <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
                     <WingBlank>
-                        <span style={{color:"red", fontSize:"20px"}}>公告：由于去中心化犀牛交易所需要进行技术升级，请务必将所有订单取消，并将所有资产进行提现。
-谢谢配合！。</span>
+                        <div>
+                            <p role="listitem" className="item">公告：老版本提现请用加载应用<a>http://edenworkroom.gitee.io/market_bak</a></p>
+                        </div>
                     </WingBlank>
                     <WingBlank>
                         {

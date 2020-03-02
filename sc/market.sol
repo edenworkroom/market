@@ -1,5 +1,8 @@
 pragma solidity ^0.4.25;
 
+import "browser/accountInfo.sol";
+import "browser/transactionpair.sol";
+
 contract Ownable {
 
     address public owner;
@@ -87,9 +90,6 @@ contract Market is Ownable, SeroInterface {
     string private constant SERO = "SERO";
     bytes32 private SEROBYTES = strings._stringToBytes(SERO);
 
-    uint256 public constant chargeFee = 2;
-
-
     AccountInfo.Accounts private accounts;
     mapping(bytes32 => TransactionPair.Pair) private pairs;
 
@@ -109,7 +109,7 @@ contract Market is Ownable, SeroInterface {
 
     function lastPrice(bytes32[] keys) public view returns (string memory json){
         string[] memory list = new string[](keys.length);
-        for(uint i=0;i<keys.length;i++) {
+        for (uint i = 0; i < keys.length; i++) {
             bytes32 key = keys[i];
             TransactionPair.Pair storage pair = pairs[key];
             list[i] = JSON.uintToJson(strings.bytes32ToHex(key), pair.lastPrice);
@@ -117,7 +117,7 @@ contract Market is Ownable, SeroInterface {
         json = JSON.toJsonMap(list);
     }
 
-    function pairInfo(bytes32 key) public view returns (uint256 price,  string buyListJson, string sellListJson) {
+    function pairInfo(bytes32 key) public view returns (uint256 price, string buyListJson, string sellListJson) {
         TransactionPair.Pair storage pair = pairs[key];
         return pair.info();
     }
@@ -130,7 +130,7 @@ contract Market is Ownable, SeroInterface {
     function balanceOf(bytes32[] memory tokens) public view returns (string) {
         address self = msg.sender;
         string[] memory list = new string[](tokens.length);
-        for(uint i=0;i<tokens.length;i++) {
+        for (uint i = 0; i < tokens.length; i++) {
             (uint256 v1, uint256 v2) = accounts.balanceOf(self, tokens[i]);
             uint256[] memory vals = new uint256[](2);
             vals[0] = v1;
@@ -153,9 +153,11 @@ contract Market is Ownable, SeroInterface {
         accounts.Add(msg.sender, token, msg.value);
     }
 
-    function cancel(bytes32 key, bytes32 orderId, bool orderType) public {
+    function cancel(bytes32 key, bytes32[] orderIds) public {
         TransactionPair.Pair storage pair = pairs[key];
-        pair.cancel(msg.sender, orderId, orderType, accounts);
+        for (uint256 i = 0; i < orderIds.length; i++) {
+            pair.cancel(msg.sender, orderIds[i], accounts);
+        }
     }
 
     function buy(bytes32 key, uint256 price, uint256 value) public {

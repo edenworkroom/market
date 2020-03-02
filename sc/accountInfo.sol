@@ -12,43 +12,43 @@ library AccountInfo {
 
     struct Accounts {
         address owner;
-        mapping(address => Balance) balances;
+        mapping(address => Balance) books;
         mapping(address => mapping(bytes32 => bytes32[])) orders; //address => key => orderid
     }
 
     function add(Accounts storage self, bytes32 token, uint256 value) internal {
-        self.balances[self.owner].values[token] = self.books[self.owner].values[token].add(value);
+        self.books[self.owner].values[token] = self.books[self.owner].values[token].add(value);
     }
 
     function sub(Accounts storage self, bytes32 token, uint256 value) internal {
-        self.balances[self.owner].values[token] = self.books[self.owner].values[token].sub(value);
+        self.books[self.owner].values[token] = self.books[self.owner].values[token].sub(value);
     }
 
     function Lock(Accounts storage self, address addr, bytes32 token, uint256 value) internal {
-        require(self.books[addr].values[token].sub(self.balances[addr].lockdValues[token]) >= value);
-        self.balances[addr].lockdValues[token] = self.books[addr].lockdValues[token].add(value);
+        require(self.books[addr].values[token].sub(self.books[addr].lockdValues[token]) >= value);
+        self.books[addr].lockdValues[token] = self.books[addr].lockdValues[token].add(value);
     }
 
     function UnLock(Accounts storage self, address addr, bytes32 token, uint256 value) internal {
-        self.balances[addr].lockdValues[token] = self.books[addr].lockdValues[token].sub(value);
+        self.books[addr].lockdValues[token] = self.books[addr].lockdValues[token].sub(value);
     }
 
     function Use(Accounts storage self, address addr, bytes32 token, uint256 value) internal {
-        self.balances[addr].lockdValues[token] = self.books[addr].lockdValues[token].sub(value);
-        self.balances[addr].values[token] = self.books[addr].values[token].sub(value);
+        self.books[addr].lockdValues[token] = self.books[addr].lockdValues[token].sub(value);
+        self.books[addr].values[token] = self.books[addr].values[token].sub(value);
     }
 
     function Add(Accounts storage self, address addr, bytes32 token, uint256 value) internal {
-        self.balances[addr].values[token] = self.books[addr].values[token].add(value);
+        self.books[addr].values[token] = self.books[addr].values[token].add(value);
     }
 
     function Sub(Accounts storage self, address addr, bytes32 token, uint256 value) internal {
-        require(self.books[addr].values[token].sub(self.balances[addr].lockdValues[token]) >= value);
-        self.balances[addr].values[token] = self.books[addr].values[token].sub(value);
+        require(self.books[addr].values[token].sub(self.books[addr].lockdValues[token]) >= value);
+        self.books[addr].values[token] = self.books[addr].values[token].sub(value);
     }
 
     function balanceOf(Accounts storage self, address addr, bytes32 token) internal view returns (uint256, uint256) {
-        return (self.books[addr].values[token].sub(self.balances[addr].lockdValues[token]), self.balances[addr].lockdValues[token]);
+        return (self.books[addr].values[token].sub(self.books[addr].lockdValues[token]), self.books[addr].lockdValues[token]);
     }
 
     function insertOrder(Accounts storage self, address addr, bytes32 key, bytes32 orderId) internal {

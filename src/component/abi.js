@@ -6,7 +6,7 @@ import {decimals, tokenToBytes} from "./common";
 
 const config = {
     name: "Rhino Market",
-    contractAddress: "Gv4ucQ4cSZ3v3iKyiccFwUaLarEaxFRYktVoc523y8ydniUYpT2wjwLGfiCYtfeqztnbWU4tFhxRG4SvGsHMjCP",
+    contractAddress: "5iyXFQEmfefYr1MkK3sj645cExYvGYfT2yDPWnVL9m3rkh5GNrAYHgQCkvDFkfDxekXoX9v3hycMQ5eRdqUpryZg",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
@@ -48,12 +48,6 @@ class MAbi {
                 accounts.push({pk: item.PK, mainPKr: item.MainPKr, name: item.Name, balances: item.Balance})
             });
             callback(accounts)
-        });
-    }
-
-    orders(from, key, callback) {
-        this.callMethod('orders', from, [key], function (json) {
-            callback(JSON.parse(json));
         });
     }
 
