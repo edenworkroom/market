@@ -117,7 +117,8 @@ class Market extends Component {
                 <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
                     <WingBlank>
                         <div>
-                            <p role="listitem" className="item">公告：老版本提现请用加载应用<a>http://edenworkroom.gitee.io/market_bak</a></p>
+                            <p role="listitem" className="item">公告：老版本提现请用加载应用<a href="http://edenworkroom.gitee.io/market_bak">http://edenworkroom.gitee.io/market_bak</a></p>
+                            <p role="listitem" className="item"></p>
                         </div>
                     </WingBlank>
                     <WingBlank>
