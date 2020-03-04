@@ -63,7 +63,7 @@ class Language {
 
             openOrders: "当前委托",
             all: "全部",
-            cancle: "撤消",
+            cancel: "撤消",
             cancelAll: "全部撤消",
 
             finished: "已完成",
@@ -113,7 +113,7 @@ class Language {
 
             openOrders: "Open Orders",
             all: "ALL",
-            cancle: "Cancel",
+            cancel: "Cancel",
             cancelAll: "Cancel All",
 
             finished: "Completed",
@@ -164,7 +164,7 @@ class Language {
 
             openOrders: "当前委托",
             all: "全部",
-            cancle: "撤消",
+            cancel: "撤消",
             cancelAll: "全部撤消",
 
             finished: "已完成",
