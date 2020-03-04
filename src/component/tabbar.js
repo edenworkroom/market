@@ -8,11 +8,21 @@ import tabbar_markets from '../icon/tabbar_markets.png'
 import tabbar_markets_light from '../icon/tabbar_markets_light.png'
 import tabbar_trade from '../icon/tabbar_trade.png'
 import tabbar_trade_light from '../icon/tabbar_trade_light.png'
+import language from './language'
+import mAbi from "./abi";
 
 class MTabbar extends Component {
 
     constructor(props) {
         super(props);
+    }
+
+    componentDidMount() {
+        mAbi.init.then(() => {
+            mAbi.initLanguage(function (_lang) {
+                language.set(_lang);
+            });
+        })
     }
 
     render() {
@@ -25,7 +35,7 @@ class MTabbar extends Component {
                 zIndex: '999',
             }}>
                 <TabBar unselectedTintColor="#949494" tintColor="#33A3F4" barTintColor="white">
-                    <TabBar.Item title="行情" key="market"
+                    <TabBar.Item title={language.e().tabBar.price} key="market"
                                  selected={self.props.selectedTab === 'market'}
                                  icon={<img src={tabbar_markets} style={{width: '22px', height: '22px'}}/>}
                                  selectedIcon={<img src={tabbar_markets_light}
@@ -36,7 +46,7 @@ class MTabbar extends Component {
                     >
 
                     </TabBar.Item>
-                    <TabBar.Item title="交易"
+                    <TabBar.Item title={language.e().tabBar.trade}
                                  key="trade"
                                  selected={self.props.selectedTab === 'trade'}
                                  icon={<img src={tabbar_trade} style={{width: '22px', height: '22px'}}/>}
@@ -47,7 +57,7 @@ class MTabbar extends Component {
                     >
 
                     </TabBar.Item>
-                    <TabBar.Item title="资产"
+                    <TabBar.Item title={language.e().tabBar.assets}
                                  key="asset"
                                  selected={self.props.selectedTab === 'asset'}
                                  icon={<img src={tabbar_banlance} style={{width: '22px', height: '22px'}}/>}

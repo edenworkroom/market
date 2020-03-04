@@ -8,6 +8,7 @@ import {hashKey, showPK, showPrice} from "./common";
 
 import MTabbar from "./tabbar";
 import MCarousel from './carousel'
+import language from './language'
 
 const operation = Modal.operation;
 
@@ -61,6 +62,10 @@ class Market extends Component {
                 }
 
                 self.timer = setInterval(self.initPairList(), 2 * 60 * 1000);
+
+                mAbi.initLanguage(function (_lang) {
+                    language.set(_lang);
+                });
             })
     }
 
@@ -106,22 +111,17 @@ class Market extends Component {
                     <div style={{float: "right", width: "20%", textAlign: "right"}}>
                         <Button type="primary" inline size="small" onClick={() => {
                             createHashHistory().push(`/trade/${this.state.pk}/SERO/${item.tokenName}`);
-                        }}>交易</Button>
+                        }}>{language.e().home.trade}</Button>
                     </div>
                 </List.Item>
             )
         });
 
         return (
-            <div style={{height: document.documentElement.clientHeight}}>
-                <div style={{paddingTop: "15px", paddingBottom: '40px'}}>
+            <div style={{height: document.documentElement.clientHeight, maxWidth: '600px'}}>
+                <div style={{paddingTop: "10px", paddingBottom: '40px'}}>
                     <WingBlank>
-                        <div>
-                            <p role="listitem" className="item">公告：老版本提现请用加载应用<a href="http://edenworkroom.gitee.io/market_bak">http://edenworkroom.gitee.io/market_bak</a></p>
-                            <p role="listitem" className="item"></p>
-                        </div>
-                    </WingBlank>
-                    <WingBlank>
+                        <div style={{float: "clear"}}></div>
                         {
                             self.isIOS() ? <div>
                                 <img style={{width: '100%', height: '180px'}} src={require('../icon/1.png')}/>
@@ -130,17 +130,24 @@ class Market extends Component {
                         }
                     </WingBlank>
                     <WingBlank>
+                        <div>
+                            <p role="listitem" className="item">公告：老版本用户提现请用加载 <a
+                                href="http://edenworkroom.gitee.io/market_bak">老版本</a>
+                            </p>
+                        </div>
                         <div style={{paddingTop: '15px'}}>
                             <div style={{padding: '0px 15px'}}>
-                                <span style={{float: 'left'}}>账号 : {showPK(this.state.pk, 12)}</span>
+                                <span
+                                    style={{float: 'left'}}>{language.e().home.account} : {showPK(this.state.pk, 12)}</span>
                             </div>
-                            <div style={{float: 'right'}}><a onClick={this.changAccount.bind(this)}>选择账号</a></div>
+                            <div style={{float: 'right'}}><a
+                                onClick={this.changAccount.bind(this)}>{language.e().home.change}</a></div>
                         </div>
                         <div style={{clear: 'both'}}></div>
                         <List style={{paddingTop: '15px'}}>
                             <List.Item>
-                                <div style={{float: "left", width: "50%"}}>名称</div>
-                                <div style={{float: "left", width: "30%"}}>最新价</div>
+                                <div style={{float: "left", width: "50%"}}>{language.e().home.name}</div>
+                                <div style={{float: "left", width: "30%"}}>{language.e().home.lastPrice}</div>
                                 <div style={{float: "right", width: "20%", textAlign: "right"}}></div>
                             </List.Item>
                             {tokenPairs}

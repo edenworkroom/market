@@ -4,6 +4,7 @@ import {decimals, formatDate, hashKey, showPrice} from "./common";
 import {WingBlank} from "antd-mobile";
 import pairs from "./pairs";
 import MTabbar from "./tabbar";
+import language from "./language";
 
 
 class OrderList extends Component {
@@ -32,6 +33,9 @@ class OrderList extends Component {
                     self.setState({orders: orders});
                 })
             });
+            mAbi.initLanguage(function (_lang) {
+                language.set(_lang);
+            });
         })
     }
 
@@ -46,8 +50,8 @@ class OrderList extends Component {
                     <div className="header">
                         {
                             item.type === 0 ?
-                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#D01919'}}>卖出</span> :
-                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#21BA45'}}>买入</span>
+                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#D01919'}}>{language.e().trade.sell}</span> :
+                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#21BA45'}}>{language.e().trade.buy}</span>
                         }
                         <span style={{
                             paddingLeft: '3px',
@@ -59,24 +63,24 @@ class OrderList extends Component {
                             paddingLeft: '5px'
                         }}>{formatDate(new Date(item.createTime * 1000))}</span>
                         {
-                            item.status == 1 && <a style={{float: 'right', color: '#A8A8A8'}}>已完成</a>
+                            item.status == 1 && <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.finished}</a>
                         }
                         {
-                            item.status == 2 && <a style={{float: 'right', color: '#A8A8A8'}}>已撤消</a>
+                            item.status == 2 && <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.canceled}</a>
                         }
                     </div>
                     <div className='extra' style={{paddingTop: '8px'}}>
                         <div style={{width: '100%'}}>
                             <div style={{float: 'left', width: '45%'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>价格({self.state.pair[1]})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.price}({self.state.pair[1]})</div>
                                 <div>{showPrice(item.price,  3)}</div>
                             </div>
                             <div style={{float: 'left'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>数量({symbol})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.total}({symbol})</div>
                                 <div>{decimals(item.value, decimal, 9)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>实际成交({symbol})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.volume}({symbol})</div>
                                 <div>{decimals(item.dealValue, decimal, 9)}</div>
                             </div>
                         </div>

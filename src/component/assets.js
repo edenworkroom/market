@@ -8,11 +8,9 @@ import {createHashHistory} from 'history'
 import pairs from "./pairs";
 import mAbi from "./abi";
 import {decimals, showPK, tokenToBytes} from "./common";
+import language from './language'
 
-const operation = Modal.operation;
-
-
-class Asset extends Component {
+class Assets extends Component {
     constructor(props) {
         super(props);
 
@@ -39,6 +37,9 @@ class Asset extends Component {
                     self.initBalances(self.state.mainPKr);
                 }, 20 * 1000)
             });
+            mAbi.initLanguage(function (_lang) {
+                language.set(_lang);
+            });
         })
     }
 
@@ -51,9 +52,10 @@ class Asset extends Component {
 
     op(token, symbol, type) {
         let self = this;
-        let title = (type === "recharge" ? "充值 " : "提现 ") + symbol;
+
+        let title = (type === "recharge" ? language.e().assets.rechange : language.e().assets.withdrawal) + " "+symbol;
         let input = <div className="ui input">
-            <input type="number" placeholder="数量"
+            <input type="number" placeholder={language.e().trade.num}
                    ref={el => this.valueInput = el}
                    onChange={(event) => {
                        let value = event.target.value;
@@ -105,15 +107,15 @@ class Asset extends Component {
                         <div className="ui three column grid aligned container">
                             <div className="row">
                                 <div className="column">
-                                    <div className="ui aligned">持有总量</div>
+                                    <div className="ui aligned">{language.e().assets.total}</div>
                                     <div className="ui aligned">{decimals(balance[0] + balance[1], decimal, 9)}</div>
                                 </div>
                                 <div className="column">
-                                    <div className="ui aligned">可用数量</div>
+                                    <div className="ui aligned">{language.e().assets.available}</div>
                                     <div className="ui aligned">{decimals(balance[0], decimal, 9)}</div>
                                 </div>
                                 <div className="column">
-                                    <div className="ui aligned">锁定数量</div>
+                                    <div className="ui aligned">{language.e().assets.locked}</div>
                                     <div className="ui aligned">{decimals(balance[1], decimal, 9)}</div>
                                 </div>
                             </div>
@@ -123,16 +125,16 @@ class Asset extends Component {
                 <div className="extra content">
                     <div className="ui three buttons">
                         <button className="ui green basic button"
-                                onClick={self.op.bind(self, token, symbol, "recharge")}>充值
+                                onClick={self.op.bind(self, token, symbol, "recharge")}>{language.e().assets.rechange}
                         </button>
                         <button className="ui green basic button"
-                                onClick={self.op.bind(self, token, symbol, "withdraw")}>提现
+                                onClick={self.op.bind(self, token, symbol, "withdraw")}>{language.e().assets.withdrawal}
                         </button>
                         <button disabled={token=="SERO"} className="ui green basic button" onClick={() => {
                             if (token !== "SERO") {
                                 createHashHistory().push(`/trade/${this.state.pk}/SERO/${token}`);
                             }
-                        }}>交易
+                        }}>{language.e().assets.trade}
                         </button>
                     </div>
                 </div>
@@ -160,4 +162,4 @@ class Asset extends Component {
     }
 }
 
-export default Asset;
+export default Assets;

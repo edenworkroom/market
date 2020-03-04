@@ -12,6 +12,7 @@ import mAbi from './abi'
 import {decimals, showPrice, showPK, hashKey, formatDate} from "./common";
 import pairs from "./pairs";
 import MTabbar from "./tabbar";
+import language from './language'
 
 const operation = Modal.operation;
 
@@ -66,7 +67,9 @@ class Trade extends Component {
                 }, 20 * 1000);
             });
 
-
+            mAbi.initLanguage(function (_lang) {
+                language.set(_lang);
+            });
         })
     }
 
@@ -89,7 +92,7 @@ class Trade extends Component {
                 ])
                 return;
             }
-            mAbi.buy(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
+            // mAbi.buy(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
         } else {
             if (Number(this.numValue.value) > Number(this.balanceOf(this.state.pair[0]))) {
                 Modal.alert('', '余额不足，请充值', [
@@ -97,7 +100,7 @@ class Trade extends Component {
                 ])
                 return;
             }
-            mAbi.sell(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
+            // mAbi.sell(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
         }
     }
 
@@ -151,8 +154,8 @@ class Trade extends Component {
                     <div className="header">
                         {
                             item.type === 0 ?
-                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#D01919'}}>卖出</span> :
-                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#21BA45'}}>买入</span>
+                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#D01919'}}>{language.e().trade.sell}</span> :
+                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#21BA45'}}>{language.e().trade.buy}</span>
                         }
                         <span style={{
                             paddingLeft: '3px',
@@ -165,10 +168,10 @@ class Trade extends Component {
                         }}>{formatDate(new Date(item.createTime * 1000))}</span>
                         {
                             item.status == 0 &&
-                            <a style={{float: 'right'}} onClick={self.cancel.bind(this, [item.id])}>撤消</a>
+                            <a style={{float: 'right'}} onClick={self.cancel.bind(this, [item.id])}>{language.e().trade.cancel}</a>
                         }
                         {
-                            item.status == 1 && <a style={{float: 'right', color: '#A8A8A8'}}>已完成</a>
+                            item.status == 1 && <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.dealNum}</a>
                         }
                         {
                             item.status == 2 && <a style={{float: 'right', color: '#A8A8A8'}}>已撤消</a>
@@ -177,15 +180,15 @@ class Trade extends Component {
                     <div className='extra' style={{paddingTop: '8px'}}>
                         <div style={{width: '100%'}}>
                             <div style={{float: 'left', width: '45%'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>价格({self.state.pair[1]})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.price}({self.state.pair[1]})</div>
                                 <div>{showPrice(item.price, 3)}</div>
                             </div>
                             <div style={{float: 'left'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>数量({symbol})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.num}({symbol})</div>
                                 <div>{decimals(item.value, decimal, 9)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>实际成交({symbol})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.dealNum}({symbol})</div>
                                 <div>{decimals(item.dealValue, decimal, 9)}</div>
                             </div>
                         </div>
@@ -215,7 +218,7 @@ class Trade extends Component {
                                                 style={{width: '100%'}}
                                                 onClick={() => {
                                                     this.click(true);
-                                                }}>买入
+                                                }}>{language.e().trade.buy}
                                         </button>
                                     </div>
                                 </Flex.Item>
@@ -225,7 +228,7 @@ class Trade extends Component {
                                                 style={{width: '100%'}}
                                                 onClick={() => {
                                                     this.click(false);
-                                                }}>卖出
+                                                }}>{language.e().trade.sell}
                                         </button>
                                     </div>
                                 </Flex.Item>
@@ -234,7 +237,7 @@ class Trade extends Component {
                             <Flex>
                                 <Flex.Item>
                                     <div className="ui right labeled input" style={{width: '100%'}}>
-                                        <input type="number" placeholder="委托价格(SERO)" style={{width: '70%'}}
+                                        <input type="number" placeholder={language.e().trade.orderPrice} style={{width: '70%'}}
                                                ref={el => this.priceValue = el}  onChange={(event) => {
                                             let value = event.target.value;
                                             if (value) {
@@ -277,7 +280,7 @@ class Trade extends Component {
                             <Flex>
                                 <Flex.Item>
                                     <div className="ui right labeled input" style={{width: '100%'}}>
-                                        <input type="number" ref={el => this.numValue = el} placeholder="数量"
+                                        <input type="number" ref={el => this.numValue = el} placeholder={language.e().trade.num}
                                                style={{width: '70%'}}
                                                onChange={(event) => {
                                                    let value = event.target.value;
@@ -296,8 +299,8 @@ class Trade extends Component {
                                     <div style={{paddingTop: '5px', fontSize: '12px', color: '#A8A8A8'}}>
                                         {
                                             this.state.type ?
-                                                <span>可用 {this.balanceOf(this.state.pair[1])} {this.state.pair[1]}</span> :
-                                                <span>可用 {this.balanceOf(this.state.pair[0])} {symbol}</span>
+                                                <span>{language.e().trade.available} {this.balanceOf(this.state.pair[1])} {this.state.pair[1]}</span> :
+                                                <span>{language.e().trade.available} {this.balanceOf(this.state.pair[0])} {symbol}</span>
                                         }
                                     </div>
                                 </Flex.Item>
@@ -314,10 +317,10 @@ class Trade extends Component {
 
                                             this.state.type ? <button className="ui positive button"
                                                                       style={{width: '100%'}}
-                                                                      onClick={this.submit.bind(this)}>买入</button> :
+                                                                      onClick={this.submit.bind(this)}>{language.e().trade.buy}</button> :
                                                 <button className="ui negative button"
                                                         style={{width: '100%'}}
-                                                        onClick={this.submit.bind(this)}>卖出</button>
+                                                        onClick={this.submit.bind(this)}>{language.e().trade.sell}</button>
                                         }
                                     </div>
                                 </Flex.Item>
@@ -326,8 +329,8 @@ class Trade extends Component {
                         <div style={{float: 'right', width: '30%', paddingTop: '8px'}}>
                             <div role="list" className="ui list">
                                 <div role="listitem" className="item">
-                                    <div style={{float: 'left'}}>价格</div>
-                                    <div style={{float: 'right'}}>数量</div>
+                                    <div style={{float: 'left'}}>{language.e().trade.price}</div>
+                                    <div style={{float: 'right'}}>{language.e().trade.num}</div>
                                 </div>
                             </div>
                             <div role="list" className="ui list" style={{color: '#D01919'}}>
@@ -347,17 +350,17 @@ class Trade extends Component {
                 <WingBlank style={{paddingTop: '15px', paddingBottom: '100px', clear: 'both'}}>
                     <div>
                         <div>
-                            <span style={{float: 'left', fontSize: '17px'}}>当前委托</span>
+                            <span style={{float: 'left', fontSize: '17px'}}>{language.e().trade.currentOrders}</span>
                         </div>
                         <div style={{float: 'right'}}><a onClick={() => {
                             createHashHistory().push(`/orders/${self.state.pair[1]}/${self.state.pair[0]}/${this.state.pk}/${self.state.mainPKr}`);
-                        }}>全部</a></div>
+                        }}>{language.e().trade.all}</a></div>
                     </div>
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>
                     {myOrders}
                     {
                         orderIds.length > 0 && <div className="item" style={{paddingTop: '15px', clear: 'both'}}>
-                            <button className="ui fluid button" onClick={self.cancel.bind(this, orderIds)}>全部撤消</button>
+                            <button className="ui fluid button" onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>
                         </div>
                     }
 

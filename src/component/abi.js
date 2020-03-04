@@ -34,6 +34,12 @@ class MAbi {
         )
     }
 
+    initLanguage(callback) {
+        seropp.getInfo(function(info) {
+            callback(info.language);
+        });
+    }
+
     accountDetails(pk, callback) {
         let self = this;
         seropp.getAccountDetail(pk, function (item) {
