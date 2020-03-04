@@ -92,7 +92,7 @@ class Trade extends Component {
                 ])
                 return;
             }
-            // mAbi.buy(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
+            mAbi.buy(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
         } else {
             if (Number(this.numValue.value) > Number(this.balanceOf(this.state.pair[0]))) {
                 Modal.alert('', '余额不足，请充值', [
@@ -100,7 +100,7 @@ class Trade extends Component {
                 ])
                 return;
             }
-            // mAbi.sell(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
+            mAbi.sell(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
         }
     }
 
