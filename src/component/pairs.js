@@ -16,6 +16,11 @@ class Pairs {
             decimals: 18,
             name: "纪念币"
         }],
+        ["ASNOW", {
+            symbol: "ASNOW",
+            decimals: 18,
+            name: ""
+        }],
         ["SVVC", {
             symbol: "SVVC",
             decimals: 4,
