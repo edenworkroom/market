@@ -171,10 +171,10 @@ class Trade extends Component {
                             <a style={{float: 'right'}} onClick={self.cancel.bind(this, [item.id])}>{language.e().trade.cancel}</a>
                         }
                         {
-                            item.status == 1 && <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.dealNum}</a>
+                            item.status == 1 && <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.volume}</a>
                         }
                         {
-                            item.status == 2 && <a style={{float: 'right', color: '#A8A8A8'}}>已撤消</a>
+                            item.status == 2 && <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.canceled}</a>
                         }
                     </div>
                     <div className='extra' style={{paddingTop: '8px'}}>
@@ -184,11 +184,11 @@ class Trade extends Component {
                                 <div>{showPrice(item.price, 3)}</div>
                             </div>
                             <div style={{float: 'left'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.num}({symbol})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.total}({symbol})</div>
                                 <div>{decimals(item.value, decimal, 9)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.dealNum}({symbol})</div>
+                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.volume}({symbol})</div>
                                 <div>{decimals(item.dealValue, decimal, 9)}</div>
                             </div>
                         </div>
@@ -309,7 +309,7 @@ class Trade extends Component {
                             <Flex>
                                 <Flex.Item>
                                     <div>
-                                        交易额:<span style={{padding: '0px 5px'}}
+                                        {language.e().trade.amount}:<span style={{padding: '0px 5px'}}
                                                   ref={el => this.spanValue = el}>0</span>{this.state.pair[1]}
                                     </div>
                                     <div style={{paddingTop: '5px'}}>
@@ -350,7 +350,7 @@ class Trade extends Component {
                 <WingBlank style={{paddingTop: '15px', paddingBottom: '100px', clear: 'both'}}>
                     <div>
                         <div>
-                            <span style={{float: 'left', fontSize: '17px'}}>{language.e().trade.currentOrders}</span>
+                            <span style={{float: 'left', fontSize: '17px'}}>{language.e().trade.openOrders}</span>
                         </div>
                         <div style={{float: 'right'}}><a onClick={() => {
                             createHashHistory().push(`/orders/${self.state.pair[1]}/${self.state.pair[0]}/${this.state.pk}/${self.state.mainPKr}`);
