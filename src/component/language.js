@@ -98,7 +98,7 @@ class Language {
             change: "Change",
             name: "Name",
             trade: "Trade",
-            lastPrice: "LastPrice",
+            lastPrice: "Last Price",
         },
         trade: {
             buy: "Buy",
@@ -133,153 +133,157 @@ class Language {
         }
     };
 
+
     be_BY = {
-        text: "语言",
+        text: "языка",
         Button: {
-            ok: "确定",
-            cancek: "取消"
+            ok: "OK",
+            cancek: "Отмена"
         },
         tabBar: {
-            price: "行情",
-            trade: "交易",
-            assets: "资产"
+            price: "рынки",
+            trade: "торговать",
+            assets: "активы"
         },
         home: {
-            account: "账号",
-            change: "切换",
-            name: "名称",
-            trade: "交易",
-            lastPrice: "最新价",
+            account: "учетная запись",
+            change: "изменить",
+            name: "имя",
+            trade: "торговать",
+            lastPrice: "Последняя цена",
         },
         trade: {
-            buy: "买入",
-            sell: "卖出",
-            orderPrice: "委托价格",
-            orderNum: "数量",
-            available: "可用",
-            amount: "交易额",
+            buy: "купить",
+            sell: "продавать",
+            orderPrice: "Цена",
+            orderNum: "сумма",
+            available: "доступный",
+            amount: "сумма",
 
-            price: "价格",
-            num: "数量",
+            price: "Цена",
+            num: "сумма",
 
-            openOrders: "当前委托",
-            all: "全部",
-            cancel: "撤消",
-            cancelAll: "全部撤消",
+            openOrders: "Открытые заказы",
+            all: "все",
+            cancel: "Отмена",
+            cancelAll: "Отменить все",
 
-            finished: "已完成",
-            canceled: "已撤消",
-            total: "数量",
-            volume: "交易量"
+            finished: "Завершенный",
+            canceled: "отменен",
+            total: "общее количество",
+            volume: "объем"
         },
+
         assets: {
-            total: "总量",
-            available: "可用数量",
-            locked: "锁定数量",
-            rechange: "充值",
-            withdrawal: "提现",
-            trade: "交易",
-            num: "数量"
+            total: "Итоговый баланс",
+            available: "Доступный",
+            locked: "в заказах",
+            rechange: "перезарядка",
+            withdrawal: "Сумма вывода",
+            trade: "торговать",
+            num: "количество"
         }
     };
 
     ja_JP = {
-        text: "语言",
+        text: "言語",
         Button: {
-            ok: "确定",
-            cancek: "取消"
+            ok: "OK",
+            cancek: "キャンセル"
         },
         tabBar: {
-            price: "行情",
-            trade: "交易",
-            assets: "资产"
+            price: "市場",
+            trade: "トレード",
+            assets: "資産"
         },
         home: {
-            account: "账号",
-            change: "切换",
-            name: "名称",
-            trade: "交易",
-            lastPrice: "最新价",
+            account: "アカウント",
+            change: "変化する",
+            name: "名前",
+            trade: "トレード",
+            lastPrice: "最後価格",
         },
         trade: {
-            buy: "买入",
-            sell: "卖出",
-            orderPrice: "委托价格",
-            orderNum: "数量",
-            available: "可用",
-            amount: "交易额",
+            buy: "購入",
+            sell: "売る",
+            orderPrice: "価格",
+            orderNum: "量",
+            available: "利用可能",
+            amount: "量",
 
-            price: "价格",
-            num: "数量",
+            price: "価格",
+            num: "量",
 
-            openOrders: "当前委托",
-            all: "全部",
-            cancle: "撤消",
-            cancelAll: "全部撤消",
+            openOrders: "未処理の注文",
+            all: "すべて",
+            cancel: "キャンセル",
+            cancelAll: "すべてキャンセル",
 
-            finished: "已完成",
-            canceled: "已撤消",
-            total: "数量",
-            volume: "交易量"
+            finished: "完成した",
+            canceled: "キャンセル",
+            total: "合計",
+            volume: "ボリューム"
         },
+
         assets: {
-            total: "总量",
-            available: "可用数量",
-            locked: "锁定数量",
-            rechange: "充值",
-            withdrawal: "提现",
-            trade: "交易",
-            num: "数量"
+            total: "合計",
+            available: "利用可能",
+            locked: "順番に",
+            rechange: "保証金",
+            withdrawal: "撤回",
+            trade: "トレード",
+            num: "量"
         }
     };
 
     ko_KR = {
-        text: "语言",
+        text: "언어",
         Button: {
-            ok: "确定",
-            cancek: "取消"
+            ok: "OK",
+            cancek: "취소"
         },
         tabBar: {
-            price: "行情",
-            trade: "交易",
-            assets: "资产"
+            price: "시장",
+            trade: "무역",
+            assets: "자산"
         },
         home: {
-            account: "账号",
-            change: "切换",
-            name: "名称",
-            trade: "交易",
-            lastPrice: "最新价",
+            account: "계정",
+            change: "변화",
+            name: "이름",
+            trade: "무역",
+            lastPrice: "마지막 가격",
         },
         trade: {
-            buy: "买入",
-            sell: "卖出",
-            orderPrice: "委托价格",
-            orderNum: "数量",
-            available: "可用",
-            amount: "交易额",
+            buy: "구입",
+            sell: "팔다",
+            orderPrice: "가격",
+            orderNum: "양",
+            available: "이용할 수 있는",
+            amount: "양",
 
-            price: "价格",
-            num: "数量",
+            price: "가격",
+            num: "양",
 
-            openOrders: "当前委托",
-            all: "全部",
-            cancle: "撤消",
-            cancelAll: "全部撤消",
+            openOrders: "주문 열기",
+            all: "모두",
+            cancel: "취소",
+            cancelAll: "모두 취소",
 
-            finished: "已完成",
-            canceled: "已撤消",
-            total: "数量",
-            volume: "交易量"
+            finished: "완성됨",
+            canceled: "취소 된",
+            total: "합계",
+            volume: "음량"
         },
+
         assets: {
-            total: "总量",
-            available: "可用数量",
-            locked: "锁定数量",
-            rechange: "充值",
-            withdrawal: "提现",
-            trade: "交易",
-            num: "数量"
+            total: "합계",
+            available: "사용 가능한 잔액",
+            locked: "순서대로",
+            rechange: "재충전",
+            withdrawal: "철수",
+            trade: "무역",
+            num: "양"
         }
     };
 };
