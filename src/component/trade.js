@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, List, WhiteSpace, WingBlank, Flex} from "antd-mobile";
+import {Modal, List, WhiteSpace, WingBlank, Flex, Slider} from "antd-mobile";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
 import {createHashHistory} from 'history'
@@ -154,8 +154,16 @@ class Trade extends Component {
                     <div className="header">
                         {
                             item.type === 0 ?
-                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#D01919'}}>{language.e().trade.sell}</span> :
-                                <span style={{fontSize: '18px', fontWeight: 'bold', color: '#21BA45'}}>{language.e().trade.buy}</span>
+                                <span style={{
+                                    fontSize: '18px',
+                                    fontWeight: 'bold',
+                                    color: '#D01919'
+                                }}>{language.e().trade.sell}</span> :
+                                <span style={{
+                                    fontSize: '18px',
+                                    fontWeight: 'bold',
+                                    color: '#21BA45'
+                                }}>{language.e().trade.buy}</span>
                         }
                         <span style={{
                             paddingLeft: '3px',
@@ -168,27 +176,38 @@ class Trade extends Component {
                         }}>{formatDate(new Date(item.createTime * 1000))}</span>
                         {
                             item.status == 0 &&
-                            <a style={{float: 'right'}} onClick={self.cancel.bind(this, [item.id])}>{language.e().trade.cancel}</a>
+                            <a style={{float: 'right'}}
+                               onClick={self.cancel.bind(this, [item.id])}>{language.e().trade.cancel}</a>
                         }
                         {
-                            item.status == 1 && <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.volume}</a>
+                            item.status == 1 &&
+                            <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.volume}</a>
                         }
                         {
-                            item.status == 2 && <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.canceled}</a>
+                            item.status == 2 &&
+                            <a style={{float: 'right', color: '#A8A8A8'}}>{language.e().trade.canceled}</a>
                         }
                     </div>
                     <div className='extra' style={{paddingTop: '8px'}}>
                         <div style={{width: '100%'}}>
                             <div style={{float: 'left', width: '45%'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.price}({self.state.pair[1]})</div>
+                                <div style={{
+                                    color: '#A8A8A8',
+                                    fontSize: '13px',
+                                }}>{language.e().trade.price}({self.state.pair[1]})
+                                </div>
                                 <div>{showPrice(item.price, 3)}</div>
                             </div>
                             <div style={{float: 'left'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.total}({symbol})</div>
+                                <div
+                                    style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.total}({symbol})
+                                </div>
                                 <div>{decimals(item.value, decimal, 9)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
-                                <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.volume}({symbol})</div>
+                                <div
+                                    style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.volume}({symbol})
+                                </div>
                                 <div>{decimals(item.dealValue, decimal, 9)}</div>
                             </div>
                         </div>
@@ -237,8 +256,9 @@ class Trade extends Component {
                             <Flex>
                                 <Flex.Item>
                                     <div className="ui right labeled input" style={{width: '100%'}}>
-                                        <input type="number" placeholder={language.e().trade.orderPrice} style={{width: '70%'}}
-                                               ref={el => this.priceValue = el}  onChange={(event) => {
+                                        <input type="number" placeholder={language.e().trade.orderPrice}
+                                               style={{width: '70%'}}
+                                               ref={el => this.priceValue = el} onChange={(event) => {
                                             let value = event.target.value;
                                             if (value) {
                                                 value = (value.match(/^\d*(\.?\d{0,3})/g)[0]) || null
@@ -280,7 +300,8 @@ class Trade extends Component {
                             <Flex>
                                 <Flex.Item>
                                     <div className="ui right labeled input" style={{width: '100%'}}>
-                                        <input type="number" ref={el => this.numValue = el} placeholder={language.e().trade.num}
+                                        <input type="number" ref={el => this.numValue = el}
+                                               placeholder={language.e().trade.num}
                                                style={{width: '70%'}}
                                                onChange={(event) => {
                                                    let value = event.target.value;
@@ -303,14 +324,51 @@ class Trade extends Component {
                                                 <span>{language.e().trade.available} {this.balanceOf(this.state.pair[0])} {symbol}</span>
                                         }
                                     </div>
+
+                                </Flex.Item>
+
+                            </Flex>
+                            <Flex>
+                                <Flex.Item>
+                                    <div style={{padding: 15}}>
+                                        <Slider
+                                            defaultValue={0}
+                                            ref={el => this.slider = el}
+                                            min={0}
+                                            max={100}
+                                            marks={{0: "0%", 25: "25%", 50: "50%", 75: "75", 100: "100%"}}
+
+                                            onAfterChange={(val) => {
+                                                if(val ==0) {
+                                                    return;
+                                                }
+                                                let value = 0;
+                                                if (this.state.type) {
+                                                    if(!this.priceValue.value) {
+                                                        this.slider.value = 0;
+                                                        return
+                                                    }
+                                                    let balance = this.balanceOf(this.state.pair[1])
+                                                    value = balance * val / 100 / this.priceValue.value;
+                                                } else {
+                                                    let balance = this.balanceOf(this.state.pair[0]);
+                                                    value = balance * val / 100;
+                                                }
+
+                                                this.numValue.value = value;
+                                                this.spanValue.innerHTML = new BigNumber(value * Number(this.priceValue.value)).toFixed(3);
+                                            }}
+                                        />
+                                    </div>
                                 </Flex.Item>
                             </Flex>
                             <WhiteSpace size="lg"/>
                             <Flex>
                                 <Flex.Item>
+
                                     <div>
                                         {language.e().trade.amount}:<span style={{padding: '0px 5px'}}
-                                                  ref={el => this.spanValue = el}>0</span>{this.state.pair[1]}
+                                                                          ref={el => this.spanValue = el}>0</span>{this.state.pair[1]}
                                     </div>
                                     <div style={{paddingTop: '5px'}}>
                                         {
@@ -360,7 +418,8 @@ class Trade extends Component {
                     {myOrders}
                     {
                         orderIds.length > 0 && <div className="item" style={{paddingTop: '15px', clear: 'both'}}>
-                            <button className="ui fluid button" onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>
+                            <button className="ui fluid button"
+                                    onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>
                         </div>
                     }
 

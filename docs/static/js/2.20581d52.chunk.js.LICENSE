@@ -11,16 +11,16 @@
  * @license  MIT
  */
 
-/*!
-  Copyright (c) 2015 Jed Watson.
-  Based on code that is Copyright 2013-2015, Facebook, Inc.
-  All rights reserved.
-*/
-
 /*
 object-assign
 (c) Sindre Sorhus
 @license MIT
+*/
+
+/*!
+  Copyright (c) 2015 Jed Watson.
+  Based on code that is Copyright 2013-2015, Facebook, Inc.
+  All rights reserved.
 */
 
 /*! bignumber.js v2.0.7 https://github.com/MikeMcl/bignumber.js/LICENCE */
