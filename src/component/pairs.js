@@ -20,7 +20,7 @@ class Pairs {
             symbol: "ASNOW",
             decimals: 18,
             name: "",
-            // offline: true
+            offline: true
         }],
         ["SVVC", {
             symbol: "SVVC",
