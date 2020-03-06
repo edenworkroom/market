@@ -79,6 +79,9 @@ class Trade extends Component {
     }
 
     submit() {
+        if(pairs.isOffLine(this.state.pair[0])) {
+            return;
+        }
         let price = Number(this.priceValue.value) * 1000;
         let value = new BigNumber(this.numValue.value).multipliedBy(new BigNumber(10).pow(pairs.getDecimals(this.state.pair[0])));
         if (price === 0 || value.isZero()) {
@@ -132,14 +135,14 @@ class Trade extends Component {
         let buyOrderItems = this.state.pairInfo.buyList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value), decimal, 5)}</div>
+                <div style={{float: 'right'}}>{decimals((item.value), decimal, 2)}</div>
             </div>
         });
 
         let sellOrderItems = this.state.pairInfo.sellList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value), decimal, 5)}</div>
+                <div style={{float: 'right'}}>{decimals((item.value), decimal, 2)}</div>
             </div>
         });
 
@@ -202,13 +205,13 @@ class Trade extends Component {
                                 <div
                                     style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.total}({symbol})
                                 </div>
-                                <div>{decimals(item.value, decimal, 9)}</div>
+                                <div>{decimals(item.value, decimal, 3)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
                                 <div
                                     style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.volume}({symbol})
                                 </div>
-                                <div>{decimals(item.dealValue, decimal, 9)}</div>
+                                <div>{decimals(item.dealValue, decimal, 3)}</div>
                             </div>
                         </div>
                     </div>
@@ -235,6 +238,7 @@ class Trade extends Component {
                                     <div>
                                         <button className={this.state.type ? "ui positive button" : "ui button"}
                                                 style={{width: '100%'}}
+                                                disabled={pairs.isOffLine(this.state.pair[0])}
                                                 onClick={() => {
                                                     this.click(true);
                                                 }}>{language.e().trade.buy}
@@ -245,6 +249,7 @@ class Trade extends Component {
                                     <div>
                                         <button className={!this.state.type ? "ui negative button" : "ui button"}
                                                 style={{width: '100%'}}
+                                                disabled={pairs.isOffLine(this.state.pair[0])}
                                                 onClick={() => {
                                                     this.click(false);
                                                 }}>{language.e().trade.sell}
@@ -375,8 +380,10 @@ class Trade extends Component {
 
                                             this.state.type ? <button className="ui positive button"
                                                                       style={{width: '100%'}}
+                                                                      disabled={pairs.isOffLine(this.state.pair[0])}
                                                                       onClick={this.submit.bind(this)}>{language.e().trade.buy}</button> :
                                                 <button className="ui negative button"
+                                                        disabled={pairs.isOffLine(this.state.pair[0])}
                                                         style={{width: '100%'}}
                                                         onClick={this.submit.bind(this)}>{language.e().trade.sell}</button>
                                         }

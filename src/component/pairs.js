@@ -19,7 +19,8 @@ class Pairs {
         ["ASNOW", {
             symbol: "ASNOW",
             decimals: 18,
-            name: ""
+            name: "",
+            // offline: true
         }],
         ["SVVC", {
             symbol: "SVVC",
@@ -62,6 +63,10 @@ class Pairs {
 
     getKey(token) {
         return this.TOKENS.get(token).key;
+    }
+
+    isOffLine(token) {
+        return this.TOKENS.get(token).offline;
     }
 
     getDecimals(token) {

@@ -108,15 +108,15 @@ class Assets extends Component {
                             <div className="row">
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.total}</div>
-                                    <div className="ui aligned">{decimals(balance[0] + balance[1], decimal, 9)}</div>
+                                    <div className="ui aligned">{decimals(balance[0] + balance[1], decimal, 3)}</div>
                                 </div>
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.available}</div>
-                                    <div className="ui aligned">{decimals(balance[0], decimal, 9)}</div>
+                                    <div className="ui aligned">{decimals(balance[0], decimal, 3)}</div>
                                 </div>
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.locked}</div>
-                                    <div className="ui aligned">{decimals(balance[1], decimal, 9)}</div>
+                                    <div className="ui aligned">{decimals(balance[1], decimal, 3)}</div>
                                 </div>
                             </div>
                         </div>

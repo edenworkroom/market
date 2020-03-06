@@ -77,11 +77,11 @@ class OrderList extends Component {
                             </div>
                             <div style={{float: 'left'}}>
                                 <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.total}({symbol})</div>
-                                <div>{decimals(item.value, decimal, 9)}</div>
+                                <div>{decimals(item.value, decimal, 3)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
                                 <div style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.volume}({symbol})</div>
-                                <div>{decimals(item.dealValue, decimal, 9)}</div>
+                                <div>{decimals(item.dealValue, decimal, 3)}</div>
                             </div>
                         </div>
                     </div>
