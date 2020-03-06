@@ -124,7 +124,7 @@ class Assets extends Component {
                 </div>
                 <div className="extra content">
                     <div className="ui three buttons">
-                        <button className="ui green basic button"
+                        <button className="ui green basic button" disabled={pairs.isOffLine(token)}
                                 onClick={self.op.bind(self, token, symbol, "recharge")}>{language.e().assets.rechange}
                         </button>
                         <button className="ui green basic button"
