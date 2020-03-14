@@ -1,29 +1,31 @@
 {
   "files": {
     "main.css": "./static/css/main.564b014d.chunk.css",
-    "main.js": "./static/js/main.383d7f35.chunk.js",
-    "main.js.map": "./static/js/main.383d7f35.chunk.js.map",
+    "main.js": "./static/js/main.f3940db9.chunk.js",
+    "main.js.map": "./static/js/main.f3940db9.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.b25960d3.js",
     "runtime-main.js.map": "./static/js/runtime-main.b25960d3.js.map",
     "static/css/2.e05866d5.chunk.css": "./static/css/2.e05866d5.chunk.css",
-    "static/js/2.20581d52.chunk.js": "./static/js/2.20581d52.chunk.js",
-    "static/js/2.20581d52.chunk.js.map": "./static/js/2.20581d52.chunk.js.map",
+    "static/js/2.5c0dd261.chunk.js": "./static/js/2.5c0dd261.chunk.js",
+    "static/js/2.5c0dd261.chunk.js.map": "./static/js/2.5c0dd261.chunk.js.map",
     "index.html": "./index.html",
-    "precache-manifest.bff61428858efe08c8c711011f970829.js": "./precache-manifest.bff61428858efe08c8c711011f970829.js",
+    "precache-manifest.c0005b7233f5dc9e6b33e023118350c7.js": "./precache-manifest.c0005b7233f5dc9e6b33e023118350c7.js",
     "service-worker.js": "./service-worker.js",
     "static/css/2.e05866d5.chunk.css.map": "./static/css/2.e05866d5.chunk.css.map",
     "static/css/main.564b014d.chunk.css.map": "./static/css/main.564b014d.chunk.css.map",
-    "static/js/2.20581d52.chunk.js.LICENSE": "./static/js/2.20581d52.chunk.js.LICENSE",
+    "static/js/2.5c0dd261.chunk.js.LICENSE": "./static/js/2.5c0dd261.chunk.js.LICENSE",
     "static/media/1.png": "./static/media/1.64fe8c86.png",
+    "static/media/AIPP.png": "./static/media/AIPP.4911c520.png",
     "static/media/ASNOW.png": "./static/media/ASNOW.c67377c5.png",
     "static/media/FFFF.png": "./static/media/FFFF.e9d408bd.png",
+    "static/media/HAPY.png": "./static/media/HAPY.af3a3473.png",
     "static/media/NEWBITS.png": "./static/media/NEWBITS.9635f74b.png",
     "static/media/ORIGO.png": "./static/media/ORIGO.c15d08c1.png",
     "static/media/SERO.png": "./static/media/SERO.e9d408bd.png",
     "static/media/SVVC.png": "./static/media/SVVC.ecfe7e61.png",
     "static/media/THE_FIRST_PRIVACY_COIN.png": "./static/media/THE_FIRST_PRIVACY_COIN.faf7618d.png",
     "static/media/TTTT.png": "./static/media/TTTT.e9d408bd.png",
-    "static/media/USDS.png": "./static/media/USDS.037d0c29.png",
+    "static/media/USDS.png": "./static/media/USDS.8f0c6e6f.png",
     "static/media/VIRTUE.png": "./static/media/VIRTUE.40a2c752.png",
     "static/media/semantic.min.css": "./static/media/outline-icons.ef60a4f6.woff",
     "static/media/logo.png": "./static/media/logo.acb9934d.png"
@@ -31,8 +33,8 @@
   "entrypoints": [
     "static/js/runtime-main.b25960d3.js",
     "static/css/2.e05866d5.chunk.css",
-    "static/js/2.20581d52.chunk.js",
+    "static/js/2.5c0dd261.chunk.js",
     "static/css/main.564b014d.chunk.css",
-    "static/js/main.383d7f35.chunk.js"
+    "static/js/main.f3940db9.chunk.js"
   ]
 }

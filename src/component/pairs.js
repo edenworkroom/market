@@ -3,7 +3,7 @@ class Pairs {
     SERO = {
         symbol: "SERO",
         decimals: 18,
-        tokens: ["THE_FIRST_PRIVACY_COIN", "ASNOW", "SVVC", "NEWBITS", "NBHBOS", "VIRTUE", "ORIGO", "USDS"]
+        tokens: ["THE_FIRST_PRIVACY_COIN", "ASNOW", "NBHBOS", "ORIGO", "USDS", "HAPY","AIPP","SVVC", "NEWBITS", "VIRTUE",]
     };
     TOKENS = new Map([
         ["SERO", {
@@ -22,25 +22,10 @@ class Pairs {
             name: "",
             offline: true
         }],
-        ["SVVC", {
-            symbol: "SVVC",
-            decimals: 4,
-            name: ""
-        }],
-        ["NEWBITS", {
-            symbol: "NBS",
-            decimals: 8,
-            name: ""
-        }],
         ["NBHBOS", {
             symbol: "NBHBOS",
             decimals: 18,
             name: "牛比特支付"
-        }],
-        ["VIRTUE", {
-            symbol: "VRT",
-            decimals: 18,
-            name: "积德币"
         }],
         ["ORIGO", {
             symbol: "OGO",
@@ -51,6 +36,31 @@ class Pairs {
             symbol: "USDS",
             decimals: 18,
             name: "存储币"
+        }],
+        ["HAPY", {
+            symbol: "HAPY",
+            decimals: 18,
+            name: ""
+        }],
+        ["AIPP", {
+            symbol: "AIPP",
+            decimals: 18,
+            name: ""
+        }],
+        ["SVVC", {
+            symbol: "SVVC",
+            decimals: 4,
+            name: ""
+        }],
+        ["NEWBITS", {
+            symbol: "NBS",
+            decimals: 8,
+            name: ""
+        }],
+        ["VIRTUE", {
+            symbol: "VRT",
+            decimals: 18,
+            name: "积德币"
         }]
     ])
 
