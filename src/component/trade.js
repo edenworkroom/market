@@ -44,6 +44,9 @@ class Trade extends Component {
 
     init(mainPkr) {
         let self = this;
+        if (!mainPkr) {
+            mainPkr = self.state.mainPKr;
+        }
         self.setState({balances: {}})
         mAbi.balanceOf(self.state.mainPKr, self.state.pair, function (maps) {
             self.setState({balances: maps});
@@ -56,13 +59,17 @@ class Trade extends Component {
         })
     }
 
+    componentWillUnmount() {
+        clearInterval(this.timer);
+    }
+
     componentDidMount() {
         let self = this;
         mAbi.init.then(() => {
             mAbi.accountDetails(this.state.pk, function (account) {
                 self.setState({mainPKr: account.mainPKr})
                 self.init(account.mainPKr);
-                setInterval(function () {
+                self.timer = setInterval(function () {
                     self.init(self.state.mainPKr);
                 }, 20 * 1000);
             });
@@ -218,7 +225,7 @@ class Trade extends Component {
                 </div>
             </div>
         });
-       
+
         return (
             <div>
                 <WingBlank style={{paddingTop: '2px'}}>
