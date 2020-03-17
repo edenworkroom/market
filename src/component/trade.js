@@ -79,7 +79,7 @@ class Trade extends Component {
     }
 
     submit() {
-        if(pairs.isOffLine(this.state.pair[0])) {
+        if (pairs.isOffLine(this.state.pair[0])) {
             return;
         }
         let price = Number(this.priceValue.value) * 1000;
@@ -218,6 +218,7 @@ class Trade extends Component {
                 </div>
             </div>
         });
+       
         return (
             <div>
                 <WingBlank style={{paddingTop: '2px'}}>
@@ -344,12 +345,12 @@ class Trade extends Component {
                                             marks={{0: "0%", 25: "25%", 50: "50%", 75: "75", 100: "100%"}}
 
                                             onAfterChange={(val) => {
-                                                if(val ==0) {
+                                                if (val == 0) {
                                                     return;
                                                 }
                                                 let value = 0;
                                                 if (this.state.type) {
-                                                    if(!this.priceValue.value) {
+                                                    if (!this.priceValue.value) {
                                                         this.slider.value = 0;
                                                         return
                                                     }
@@ -422,7 +423,7 @@ class Trade extends Component {
                         }}>{language.e().trade.all}</a></div>
                     </div>
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>
-                    {myOrders}
+                    {orderIds.length > 0 ? myOrders : <div></div>}
                     {
                         orderIds.length > 0 && <div className="item" style={{paddingTop: '15px', clear: 'both'}}>
                             <button className="ui fluid button"
