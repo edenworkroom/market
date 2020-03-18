@@ -35,6 +35,7 @@ class Market extends Component {
     }
 
     initPairList() {
+        console.log("00000");
         let self = this;
         const keys = new Array();
         const map = new Map();
@@ -44,8 +45,12 @@ class Market extends Component {
             map[key] = token;
         });
 
+        console.log("keys", keys);
+
+        console.log("11111");
         mAbi.lastPrice("2JurSKqbpUMMrpxfzHNajLec6QQ3E7XrhrYCQfDPNBxfXcsgytr5xaB63984AEBAuHRV3h5KwKazNmBTA5PYFTiDSLSeFqq2FvoaXZnCyMburKSe5wk43Yid8DWa48214BuT", keys, function (pairMap) {
             const pairList = new Array();
+            console.log("22222");
             keys.forEach(key => {
                 let lastPrice = 0;
                 if (pairMap[key]) {
@@ -59,6 +64,7 @@ class Market extends Component {
                     decimals: pairs.getDecimals(map[key])
                 })
             });
+            console.log("pairList", pairList);
             self.setState({pairList: pairList});
         });
     }
@@ -71,6 +77,7 @@ class Market extends Component {
         let self = this;
         mAbi.init
             .then(() => {
+                console.log("market start....");
                 self.initPairList();
                 self.timer = setInterval(self.initPairList(), 2 * 60 * 1000);
                 mAbi.initLanguage(function (_lang) {
@@ -132,7 +139,7 @@ class Market extends Component {
         });
 
         return (
-            <div style={{height: document.documentElement.clientHeight, maxWidth: '600px'}}>
+            <div>
                 <div style={{paddingTop: "10px", paddingBottom: '40px'}}>
                     <WingBlank>
                         <div style={{float: "clear"}}></div>
