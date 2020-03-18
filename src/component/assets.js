@@ -158,8 +158,6 @@ class Assets extends Component {
                 </WingBlank>
                 <MTabbar selectedTab="asset" pk={this.state.pk}/>
             </div>
-
-
         );
     }
 }

@@ -433,7 +433,7 @@ class Trade extends Component {
                             <span style={{float: 'left', fontSize: '17px'}}>{language.e().trade.openOrders}</span>
                         </div>
                         <div style={{float: 'right'}}><a onClick={() => {
-                            createHashHistory().push(`/orders/${self.state.pair[1]}/${self.state.pair[0]}/${this.state.pk}/${self.state.mainPKr}`);
+                            createHashHistory().push("/orders");
                         }}>{language.e().trade.all}</a></div>
                     </div>
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>

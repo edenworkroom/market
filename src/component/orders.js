@@ -46,7 +46,10 @@ class OrderList extends Component {
         let symbol = pairs.getSymbol(this.state.pair[0]);
         let decimal = pairs.getDecimals(this.state.pair[0]);
         let myOrders = this.state.orders.map((item, index) => {
-            return <div key={index} className="item" style={{paddingTop: '15px', clear: 'both'}}>
+            return <div key={index} className="item" style={{
+                paddingTop: '15px', clear: 'both',
+                paddingBottom: (index === this.state.orders.length - 1) ? "100px" : "0px"
+            }}>
                 <div className="content">
                     <div className="header">
                         {
