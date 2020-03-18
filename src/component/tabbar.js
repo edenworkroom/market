@@ -9,20 +9,11 @@ import tabbar_markets_light from '../icon/tabbar_markets_light.png'
 import tabbar_trade from '../icon/tabbar_trade.png'
 import tabbar_trade_light from '../icon/tabbar_trade_light.png'
 import language from './language'
-import mAbi from "./abi";
 
 class MTabbar extends Component {
 
     constructor(props) {
         super(props);
-    }
-
-    componentDidMount() {
-        mAbi.init.then(() => {
-            mAbi.initLanguage(function (_lang) {
-                language.set(_lang);
-            });
-        })
     }
 
     render() {
@@ -33,6 +24,7 @@ class MTabbar extends Component {
                 width: '100%',
                 bottom: '0',
                 zIndex: '999',
+                height: '50px'
             }}>
                 <TabBar unselectedTintColor="#949494" tintColor="#33A3F4" barTintColor="white">
                     <TabBar.Item title={language.e().tabBar.price} key="market"
@@ -41,21 +33,20 @@ class MTabbar extends Component {
                                  selectedIcon={<img src={tabbar_markets_light}
                                                     style={{width: '22px', height: '22px'}}/>}
                                  onPress={() => {
-                                     createHashHistory().push(`/market/${self.props.pk}`)
+                                     createHashHistory().push(`/market`)
                                  }}
                     >
-
                     </TabBar.Item>
                     <TabBar.Item title={language.e().tabBar.trade}
                                  key="trade"
                                  selected={self.props.selectedTab === 'trade'}
                                  icon={<img src={tabbar_trade} style={{width: '22px', height: '22px'}}/>}
-                                 selectedIcon={<img src={tabbar_trade_light} style={{width: '22px', height: '22px'}}/>}
+                                 selectedIcon={<img src={tabbar_trade_light}
+                                                    style={{width: '22px', height: '22px'}}/>}
                                  onPress={() => {
-                                     createHashHistory().push(`/trade/${self.props.pk}`)
+                                     createHashHistory().push(`/trade`)
                                  }}
                     >
-
                     </TabBar.Item>
                     <TabBar.Item title={language.e().tabBar.assets}
                                  key="asset"
@@ -64,14 +55,13 @@ class MTabbar extends Component {
                                  selectedIcon={<img src={tabbar_banlance_light}
                                                     style={{width: '22px', height: '22px'}}/>}
                                  onPress={() => {
-                                     createHashHistory().push(`/asset/${self.props.pk}`)
+                                     createHashHistory().push(`/asset`)
                                  }}
                     >
-
                     </TabBar.Item>
                 </TabBar>
-
-            </div>)
+            </div>
+        )
     }
 
 }

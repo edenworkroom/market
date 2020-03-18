@@ -71,10 +71,6 @@ class Pairs {
         }
     }
 
-    getKey(token) {
-        return this.TOKENS.get(token).key;
-    }
-
     isOffLine(token) {
         return this.TOKENS.get(token).offline;
     }

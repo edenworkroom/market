@@ -20,7 +20,7 @@ class Assets extends Component {
         });
 
         this.state = {
-            pk: props.match.params.pk,
+            pk: localStorage.getItem("PK"),
             mainPKr: "",
             tokens: tokens,
             balanceMap: {}
@@ -53,7 +53,7 @@ class Assets extends Component {
     op(token, symbol, type) {
         let self = this;
 
-        let title = (type === "recharge" ? language.e().assets.rechange : language.e().assets.withdrawal) + " "+symbol;
+        let title = (type === "recharge" ? language.e().assets.rechange : language.e().assets.withdrawal) + " " + symbol;
         let input = <div className="ui input">
             <input type="number" placeholder={language.e().trade.num}
                    ref={el => this.valueInput = el}
@@ -130,9 +130,11 @@ class Assets extends Component {
                         <button className="ui green basic button"
                                 onClick={self.op.bind(self, token, symbol, "withdraw")}>{language.e().assets.withdrawal}
                         </button>
-                        <button disabled={token=="SERO"} className="ui green basic button" onClick={() => {
+                        <button disabled={token == "SERO"} className="ui green basic button" onClick={() => {
                             if (token !== "SERO") {
-                                createHashHistory().push(`/trade/${this.state.pk}/SERO/${token}`);
+                                localStorage.setItem("TOKEN", token);
+                                localStorage.setItem("STANDARD", "SERO");
+                                createHashHistory().push("/trade");
                             }
                         }}>{language.e().assets.trade}
                         </button>

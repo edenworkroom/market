@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, List, WhiteSpace, WingBlank, Flex, Slider} from "antd-mobile";
+import {Modal, List, Toast, WhiteSpace, WingBlank, Flex, Slider, TabBar} from "antd-mobile";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
 import {createHashHistory} from 'history'
@@ -14,29 +14,30 @@ import pairs from "./pairs";
 import MTabbar from "./tabbar";
 import language from './language'
 
-const operation = Modal.operation;
-
 class Trade extends Component {
     constructor(props) {
         super(props);
-        let token = pairs.SERO.tokens[0];
-        let standard = "SERO";
-        if (props.match.params.token && props.match.params.standard) {
-            token = props.match.params.token;
-            standard = props.match.params.standard;
+
+        let token = localStorage.getItem("TOKEN");
+        let standard = localStorage.getItem("STANDARD");
+
+        if (!token || !standard) {
+            token = pairs.SERO.tokens[0];
+            standard = "SERO";
         }
+        console.log("init trade : ", token, standard);
+
         let key = hashKey(token, standard);
         this.state = {
             pair: [token, standard],
             key: key,
             type: true,
-            pk: props.match.params.pk,
-            mainPKr: "",
+            pk: localStorage.getItem("PK"),
             balances: {},
             pairInfo: {
                 buyList: [],
                 sellList: [],
-                lastPrice: [],
+                lastPrice: 0.000,
             },
             orders: [],
         }
@@ -47,13 +48,15 @@ class Trade extends Component {
         if (!mainPkr) {
             mainPkr = self.state.mainPKr;
         }
-        self.setState({balances: {}})
+
         mAbi.balanceOf(self.state.mainPKr, self.state.pair, function (maps) {
             self.setState({balances: maps});
         });
+
         mAbi.pairInfo(self.state.mainPKr, self.state.key, 1, function (info) {
             self.setState({pairInfo: info});
         });
+
         mAbi.orders(mainPkr, this.state.key, function (orders) {
             self.setState({orders: orders});
         })
@@ -63,21 +66,24 @@ class Trade extends Component {
         clearInterval(this.timer);
     }
 
+
     componentDidMount() {
         let self = this;
         mAbi.init.then(() => {
-            mAbi.accountDetails(this.state.pk, function (account) {
+            mAbi.accountDetails(localStorage.getItem("PK"), function (account) {
                 self.setState({mainPKr: account.mainPKr})
                 self.init(account.mainPKr);
-                self.timer = setInterval(function () {
-                    self.init(self.state.mainPKr);
-                }, 20 * 1000);
-            });
 
-            mAbi.initLanguage(function (_lang) {
-                language.set(_lang);
+                self.timer = setInterval(function () {
+                    self.init(account.mainPKr);
+                }, 10 * 1000);
+
+                mAbi.initLanguage(function (_lang) {
+                    language.set(_lang);
+                });
             });
         })
+
     }
 
     click(val) {
@@ -136,6 +142,7 @@ class Trade extends Component {
 
     render() {
         let self = this;
+        // Toast.info(JSON.stringify(this.state),5)
         let symbol = pairs.getSymbol(this.state.pair[0]);
         let decimal = pairs.getDecimals(this.state.pair[0]);
 
@@ -227,7 +234,7 @@ class Trade extends Component {
         });
 
         return (
-            <div>
+            <div style={{minHeight: document.documentElement.clientHeight}}>
                 <WingBlank style={{paddingTop: '2px'}}>
                     <div>
                         <div style={{float: 'left', width: '65%'}}>
@@ -430,20 +437,19 @@ class Trade extends Component {
                         }}>{language.e().trade.all}</a></div>
                     </div>
                     <div className="ui divider" style={{clear: 'both', marginTop: '30px'}}></div>
-                    {orderIds.length > 0 ? myOrders : <div></div>}
+                    {myOrders}
                     {
                         orderIds.length > 0 && <div className="item" style={{paddingTop: '15px', clear: 'both'}}>
                             <button className="ui fluid button"
                                     onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>
                         </div>
                     }
-
                 </WingBlank>
-                <MTabbar selectedTab="trade" pk={this.state.pk}/>
+
+                <MTabbar selectedTab="trade"/>
             </div>
         )
     }
-
 }
 
 export default Trade;

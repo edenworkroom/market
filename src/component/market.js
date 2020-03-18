@@ -15,10 +15,22 @@ const operation = Modal.operation;
 class Market extends Component {
     constructor(props) {
         super(props);
+        let self = this;
         this.state = {
             standard: "SERO",
             pairList: [],
-            pk: props.match.params.pk,
+            pk: localStorage.getItem("PK")
+        }
+
+        let pk = localStorage.getItem("PK");
+        if (!pk) {
+            mAbi.init
+                .then(() => {
+                    mAbi.accountList(function (accounts) {
+                        localStorage.setItem("PK", accounts[0].pk);
+                        self.setState({pk: accounts[0].pk});
+                    });
+                })
         }
     }
 
@@ -51,22 +63,21 @@ class Market extends Component {
         });
     }
 
+    componentWillUnmount() {
+        clearInterval(this.timer);
+    }
+
     componentDidMount() {
         let self = this;
         mAbi.init
             .then(() => {
-                if (!self.props.match.params.pk) {
-                    mAbi.accountList(function (accounts) {
-                        self.setState({pk: accounts[0].pk});
-                    });
-                }
-
+                self.initPairList();
                 self.timer = setInterval(self.initPairList(), 2 * 60 * 1000);
-
                 mAbi.initLanguage(function (_lang) {
                     language.set(_lang);
                 });
             })
+
     }
 
     changAccount() {
@@ -78,6 +89,7 @@ class Market extends Component {
                     {
                         text: <span>{account.name + ":" + showPK(account.pk)}</span>, onPress: () => {
                             self.setState({pk: account.pk});
+                            localStorage.setItem("PK", account.pk);
                         }
                     }
                 );
@@ -110,7 +122,9 @@ class Market extends Component {
                     </div>
                     <div style={{float: "right", width: "20%", textAlign: "right"}}>
                         <Button type="primary" inline size="small" onClick={() => {
-                            createHashHistory().push(`/trade/${this.state.pk}/SERO/${item.tokenName}`);
+                            localStorage.setItem("TOKEN", item.tokenName);
+                            localStorage.setItem("STANDARD", "SERO");
+                            createHashHistory().push("/trade");
                         }}>{language.e().home.trade}</Button>
                     </div>
                 </List.Item>
@@ -154,8 +168,7 @@ class Market extends Component {
                         </List>
                     </WingBlank>
                 </div>
-
-                <MTabbar selectedTab="market" pk={this.state.pk}/>
+                <MTabbar selectedTab="market"/>
             </div>)
     }
 }
