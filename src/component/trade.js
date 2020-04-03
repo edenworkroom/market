@@ -25,7 +25,6 @@ class Trade extends Component {
             token = pairs.SERO.tokens[0];
             standard = "SERO";
         }
-        console.log("init trade : ", token, standard);
 
         let key = hashKey(token, standard);
         this.state = {
@@ -142,7 +141,6 @@ class Trade extends Component {
 
     render() {
         let self = this;
-        // Toast.info(JSON.stringify(this.state),5)
         let symbol = pairs.getSymbol(this.state.pair[0]);
         let decimal = pairs.getDecimals(this.state.pair[0]);
 

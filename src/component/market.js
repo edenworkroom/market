@@ -1,23 +1,27 @@
 import React, {Component} from 'react';
-import {Button, List, Modal, WingBlank} from "antd-mobile";
+import {Button, List, Modal, WingBlank, TabBar, Tabs} from "antd-mobile";
 import {createHashHistory} from 'history'
 
 import mAbi from './abi'
 import pairs from "./pairs";
 import {hashKey, showPK, showPrice} from "./common";
 
-import MTabbar from "./tabbar";
 import MCarousel from './carousel'
 import language from './language'
+import MTabbar from "./tabbar";
 
 const operation = Modal.operation;
+
+const tabs = [
+    {title: 'SERO', sub: '1'},
+    {title: '其他交易对上架中...', sub: '2'},
+];
 
 class Market extends Component {
     constructor(props) {
         super(props);
         let self = this;
         this.state = {
-            standard: "SERO",
             pairList: [],
             pk: localStorage.getItem("PK")
         }
@@ -34,23 +38,18 @@ class Market extends Component {
         }
     }
 
-    initPairList() {
-        console.log("00000");
+    initPairList(standard) {
         let self = this;
         const keys = new Array();
         const map = new Map();
-        pairs.getTokens(this.state.standard).forEach(function (token) {
-            let key = hashKey(token, self.state.standard);
+        pairs.getTokens(standard).forEach(function (token) {
+            let key = hashKey(token, standard);
             keys.push(key);
             map[key] = token;
         });
 
-        console.log("keys", keys);
-
-        console.log("11111");
         mAbi.lastPrice("2JurSKqbpUMMrpxfzHNajLec6QQ3E7XrhrYCQfDPNBxfXcsgytr5xaB63984AEBAuHRV3h5KwKazNmBTA5PYFTiDSLSeFqq2FvoaXZnCyMburKSe5wk43Yid8DWa48214BuT", keys, function (pairMap) {
             const pairList = new Array();
-            console.log("22222");
             keys.forEach(key => {
                 let lastPrice = 0;
                 if (pairMap[key]) {
@@ -64,12 +63,12 @@ class Market extends Component {
                     decimals: pairs.getDecimals(map[key])
                 })
             });
-            console.log("pairList", pairList);
             self.setState({pairList: pairList});
         });
     }
 
     componentWillUnmount() {
+        console.log("componentWillUnmount");
         clearInterval(this.timer);
     }
 
@@ -77,9 +76,8 @@ class Market extends Component {
         let self = this;
         mAbi.init
             .then(() => {
-                console.log("market start....");
-                self.initPairList();
-                self.timer = setInterval(self.initPairList(), 2 * 60 * 1000);
+                self.initPairList("SERO");
+                // self.timer = setInterval(self.initPairList(), 10 * 1000);
                 mAbi.initLanguage(function (_lang) {
                     language.set(_lang);
                 });
@@ -112,7 +110,6 @@ class Market extends Component {
         return isIOS;
     }
 
-
     render() {
         let self = this;
         const tokenPairs = this.state.pairList.map((item, index) => {
@@ -144,7 +141,7 @@ class Market extends Component {
                     <WingBlank>
                         <div style={{float: "clear"}}></div>
                         {
-                            self.isIOS() ? <div>
+                            this.isIOS() ? <div>
                                 <img style={{width: '100%', height: '180px'}} src={require('../icon/1.png')}/>
                             </div> : <MCarousel/>
 
@@ -165,7 +162,21 @@ class Market extends Component {
                                 onClick={this.changAccount.bind(this)}>{language.e().home.change}</a></div>
                         </div>
                         <div style={{clear: 'both'}}></div>
-                        <List style={{paddingTop: '15px'}}>
+
+
+                        <List style={{paddingTop: '15px'}} renderHeader={() => {
+                            return (
+                                <Tabs tabs={tabs}
+                                      initialPage={0}
+                                      renderTab={tab => <span style={{}}>{tab.title}</span>}
+                                      onChange={(tab, index) => {
+                                          self.initPairList(tab.title);
+                                      }}
+                                >
+                                </Tabs>
+                            )
+                        }
+                        }>
                             <List.Item>
                                 <div style={{float: "left", width: "50%"}}>{language.e().home.name}</div>
                                 <div style={{float: "left", width: "30%"}}>{language.e().home.lastPrice}</div>
