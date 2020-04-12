@@ -14,7 +14,7 @@ const operation = Modal.operation;
 
 const tabs = [
     {title: 'SERO', sub: '1'},
-    {title: '其他交易对上架中...', sub: '2'},
+    {title: 'USDS', sub: '2'},
 ];
 
 class Market extends Component {
@@ -60,7 +60,8 @@ class Market extends Component {
                     tokenName: map[key],
                     name: pairs.getName(map[key]),
                     lastPrice: lastPrice,
-                    decimals: pairs.getDecimals(map[key])
+                    decimals: pairs.getDecimals(map[key]),
+                    standard: standard
                 })
             });
             self.setState({pairList: pairList});
@@ -68,7 +69,6 @@ class Market extends Component {
     }
 
     componentWillUnmount() {
-        console.log("componentWillUnmount");
         clearInterval(this.timer);
     }
 
@@ -127,7 +127,7 @@ class Market extends Component {
                     <div style={{float: "right", width: "20%", textAlign: "right"}}>
                         <Button type="primary" inline size="small" onClick={() => {
                             localStorage.setItem("TOKEN", item.tokenName);
-                            localStorage.setItem("STANDARD", "SERO");
+                            localStorage.setItem("STANDARD", item.standard);
                             createHashHistory().push("/trade");
                         }}>{language.e().home.trade}</Button>
                     </div>
@@ -170,6 +170,7 @@ class Market extends Component {
                                       initialPage={0}
                                       renderTab={tab => <span style={{}}>{tab.title}</span>}
                                       onChange={(tab, index) => {
+                                          console.log("initPairList", tab.title);
                                           self.initPairList(tab.title);
                                       }}
                                 >

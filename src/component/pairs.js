@@ -5,10 +5,10 @@ class Pairs {
         decimals: 18,
         tokens: ["THE_FIRST_PRIVACY_COIN", "ASNOW", "NBHBOS", "ORIGO", "USDS", "HAPY", "SVVC", "NEWBITS", "VIRTUE",]
     };
-    AIPP = {
-        symbol: "SERO",
+    USDS = {
+        symbol: "USDS",
         decimals: 18,
-        tokens: []
+        tokens: ["NBHBOS"]
     }
     TOKENS = new Map([
         ["SERO", {
@@ -25,7 +25,7 @@ class Pairs {
             symbol: "ASNOW",
             decimals: 18,
             name: "",
-            // offline: true
+            offline: true
         }],
         ["NBHBOS", {
             symbol: "NBHBOS",
@@ -73,8 +73,8 @@ class Pairs {
     getTokens(token) {
         if (token == "SERO") {
             return this.SERO.tokens;
-        } else if (token == "AIPP") {
-            return this.AIPP.tokens;
+        } else if (token == "USDS") {
+            return this.USDS.tokens;
         } else {
             return [];
         }
