@@ -147,14 +147,14 @@ class Trade extends Component {
         let buyOrderItems = this.state.pairInfo.buyList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value), decimal, 2)}</div>
+                <div style={{float: 'right'}}>{decimals((item.value), decimal, 4)}</div>
             </div>
         });
 
         let sellOrderItems = this.state.pairInfo.sellList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value), decimal, 2)}</div>
+                <div style={{float: 'right'}}>{decimals((item.value), decimal, 4)}</div>
             </div>
         });
 
