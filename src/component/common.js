@@ -31,6 +31,20 @@ export function showPrice(price, decimalPlaces) {
     }
 }
 
+export function showValue(val, decimal, decimalPlaces) {
+    let num = new BigNumber(val).dividedBy(new BigNumber(10).pow(decimal));
+    if (num.comparedTo(1000000) >= 0) {
+        let text = num.dividedBy(1000000).toFixed(decimalPlaces);
+        return trimNumber(text) + "M";
+    } else if (num.comparedTo(1000) >= 0) {
+        let text = num.dividedBy(1000).toFixed(decimalPlaces);
+        return trimNumber(text) + "K";
+    } else {
+        return trimNumber(num.toFixed(decimalPlaces));
+    }
+
+}
+
 export function decimals(val, decimal, decimalPlaces) {
     let text = new BigNumber(val).dividedBy(new BigNumber(10).pow(decimal)).toFixed(decimalPlaces);
     return trimNumber(text)

@@ -9,7 +9,7 @@ import trade_price_add from '../icon/trade_price_add.png'
 import trade_price_reduce from '../icon/trade_price_reduce.png'
 
 import mAbi from './abi'
-import {decimals, showPrice, showPK, hashKey, formatDate} from "./common";
+import {decimals, showPrice, showPK, showValue, hashKey, formatDate} from "./common";
 import pairs from "./pairs";
 import MTabbar from "./tabbar";
 import language from './language'
@@ -147,14 +147,14 @@ class Trade extends Component {
         let buyOrderItems = this.state.pairInfo.buyList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value), decimal, 4)}</div>
+                <div style={{float: 'right'}}>{showValue((item.value), decimal, 4)}</div>
             </div>
         });
 
         let sellOrderItems = this.state.pairInfo.sellList.map((item, index) => {
             return <div key={index} role="listitem" className="item" style={{fontSize: '13px'}}>
                 <div style={{float: 'left'}}>{showPrice(item.price, 3)}</div>
-                <div style={{float: 'right'}}>{decimals((item.value), decimal, 4)}</div>
+                <div style={{float: 'right'}}>{showValue((item.value), decimal, 4)}</div>
             </div>
         });
 
