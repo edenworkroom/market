@@ -1,15 +1,5 @@
 class Pairs {
 
-    SERO = {
-        symbol: "SERO",
-        decimals: 18,
-        tokens: ["THE_FIRST_PRIVACY_COIN", "ASNOW", "NBHBOS", "ORIGO", "USDS", "HAPY", "SVVC", "NEWBITS", "VIRTUE",]
-    };
-    USDS = {
-        symbol: "USDS",
-        decimals: 18,
-        tokens: ["NBHBOS"]
-    }
     TOKENS = new Map([
         ["SERO", {
             symbol: "SERO",
@@ -66,38 +56,16 @@ class Pairs {
             symbol: "VRT",
             decimals: 18,
             name: "积德币"
+        }],
+        ["TTTT", {
+            symbol: "TTTT",
+            decimals: 18,
+            name: "test"
         }]
     ])
 
-
-    getTokens(token) {
-        if (token == "SERO") {
-            return this.SERO.tokens;
-        } else if (token == "USDS") {
-            return this.USDS.tokens;
-        } else {
-            return [];
-        }
-    }
-
-    isOffLine(token) {
-        return this.TOKENS.get(token).offline;
-    }
-
-    getDecimals(token) {
-        let decimals = this.TOKENS.get(token).decimals;
-        if (!decimals) {
-            throw new Error("not find " + token);
-        }
-        return decimals;
-    }
-
-    getName(token) {
-        return this.TOKENS.get(token).name;
-    }
-
-    getSymbol(token) {
-        return this.TOKENS.get(token).symbol;
+    getInfo(token) {
+        return this.TOKENS.get(token)
     }
 }
 

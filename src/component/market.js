@@ -4,7 +4,7 @@ import {createHashHistory} from 'history'
 
 import mAbi from './abi'
 import pairs from "./pairs";
-import {hashKey, showPK, showPrice} from "./common";
+import {showValue, hashKey, showPK, showPrice} from "./common";
 
 import MCarousel from './carousel'
 import language from './language'
@@ -40,36 +40,42 @@ class Market extends Component {
 
     initPairList(standard) {
         let self = this;
-        const keys = new Array();
-        const map = new Map();
-        pairs.getTokens(standard).forEach(function (token) {
-            let key = hashKey(token, standard);
-            keys.push(key);
-            map[key] = token;
-        });
+        mAbi.tokenList("2JurSKqbpUMMrpxfzHNajLec6QQ3E7XrhrYCQfDPNBxfXcsgytr5xaB63984AEBAuHRV3h5KwKazNmBTA5PYFTiDSLSeFqq2FvoaXZnCyMburKSe5wk43Yid8DWa48214BuT",
+            standard, function (tokens) {
+                console.log("tokens", tokens);
+                const pairList = new Array();
+                tokens.forEach(each => {
+                    let info = pairs.getInfo(each.token);
+                    let firstPrice = each.firstPrice;
+                    let lastPrice = each.lastPrice;
+                    let amountOfIncrease = 0;
+                    if (firstPrice != 0) {
+                        amountOfIncrease = (lastPrice - firstPrice) / firstPrice * 100;
+                    }
 
-        mAbi.lastPrice("2JurSKqbpUMMrpxfzHNajLec6QQ3E7XrhrYCQfDPNBxfXcsgytr5xaB63984AEBAuHRV3h5KwKazNmBTA5PYFTiDSLSeFqq2FvoaXZnCyMburKSe5wk43Yid8DWa48214BuT", keys, function (pairMap) {
-            const pairList = new Array();
-            keys.forEach(key => {
-                let lastPrice = 0;
-                if (pairMap[key]) {
-                    lastPrice = pairMap[key];
-                }
-                pairList.push({
-                    symbol: pairs.getSymbol(map[key]),
-                    tokenName: map[key],
-                    name: pairs.getName(map[key]),
-                    lastPrice: lastPrice,
-                    decimals: pairs.getDecimals(map[key]),
-                    standard: standard
-                })
+                    pairList.push({
+                        symbol: info.symbol,
+                        tokenName: each.token,
+                        name: info.name,
+                        lastPrice: each.lastPrice,
+                        decimals: info.decimals,
+                        standard: standard,
+                        volume: each.volume,
+                        amountOfIncrease: amountOfIncrease
+                    })
+                });
+                pairList.sort(function (a, b) {
+                    return b.volume - a.volume;
+                });
+                console.log("pairList", pairList);
+                self.setState({pairList: pairList});
             });
-            self.setState({pairList: pairList});
-        });
     }
 
     componentWillUnmount() {
-        clearInterval(this.timer);
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
     }
 
     componentDidMount() {
@@ -113,9 +119,10 @@ class Market extends Component {
     render() {
         let self = this;
         const tokenPairs = this.state.pairList.map((item, index) => {
+
             return (
                 <List.Item key={item.tokenName}>
-                    <div style={{float: "left", width: "50%"}}>
+                    <div style={{float: "left", width: "45%"}}>
                         {item.symbol} <span style={{fontSize: '14px'}}>{item.name} </span>
                         <div style={{fontSize: '10px', color: '#A8A8A8'}}>
                             {item.tokenName}
@@ -123,13 +130,19 @@ class Market extends Component {
                     </div>
                     <div style={{float: "left", width: "30%"}}>
                         {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
+                        <div style={{fontSize: '10px', color: '#A8A8A8'}}>
+                            {showValue(item.volume, item.decimals, 6)}{item.standard}
+                        </div>
                     </div>
-                    <div style={{float: "right", width: "20%", textAlign: "right"}}>
-                        <Button type="primary" inline size="small" onClick={() => {
+                    <div style={{float: "right", width: "25%", textAlign: "right"}}>
+                        <Button inline size="small" style={item.amountOfIncrease<0?{backgroundColor: '#D01919',color: 'white'}:{backgroundColor: '#21BA45',color: 'white'}} onClick={() => {
                             localStorage.setItem("TOKEN", item.tokenName);
                             localStorage.setItem("STANDARD", item.standard);
                             createHashHistory().push("/trade");
-                        }}>{language.e().home.trade}</Button>
+                        }}><span>
+                            {item.amountOfIncrease >= 0 && "+"}
+                            {showValue(item.amountOfIncrease, 0, 2)}%</span>
+                            </Button>
                     </div>
                 </List.Item>
             )
@@ -179,9 +192,9 @@ class Market extends Component {
                         }
                         }>
                             <List.Item>
-                                <div style={{float: "left", width: "50%"}}>{language.e().home.name}</div>
+                                <div style={{float: "left", width: "45%"}}>{language.e().home.name}</div>
                                 <div style={{float: "left", width: "30%"}}>{language.e().home.lastPrice}</div>
-                                <div style={{float: "right", width: "20%", textAlign: "right"}}></div>
+                                <div style={{float: "right", width: "23%", textAlign: "right"}}>24H涨跌</div>
                             </List.Item>
                             {tokenPairs}
                         </List>

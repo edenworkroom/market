@@ -7,7 +7,7 @@ import {createHashHistory} from 'history'
 
 import pairs from "./pairs";
 import mAbi from "./abi";
-import {decimals, showPK, tokenToBytes} from "./common";
+import {showValue, showPK, tokenToBytes} from "./common";
 import language from './language'
 
 class Assets extends Component {
@@ -27,15 +27,22 @@ class Assets extends Component {
         };
     }
 
+    componentWillUnmount() {
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+    }
+
     componentDidMount() {
         let self = this;
         mAbi.init.then(() => {
             mAbi.accountDetails(this.state.pk, function (account) {
                 self.setState({mainPKr: account.mainPKr})
                 self.initBalances(account.mainPKr);
-                setInterval(function () {
+
+                self.timer = setInterval(function () {
                     self.initBalances(self.state.mainPKr);
-                }, 20 * 1000)
+                }, 60 * 1000)
             });
             mAbi.initLanguage(function (_lang) {
                 language.set(_lang);
@@ -73,9 +80,9 @@ class Assets extends Component {
                 {text: <span>取消</span>},
                 {
                     text: <span>确定</span>, onPress: () => {
-                        let decmail = pairs.getDecimals(token);
+                        let info = pairs.getInfo(token);
                         console.log(this.valueInput);
-                        let value = new BigNumber(this.valueInput.value).multipliedBy(new BigNumber(10).pow(decmail));
+                        let value = new BigNumber(this.valueInput.value).multipliedBy(new BigNumber(10).pow(info.decimals));
                         if (type === "recharge") {
                             mAbi.recharge(self.state.pk, self.state.mainPKr, token, value);
                         } else {
@@ -94,8 +101,9 @@ class Assets extends Component {
             if (!this.state.balanceMap[token]) {
                 balance = [0, 0];
             }
-            let decimal = pairs.getDecimals(token);
-            let symbol = pairs.getSymbol(token);
+            let info = pairs.getInfo(token);
+            let decimal = info.decimals;
+            let symbol = info.symbol;
 
             return (<div key={index} className="ui card" style={{width: '100%'}}>
                 <div className="content">
@@ -108,27 +116,32 @@ class Assets extends Component {
                             <div className="row">
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.total}</div>
-                                    <div className="ui aligned">{decimals(balance[0] + balance[1], decimal, 3)}</div>
+                                    <div className="ui aligned">{showValue(balance[0] + balance[1], decimal, 3)}</div>
                                 </div>
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.available}</div>
-                                    <div className="ui aligned">{decimals(balance[0], decimal, 3)}</div>
+                                    <div className="ui aligned">{showValue(balance[0], decimal, 3)}</div>
                                 </div>
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.locked}</div>
-                                    <div className="ui aligned">{decimals(balance[1], decimal, 3)}</div>
+                                    <div className="ui aligned">{showValue(balance[1], decimal, 3)}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="extra content">
-                    <div className="ui three buttons">
-                        <button className="ui green basic button" disabled={pairs.isOffLine(token)}
+                    <div className="ui four buttons">
+                        <button className="ui green basic button"
                                 onClick={self.op.bind(self, token, symbol, "recharge")}>{language.e().assets.rechange}
                         </button>
                         <button className="ui green basic button"
                                 onClick={self.op.bind(self, token, symbol, "withdraw")}>{language.e().assets.withdrawal}
+                        </button>
+                        <button className="ui green basic button"
+                                onClick={() => {
+                                    createHashHistory().push("/bills/" + token);
+                                }}>账单
                         </button>
                         <button disabled={token == "SERO"} className="ui green basic button" onClick={() => {
                             if (token !== "SERO") {
