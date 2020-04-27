@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, List, Toast, WhiteSpace, WingBlank, Flex, Slider, TabBar, Button, Tabs} from "antd-mobile";
+import {Modal, List, Toast, WhiteSpace, WingBlank, Flex, Slider, TabBar, Button, Tabs, NavBar, Menu} from "antd-mobile";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
 import {createHashHistory} from 'history'
@@ -61,13 +61,17 @@ class Trade extends Component {
 
         mAbi.pairInfo(self.state.mainPKr, self.state.key, function (info) {
 
+            let base = 1e18;
+            if (info.buyList[0].price < base) {
+                base = 1e15
+            }
             let buyList = new Array();
             info.buyList.filter(function (item, index, list) {
                 return item.status == 0;
             }).sort(function (a, b) {
                 return b.price - a.price;
             }).forEach(function (item, index) {
-                let buyPrice = item.price - item.price % 1
+                let buyPrice = item.price - item.price % base
                 if (buyList.length == 0 || buyPrice != buyList[buyList.length - 1].price) {
                     buyList.push({price: buyPrice, value: item.value - item.dealValue});
                 } else {
@@ -81,7 +85,7 @@ class Trade extends Component {
             }).sort(function (a, b) {
                 return b.price - a.price;
             }).forEach(function (item, index) {
-                let sellPrice = item.price - item.price % 1
+                let sellPrice = item.price - item.price % base
                 if (sellList.length == 0 || sellPrice != sellList[sellList.length - 1].price) {
                     sellList.push({price: sellPrice, value: item.value - item.dealValue});
                 } else {
@@ -103,7 +107,6 @@ class Trade extends Component {
                 info.lastOp = volumes[volumes.length - 1].opType;
                 info.amountOfIncrease = (info.lastPrice - volumes[0].price) / volumes[0].price * 100;
             }
-            console.log("pairInfo", info, info.showSellList);
             self.setState({pairInfo: info, showBuyList: buyList.slice(0, 5), showSellList: sellList.slice(0, 5)});
         });
 
@@ -220,7 +223,7 @@ class Trade extends Component {
                 return;
             }
             orderIds.push(item.id);
-            return <div key={index} className="item" style={{paddingTop: '15px', clear: 'both'}}>
+            return <div key={index} className="item" style={{paddingTop: '15px'}}>
                 <div className="content">
                     <div className="header">
                         <Flex>
@@ -304,209 +307,214 @@ class Trade extends Component {
         return (
             <div style={{minHeight: document.documentElement.clientHeight}}>
                 <WingBlank style={{paddingTop: '2px'}}>
-                    <div>
-                        <Flex>
-                            <Flex.Item style={{flex: 67, height: "310px"}}>
-                                <Flex>
-                                    <div className="ui breadcrumb">
-                                        <div className="active section"><img src={trade_buy}
-                                                                             className="ui avatar image"/>
-                                        </div>
-                                        <div className="active section"><span
-                                            className="header">{symbol}/{this.state.pair[1]}</span>
-                                        </div>
+                    <Flex>
+                        <Flex.Item style={{flex: 67, height: "310px"}}>
+                            <Flex>
+                                <div className="ui breadcrumb">
+                                    <div className="active section"><img src={trade_buy}
+                                                                         className="ui avatar image"/>
                                     </div>
-                                </Flex>
+                                    <div className="active section"><span
+                                        className="header">{symbol}/{this.state.pair[1]}</span>
+                                    </div>
+                                </div>
+                            </Flex>
 
-                                <Flex>
-                                    <Flex.Item>
-                                        <div>
-                                            <button className={this.state.type ? "ui positive button" : "ui button"}
-                                                    style={{width: '100%'}}
-                                                    disabled={this.state.pairInfo.offline}
-                                                    onClick={() => {
-                                                        this.click(true);
-                                                    }}>{language.e().trade.buy}
-                                            </button>
-                                        </div>
-                                    </Flex.Item>
-                                    <Flex.Item>
-                                        <div>
-                                            <button
-                                                className={!this.state.type ? "ui negative button" : "ui button"}
+                            <Flex>
+                                <Flex.Item>
+                                    <div>
+                                        <button className={this.state.type ? "ui positive button" : "ui button"}
                                                 style={{width: '100%'}}
                                                 disabled={this.state.pairInfo.offline}
                                                 onClick={() => {
-                                                    this.click(false);
-                                                }}>{language.e().trade.sell}
-                                            </button>
+                                                    this.click(true);
+                                                }}>{language.e().trade.buy}
+                                        </button>
+                                    </div>
+                                </Flex.Item>
+                                <Flex.Item>
+                                    <div>
+                                        <button
+                                            className={!this.state.type ? "ui negative button" : "ui button"}
+                                            style={{width: '100%'}}
+                                            disabled={this.state.pairInfo.offline}
+                                            onClick={() => {
+                                                this.click(false);
+                                            }}>{language.e().trade.sell}
+                                        </button>
+                                    </div>
+                                </Flex.Item>
+                            </Flex>
+                            <WhiteSpace size="lg"/>
+                            <Flex>
+                                <Flex.Item>
+                                    <div className="ui right labeled input" style={{width: '100%'}}>
+                                        <input type="number" placeholder={language.e().trade.orderPrice}
+                                               style={{width: '70%'}}
+                                               ref={el => this.priceValue = el} onChange={(event) => {
+                                            let value = event.target.value;
+                                            if (value) {
+                                                value = (value.match(/^\d*(\.?\d{0,6})/g)[0]) || null
+                                                this.setState({currentPrice: value.toString()})
+                                            } else {
+                                                this.setState({currentPrice: ""});
+                                            }
+                                            this.priceValue.value = value;
+                                            this.spanValue.innerHTML = showValue(value * this.numValue.value, 0, 6);
+                                        }}/>
+                                        <div className="ui basic label label" style={{width: '30%'}}>
+                                            <Flex>
+                                                <Flex.Item style={{flex: 44}}>
+                                                    <a onClick={this.updatePrice.bind(this, 0.001)}>
+                                                        <img src={trade_price_add} className="ui avatar image"
+                                                             style={{width: '10px', height: '10px'}}/>
+                                                    </a>
+                                                </Flex.Item>
+                                                <div style={{
+                                                    marginTop: '1px',
+                                                    width: '1px',
+                                                    height: '15px',
+                                                    background: 'darkgray'
+                                                }}></div>
+                                                <Flex.Item style={{flex: 45, textAlign: 'left'}}>
+                                                    <a style={{float: 'left'}}
+                                                       onClick={this.updatePrice.bind(this, -0.001)}>
+                                                        <img src={trade_price_reduce} className="ui avatar image"
+                                                             style={{width: '10px', height: '2px'}}/>
+                                                    </a>
+                                                </Flex.Item>
+                                            </Flex>
                                         </div>
-                                    </Flex.Item>
-                                </Flex>
-                                <WhiteSpace size="lg"/>
-                                <Flex>
-                                    <Flex.Item>
-                                        <div className="ui right labeled input" style={{width: '100%'}}>
-                                            <input type="number" placeholder={language.e().trade.orderPrice}
-                                                   style={{width: '70%'}}
-                                                   ref={el => this.priceValue = el} onChange={(event) => {
-                                                let value = event.target.value;
-                                                if (value) {
-                                                    value = (value.match(/^\d*(\.?\d{0,6})/g)[0]) || null
-                                                    this.setState({currentPrice: value.toString()})
-                                                } else {
-                                                    this.setState({currentPrice: ""});
+                                    </div>
+                                    <div style={{paddingTop: '5px'}}>
+                                        <span></span>
+                                    </div>
+                                </Flex.Item>
+                            </Flex>
+                            <WhiteSpace size="lg"/>
+                            <Flex>
+                                <Flex.Item>
+                                    <div className="ui right labeled input" style={{width: '100%'}}>
+                                        <input type="number" ref={el => this.numValue = el}
+                                               placeholder={language.e().trade.num}
+                                               style={{width: '70%'}}
+                                               onChange={(event) => {
+                                                   let value = event.target.value;
+                                                   if (value) {
+                                                       value = (value.match(/^\d*(\.?\d{0,3})/g)[0]) || null
+                                                       this.setState({value: value.toString()})
+                                                   } else {
+                                                       this.setState({value: ""});
+                                                   }
+                                                   this.numValue.value = value;
+                                                   this.spanValue.innerHTML = showValue(value * Number(this.priceValue.value), 0, 6);
+                                               }}/>
+                                        <div className="ui basic label label"
+                                             style={{width: '30%'}}>{symbol}</div>
+                                    </div>
+                                    <div style={{paddingTop: '5px', fontSize: '12px', color: '#A8A8A8'}}>
+                                        {
+                                            this.state.type ?
+                                                <span>{language.e().trade.available} {this.balanceOf(this.state.pair[1])} {this.state.pair[1]}</span> :
+                                                <span>{language.e().trade.available} {this.balanceOf(this.state.pair[0])} {symbol}</span>
+                                        }
+                                    </div>
+
+                                </Flex.Item>
+
+                            </Flex>
+                            <Flex>
+                                <Flex.Item>
+                                    <div style={{padding: 15}}>
+                                        <Slider
+                                            defaultValue={0}
+                                            ref={el => this.slider = el}
+                                            min={0}
+                                            max={100}
+                                            marks={{0: "0%", 25: "25%", 50: "50%", 75: "75", 100: "100%"}}
+
+                                            onAfterChange={(val) => {
+                                                if (val == 0) {
+                                                    return;
                                                 }
-                                                this.priceValue.value = value;
-                                                this.spanValue.innerHTML = showValue(value * this.numValue.value, 0, 6);
-                                            }}/>
-                                            <div className="ui basic label label" style={{width: '30%'}}>
-                                                <Flex>
-                                                    <Flex.Item style={{flex: 44}}>
-                                                        <a onClick={this.updatePrice.bind(this, 0.001)}>
-                                                            <img src={trade_price_add} className="ui avatar image"
-                                                                 style={{width: '10px', height: '10px'}}/>
-                                                        </a>
-                                                    </Flex.Item>
-                                                    <div style={{
-                                                        marginTop: '1px',
-                                                        width: '1px',
-                                                        height: '15px',
-                                                        background: 'darkgray'
-                                                    }}></div>
-                                                    <Flex.Item style={{flex: 45, textAlign: 'left'}}>
-                                                        <a style={{float:'left'}} onClick={this.updatePrice.bind(this, -0.001)}>
-                                                            <img src={trade_price_reduce} className="ui avatar image"
-                                                                 style={{width: '10px', height: '2px'}}/>
-                                                        </a>
-                                                    </Flex.Item>
-                                                </Flex>
-                                            </div>
-                                        </div>
-                                        <div style={{paddingTop: '5px'}}>
-                                            <span></span>
-                                        </div>
-                                    </Flex.Item>
-                                </Flex>
-                                <WhiteSpace size="lg"/>
-                                <Flex>
-                                    <Flex.Item>
-                                        <div className="ui right labeled input" style={{width: '100%'}}>
-                                            <input type="number" ref={el => this.numValue = el}
-                                                   placeholder={language.e().trade.num}
-                                                   style={{width: '70%'}}
-                                                   onChange={(event) => {
-                                                       let value = event.target.value;
-                                                       if (value) {
-                                                           value = (value.match(/^\d*(\.?\d{0,3})/g)[0]) || null
-                                                           this.setState({value: value.toString()})
-                                                       } else {
-                                                           this.setState({value: ""});
-                                                       }
-                                                       this.numValue.value = value;
-                                                       this.spanValue.innerHTML = showValue(value * Number(this.priceValue.value), 0, 6);
-                                                   }}/>
-                                            <div className="ui basic label label"
-                                                 style={{width: '30%'}}>{symbol}</div>
-                                        </div>
-                                        <div style={{paddingTop: '5px', fontSize: '12px', color: '#A8A8A8'}}>
-                                            {
-                                                this.state.type ?
-                                                    <span>{language.e().trade.available} {this.balanceOf(this.state.pair[1])} {this.state.pair[1]}</span> :
-                                                    <span>{language.e().trade.available} {this.balanceOf(this.state.pair[0])} {symbol}</span>
-                                            }
-                                        </div>
-
-                                    </Flex.Item>
-
-                                </Flex>
-                                <Flex>
-                                    <Flex.Item>
-                                        <div style={{padding: 15}}>
-                                            <Slider
-                                                defaultValue={0}
-                                                ref={el => this.slider = el}
-                                                min={0}
-                                                max={100}
-                                                marks={{0: "0%", 25: "25%", 50: "50%", 75: "75", 100: "100%"}}
-
-                                                onAfterChange={(val) => {
-                                                    if (val == 0) {
-                                                        return;
+                                                let value = 0;
+                                                if (this.state.type) {
+                                                    if (!this.priceValue.value) {
+                                                        this.slider.value = 0;
+                                                        return
                                                     }
-                                                    let value = 0;
-                                                    if (this.state.type) {
-                                                        if (!this.priceValue.value) {
-                                                            this.slider.value = 0;
-                                                            return
-                                                        }
-                                                        let balance = this.balanceOf(this.state.pair[1])
-                                                        value = new BigNumber(balance * val / 100 / this.priceValue.value).toFixed(3);
-                                                    } else {
-                                                        let balance = this.balanceOf(this.state.pair[0]);
-                                                        value = new BigNumber(balance * val / 100).toFixed(3);
-                                                    }
+                                                    let balance = this.balanceOf(this.state.pair[1])
+                                                    value = new BigNumber(balance * val / 100 / this.priceValue.value).toFixed(3);
+                                                } else {
+                                                    let balance = this.balanceOf(this.state.pair[0]);
+                                                    value = new BigNumber(balance * val / 100).toFixed(3);
+                                                }
 
-                                                    this.numValue.value = value;
-                                                    this.spanValue.innerHTML = showValue(Number(value) * Number(this.priceValue.value), 0, 6);
-                                                }}
-                                            />
-                                        </div>
-                                    </Flex.Item>
-                                </Flex>
-                                <WhiteSpace size="lg"/>
+                                                this.numValue.value = value;
+                                                this.spanValue.innerHTML = showValue(Number(value) * Number(this.priceValue.value), 0, 6);
+                                            }}
+                                        />
+                                    </div>
+                                </Flex.Item>
+                            </Flex>
+                            <WhiteSpace size="lg"/>
+                            <Flex>
+                                <Flex.Item>
+
+                                    <div>
+                                        {language.e().trade.amount}:<span style={{padding: '0px 5px'}}
+                                                                          ref={el => this.spanValue = el}>0</span>{this.state.pair[1]}
+                                    </div>
+                                    <div style={{paddingTop: '5px'}}>
+                                        {
+
+                                            this.state.type ? <button className="ui positive button"
+                                                                      style={{width: '100%'}}
+                                                                      disabled={this.state.pairInfo.offline}
+                                                                      onClick={this.submit.bind(this)}>{language.e().trade.buy}</button> :
+                                                <button className="ui negative button"
+                                                        disabled={this.state.pairInfo.offline}
+                                                        style={{width: '100%'}}
+                                                        onClick={this.submit.bind(this)}>{language.e().trade.sell}</button>
+                                        }
+                                    </div>
+                                </Flex.Item>
+                            </Flex>
+                        </Flex.Item>
+                        {/*<Flex.Item style={{flex: 1, height: "310px"}}></Flex.Item>*/}
+                        <Flex.Item style={{flex: 33, height: "310px", paddingLeft: '8px', paddingRight: '2px'}}>
+                            <Flex>
+                                <Flex.Item
+                                    style={{textAlign: 'left'}}>{language.e().trade.price}</Flex.Item>
+                                <Flex.Item style={{textAlign: 'right'}}>{language.e().trade.num}</Flex.Item>
+                            </Flex>
+                            <div role="list" className="ui list" style={{color: '#D01919', fontSize: '13px'}}>
+                                {sellOrderItems}
+                            </div>
+                            <div>
                                 <Flex>
-                                    <Flex.Item>
-
-                                        <div>
-                                            {language.e().trade.amount}:<span style={{padding: '0px 5px'}}
-                                                                              ref={el => this.spanValue = el}>0</span>{this.state.pair[1]}
-                                        </div>
-                                        <div style={{paddingTop: '5px'}}>
-                                            {
-
-                                                this.state.type ? <button className="ui positive button"
-                                                                          style={{width: '100%'}}
-                                                                          disabled={this.state.pairInfo.offline}
-                                                                          onClick={this.submit.bind(this)}>{language.e().trade.buy}</button> :
-                                                    <button className="ui negative button"
-                                                            disabled={this.state.pairInfo.offline}
-                                                            style={{width: '100%'}}
-                                                            onClick={this.submit.bind(this)}>{language.e().trade.sell}</button>
-                                            }
-                                        </div>
-                                    </Flex.Item>
-                                </Flex>
-                            </Flex.Item>
-                            {/*<Flex.Item style={{flex: 1, height: "310px"}}></Flex.Item>*/}
-                            <Flex.Item style={{flex: 33, height: "310px",paddingLeft:'8px',paddingRight:'2px'}}>
-                                <Flex>
-                                    <Flex.Item
-                                        style={{textAlign: 'left'}}>{language.e().trade.price}</Flex.Item>
-                                    <Flex.Item style={{textAlign: 'right'}}>{language.e().trade.num}</Flex.Item>
-                                </Flex>
-                                <div role="list" className="ui list" style={{color: '#D01919', fontSize: '13px'}}>
-                                    {sellOrderItems}
-                                </div>
-                                <div>
-                                    <Flex>
-                                        <Flex.Item style={{textAlign: 'left'}}><span
-                                            style={this.state.pairInfo.lastOp == 0 ? {color: '#D01919'} : {color: '#21BA45'}}>{showPrice(this.state.pairInfo.lastPrice, 3)}</span></Flex.Item>
-                                        <Flex.Item style={{textAlign: 'right'}}><span>
+                                    <Flex.Item style={{textAlign: 'left'}}><span
+                                        style={this.state.pairInfo.lastOp == 0 ? {
+                                            color: '#D01919',
+                                            fontSize: '13px'
+                                        } : {
+                                            color: '#21BA45',
+                                            fontSize: '13px'
+                                        }}>{showPrice(this.state.pairInfo.lastPrice, 3)}</span></Flex.Item>
+                                    <Flex.Item style={{textAlign: 'right'}}><span>
                                         {this.state.pairInfo.amountOfIncrease >= 0 && "+"}
-                                            {showValue(this.state.pairInfo.amountOfIncrease, 0, 2)}%</span></Flex.Item>
-                                    </Flex>
-                                </div>
+                                        {showValue(this.state.pairInfo.amountOfIncrease, 0, 2)}%</span></Flex.Item>
+                                </Flex>
+                            </div>
 
-                                <div role="list" className="ui list" style={{color: '#21BA45'}}>
-                                    {buyOrderItems}
-                                </div>
-                            </Flex.Item>
-                        </Flex>
-                    </div>
+                            <div role="list" className="ui list" style={{color: '#21BA45', fontSize: '13px'}}>
+                                {buyOrderItems}
+                            </div>
+                        </Flex.Item>
+                    </Flex>
                 </WingBlank>
                 <WhiteSpace size="lg"/>
-                <WingBlank style={{paddingTop: '15px', paddingBottom: '100px', clear: 'both'}}>
+                <WingBlank style={{paddingTop: '15px', paddingBottom: '100px'}}>
                     <div>
                                 <span><a onClick={() => {
                                     createHashHistory().push("/orders");

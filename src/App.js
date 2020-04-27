@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import './App.css';
-import {List, TabBar, WingBlank} from "antd-mobile";
 
 import {HashRouter as Router, Switch, Route} from 'react-router-dom';
 import Market from "./component/market";
