@@ -51,13 +51,13 @@ class BillList extends Component {
                 opText = language.e().trade.sell;
             }
             return <List.Item key={index}>
-                <Flex>
+                <Flex style={{fontSize: '12px'}}>
                     <Flex.Item style={{flex: 18}}>{formatDate(new Date(item.timestamp * 1000))}</Flex.Item>
                     <Flex.Item style={{flex: 5}}>{opText}</Flex.Item>
                     <Flex.Item style={{
                         flex: 17,
                         textAlign: 'right',
-                        paddingRight:'5px'
+                        paddingRight: '2px'
                     }}>{showValue(item.value, decimals, 2)} {this.state.token}</Flex.Item>
                 </Flex>
             </List.Item>

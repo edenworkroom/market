@@ -479,7 +479,7 @@ class Trade extends Component {
                                 </Flex>
                             </Flex.Item>
                             {/*<Flex.Item style={{flex: 1, height: "310px"}}></Flex.Item>*/}
-                            <Flex.Item style={{flex: 33, height: "310px",paddingLeft:'8px',paddingRight:'8px'}}>
+                            <Flex.Item style={{flex: 33, height: "310px",paddingLeft:'8px',paddingRight:'2px'}}>
                                 <Flex>
                                     <Flex.Item
                                         style={{textAlign: 'left'}}>{language.e().trade.price}</Flex.Item>
