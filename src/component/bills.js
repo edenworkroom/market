@@ -52,12 +52,13 @@ class BillList extends Component {
             }
             return <List.Item key={index}>
                 <Flex>
-                    <Flex.Item style={{flex: 2}}>{formatDate(new Date(item.timestamp * 1000))}</Flex.Item>
-                    <Flex.Item style={{flex: 0.5}}>{opText}</Flex.Item>
+                    <Flex.Item style={{flex: 18}}>{formatDate(new Date(item.timestamp * 1000))}</Flex.Item>
+                    <Flex.Item style={{flex: 5}}>{opText}</Flex.Item>
                     <Flex.Item style={{
-                        flex: 1.5,
-                        textAlign: 'right'
-                    }}>{showValue(item.value, decimals, 6)} {this.state.token}</Flex.Item>
+                        flex: 17,
+                        textAlign: 'right',
+                        paddingRight:'5px'
+                    }}>{showValue(item.value, decimals, 2)} {this.state.token}</Flex.Item>
                 </Flex>
             </List.Item>
         });

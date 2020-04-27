@@ -306,7 +306,7 @@ class Trade extends Component {
                 <WingBlank style={{paddingTop: '2px'}}>
                     <div>
                         <Flex>
-                            <Flex.Item style={{flex: 65, height: "310px"}}>
+                            <Flex.Item style={{flex: 67, height: "310px"}}>
                                 <Flex>
                                     <div className="ui breadcrumb">
                                         <div className="active section"><img src={trade_buy}
@@ -478,8 +478,8 @@ class Trade extends Component {
                                     </Flex.Item>
                                 </Flex>
                             </Flex.Item>
-                            <Flex.Item style={{flex: 3, height: "310px"}}></Flex.Item>
-                            <Flex.Item style={{flex: 32, height: "310px"}}>
+                            {/*<Flex.Item style={{flex: 1, height: "310px"}}></Flex.Item>*/}
+                            <Flex.Item style={{flex: 33, height: "310px",paddingLeft:'8px',paddingRight:'8px'}}>
                                 <Flex>
                                     <Flex.Item
                                         style={{textAlign: 'left'}}>{language.e().trade.price}</Flex.Item>
