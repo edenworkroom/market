@@ -368,14 +368,12 @@ class Trade extends Component {
                                                                  style={{width: '10px', height: '10px'}}/>
                                                         </a>
                                                     </Flex.Item>
-                                                    <Flex.Item style={{flex: 5, textAlign: 'center'}}>
-                                                        <div style={{
-                                                            marginTop: '1px',
-                                                            width: '1px',
-                                                            height: '15px',
-                                                            background: 'darkgray'
-                                                        }}></div>
-                                                    </Flex.Item>
+                                                    <div style={{
+                                                        marginTop: '1px',
+                                                        width: '1px',
+                                                        height: '15px',
+                                                        background: 'darkgray'
+                                                    }}></div>
                                                     <Flex.Item style={{flex: 45, textAlign: 'left'}}>
                                                         <a style={{float:'left'}} onClick={this.updatePrice.bind(this, -0.001)}>
                                                             <img src={trade_price_reduce} className="ui avatar image"
