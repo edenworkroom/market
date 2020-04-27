@@ -23,7 +23,7 @@ class Trade extends Component {
         let standard = localStorage.getItem("STANDARD");
 
         if (!token || !standard) {
-            token = pairs.SERO.tokens[0];
+            token = "TTTT";
             standard = "SERO";
         }
 
@@ -38,10 +38,10 @@ class Trade extends Component {
                 buyList: [],
                 sellList: [],
                 lastPrice: 0.000,
+                offline:false
             },
-            showBuyList:[],
-            showSellList:[],
-            isOffLine: false,
+            showBuyList: [],
+            showSellList: [],
             lastPrice: 0,
             lastOp: 0,
             amountOfIncrease: 0,
@@ -67,7 +67,7 @@ class Trade extends Component {
             }).sort(function (a, b) {
                 return b.price - a.price;
             }).forEach(function (item, index) {
-                let buyPrice = item.price - item.price%1
+                let buyPrice = item.price - item.price % 1
                 if (buyList.length == 0 || buyPrice != buyList[buyList.length - 1].price) {
                     buyList.push({price: buyPrice, value: item.value - item.dealValue});
                 } else {
@@ -81,7 +81,7 @@ class Trade extends Component {
             }).sort(function (a, b) {
                 return b.price - a.price;
             }).forEach(function (item, index) {
-                let sellPrice = item.price - item.price%1
+                let sellPrice = item.price - item.price % 1
                 if (sellList.length == 0 || sellPrice != sellList[sellList.length - 1].price) {
                     sellList.push({price: sellPrice, value: item.value - item.dealValue});
                 } else {
@@ -306,7 +306,7 @@ class Trade extends Component {
                 <WingBlank style={{paddingTop: '2px'}}>
                     <div>
                         <Flex>
-                            <Flex.Item style={{flex: 65,height:"310px"}}>
+                            <Flex.Item style={{flex: 65, height: "310px"}}>
                                 <Flex>
                                     <div className="ui breadcrumb">
                                         <div className="active section"><img src={trade_buy}
@@ -323,7 +323,7 @@ class Trade extends Component {
                                         <div>
                                             <button className={this.state.type ? "ui positive button" : "ui button"}
                                                     style={{width: '100%'}}
-                                                    disabled={this.state.isOffLines}
+                                                    disabled={this.state.pairInfo.offline}
                                                     onClick={() => {
                                                         this.click(true);
                                                     }}>{language.e().trade.buy}
@@ -335,7 +335,7 @@ class Trade extends Component {
                                             <button
                                                 className={!this.state.type ? "ui negative button" : "ui button"}
                                                 style={{width: '100%'}}
-                                                disabled={this.state.isOffLines}
+                                                disabled={this.state.pairInfo.offline}
                                                 onClick={() => {
                                                     this.click(false);
                                                 }}>{language.e().trade.sell}
@@ -352,7 +352,7 @@ class Trade extends Component {
                                                    ref={el => this.priceValue = el} onChange={(event) => {
                                                 let value = event.target.value;
                                                 if (value) {
-                                                    value = (value.match(/^\d*(\.?\d{0,18})/g)[0]) || null
+                                                    value = (value.match(/^\d*(\.?\d{0,6})/g)[0]) || null
                                                     this.setState({currentPrice: value.toString()})
                                                 } else {
                                                     this.setState({currentPrice: ""});
@@ -443,14 +443,14 @@ class Trade extends Component {
                                                             return
                                                         }
                                                         let balance = this.balanceOf(this.state.pair[1])
-                                                        value = balance * val / 100 / this.priceValue.value;
+                                                        value = new BigNumber(balance * val / 100 / this.priceValue.value).toFixed(3);
                                                     } else {
                                                         let balance = this.balanceOf(this.state.pair[0]);
-                                                        value = balance * val / 100;
+                                                        value = new BigNumber(balance * val / 100).toFixed(3);
                                                     }
 
                                                     this.numValue.value = value;
-                                                    this.spanValue.innerHTML = showValue(value * Number(this.priceValue.value), 0, 6);
+                                                    this.spanValue.innerHTML = showValue(Number(value) * Number(this.priceValue.value), 0, 6);
                                                 }}
                                             />
                                         </div>
@@ -469,10 +469,10 @@ class Trade extends Component {
 
                                                 this.state.type ? <button className="ui positive button"
                                                                           style={{width: '100%'}}
-                                                                          disabled={this.state.isOffLine}
+                                                                          disabled={this.state.pairInfo.offline}
                                                                           onClick={this.submit.bind(this)}>{language.e().trade.buy}</button> :
                                                     <button className="ui negative button"
-                                                            disabled={this.state.isOffLine}
+                                                            disabled={this.state.pairInfo.offline}
                                                             style={{width: '100%'}}
                                                             onClick={this.submit.bind(this)}>{language.e().trade.sell}</button>
                                             }
@@ -480,8 +480,8 @@ class Trade extends Component {
                                     </Flex.Item>
                                 </Flex>
                             </Flex.Item>
-                            <Flex.Item style={{flex: 3,height:"310px"}}></Flex.Item>
-                            <Flex.Item style={{flex: 32,height:"310px"}}>
+                            <Flex.Item style={{flex: 3, height: "310px"}}></Flex.Item>
+                            <Flex.Item style={{flex: 32, height: "310px"}}>
                                 <Flex>
                                     <Flex.Item
                                         style={{textAlign: 'left'}}>{language.e().trade.price}</Flex.Item>
@@ -509,26 +509,29 @@ class Trade extends Component {
                 </WingBlank>
                 <WhiteSpace size="lg"/>
                 <WingBlank style={{paddingTop: '15px', paddingBottom: '100px', clear: 'both'}}>
-                    <Tabs tabs={[{title: language.e().trade.openOrders, sub: '0'}, {title: language.e().trade.depth, sub: '1'}]}
-                          initialPage={0}
-                    >
-                        <div>
+                    <div>
                                 <span><a onClick={() => {
                                     createHashHistory().push("/orders");
                                 }}>{language.e().trade.all}</a></span>
-                            {myOrders}
-                            {
-                                orderIds.length > 0 && <div className="item" style={{paddingTop: '15px'}}>
-                                    <button className="ui fluid button"
-                                            onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>
-                                </div>
-                            }
-                        </div>
-                        <div>
-                            <Depthmap sellList={this.state.pairInfo.sellList} buyList={this.state.pairInfo.buyList}/>
-                        </div>
-
-                    </Tabs>
+                        {myOrders}
+                        {
+                            orderIds.length > 0 && <div className="item" style={{paddingTop: '15px'}}>
+                                <button className="ui fluid button"
+                                        onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>
+                            </div>
+                        }
+                    </div>
+                    {/*<Tabs tabs={[{title: language.e().trade.openOrders, sub: '0'}, {*/}
+                    {/*    title: language.e().trade.depth,*/}
+                    {/*    sub: '1'*/}
+                    {/*}]}*/}
+                    {/*      initialPage={0}*/}
+                    {/*>*/}
+                    {/*    */}
+                    {/*    <div>*/}
+                    {/*        <Depthmap sellList={this.state.pairInfo.sellList} buyList={this.state.pairInfo.buyList}/>*/}
+                    {/*    </div>*/}
+                    {/*</Tabs>*/}
 
                 </WingBlank>
                 <MTabbar selectedTab="trade"/>

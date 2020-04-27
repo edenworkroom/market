@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, WingBlank} from 'antd-mobile';
+import {Modal, Radio, WingBlank} from 'antd-mobile';
 import MTabbar from "./tabbar";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
@@ -23,6 +23,7 @@ class Assets extends Component {
             pk: localStorage.getItem("PK"),
             mainPKr: "",
             tokens: tokens,
+            filter: false,
             balanceMap: {}
         };
     }
@@ -102,8 +103,16 @@ class Assets extends Component {
                 balance = [0, 0];
             }
             let info = pairs.getInfo(token);
-            let decimal = info.decimals;
+            let decimals = info.decimals;
             let symbol = info.symbol;
+
+            if (self.state.filter) {
+                let temp = {};
+                let val = new BigNumber(balance[0]).dividedBy(new BigNumber(10).pow(decimals));
+                if (val.isZero()) {
+                    return
+                }
+            }
 
             return (<div key={index} className="ui card" style={{width: '100%'}}>
                 <div className="content">
@@ -116,15 +125,15 @@ class Assets extends Component {
                             <div className="row">
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.total}</div>
-                                    <div className="ui aligned">{showValue(balance[0] + balance[1], decimal, 3)}</div>
+                                    <div className="ui aligned">{showValue(balance[0] + balance[1], decimals, 3)}</div>
                                 </div>
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.available}</div>
-                                    <div className="ui aligned">{showValue(balance[0], decimal, 3)}</div>
+                                    <div className="ui aligned">{showValue(balance[0], decimals, 3)}</div>
                                 </div>
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.locked}</div>
-                                    <div className="ui aligned">{showValue(balance[1], decimal, 3)}</div>
+                                    <div className="ui aligned">{showValue(balance[1], decimals, 3)}</div>
                                 </div>
                             </div>
                         </div>
@@ -158,6 +167,12 @@ class Assets extends Component {
         return (
             <div>
                 <WingBlank>
+                    <div style={{textAlign: 'right', paddingRight: '5px', paddingTop: '5px'}}>
+                        <label><input className="my-radio" checked={this.state.filter} type="radio" onClick={() => {
+                            this.setState({filter: !this.state.filter});
+                            this.initBalances(this.state.mainPKr);
+                        }}/><span>&nbsp;&nbsp;隐藏小额资产</span> </label>
+                    </div>
                     <div className="ui cards" style={{paddingTop: '15px', paddingBottom: '40px'}}>
                         {/*<div className="ui card green" style={{width: '100%'}}>*/}
                         {/*    <div className="content">*/}
