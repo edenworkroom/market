@@ -38,7 +38,7 @@ class Trade extends Component {
                 buyList: [],
                 sellList: [],
                 lastPrice: 0.000,
-                offline:false
+                offline: false
             },
             showBuyList: [],
             showSellList: [],
@@ -362,13 +362,13 @@ class Trade extends Component {
                                             }}/>
                                             <div className="ui basic label label" style={{width: '30%'}}>
                                                 <Flex>
-                                                    <Flex.Item style={{flex: 4, textAlign: 'center'}}>
+                                                    <Flex.Item style={{flex: 44}}>
                                                         <a onClick={this.updatePrice.bind(this, 0.001)}>
                                                             <img src={trade_price_add} className="ui avatar image"
                                                                  style={{width: '10px', height: '10px'}}/>
                                                         </a>
                                                     </Flex.Item>
-                                                    <Flex.Item style={{flex: 1, textAlign: 'center'}}>
+                                                    <Flex.Item style={{flex: 5, textAlign: 'center'}}>
                                                         <div style={{
                                                             marginTop: '1px',
                                                             width: '1px',
@@ -376,8 +376,8 @@ class Trade extends Component {
                                                             background: 'darkgray'
                                                         }}></div>
                                                     </Flex.Item>
-                                                    <Flex.Item style={{flex: 4, textAlign: 'center'}}>
-                                                        <a onClick={this.updatePrice.bind(this, -0.001)}>
+                                                    <Flex.Item style={{flex: 45, textAlign: 'left'}}>
+                                                        <a style={{float:'left'}} onClick={this.updatePrice.bind(this, -0.001)}>
                                                             <img src={trade_price_reduce} className="ui avatar image"
                                                                  style={{width: '10px', height: '2px'}}/>
                                                         </a>
