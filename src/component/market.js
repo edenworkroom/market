@@ -128,13 +128,13 @@ class Market extends Component {
                             {item.tokenName}
                         </div>
                     </div>
-                    <div style={{float: "left", width: "30%"}}>
+                    <div style={{float: "left", width: "28%"}}>
                         {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
                         <div style={{fontSize: '10px', color: '#A8A8A8'}}>
                             {showValue(item.volume, item.decimals, 6)}{item.standard}
                         </div>
                     </div>
-                    <div style={{float: "right", width: "25%", textAlign: "right"}}>
+                    <div style={{float: "right", width: "27%", textAlign: "right"}}>
                         <Button inline size="small" style={item.amountOfIncrease<0?{backgroundColor: '#D01919',color: 'white'}:{backgroundColor: '#21BA45',color: 'white'}} onClick={() => {
                             localStorage.setItem("TOKEN", item.tokenName);
                             localStorage.setItem("STANDARD", item.standard);

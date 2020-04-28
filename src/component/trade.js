@@ -61,6 +61,7 @@ class Trade extends Component {
 
         mAbi.pairInfo(self.state.mainPKr, self.state.key, function (info) {
 
+            console.log("pairInfo", info);
             let base = 1e18;
             if (info.buyList[0].price < base) {
                 base = 1e15
@@ -501,7 +502,7 @@ class Trade extends Component {
                                             color: '#21BA45',
                                             fontSize: '13px'
                                         }}>{showPrice(this.state.pairInfo.lastPrice, 3)}</span></Flex.Item>
-                                    <Flex.Item style={{textAlign: 'right'}}><span>
+                                    <Flex.Item style={{textAlign: 'right',paddingRight:'3px'}}><span>
                                         {this.state.pairInfo.amountOfIncrease >= 0 && "+"}
                                         {showValue(this.state.pairInfo.amountOfIncrease, 0, 2)}%</span></Flex.Item>
                                 </Flex>
