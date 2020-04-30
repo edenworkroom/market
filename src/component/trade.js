@@ -204,7 +204,7 @@ class Trade extends Component {
                 <Flex key={index}>
                     <Flex.Item style={{textAlign: 'left'}}>{showPrice(item.price, 18)}</Flex.Item>
                     <Flex.Item
-                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 3)}</Flex.Item>
+                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 5)}</Flex.Item>
                 </Flex>)
         });
 
@@ -213,7 +213,7 @@ class Trade extends Component {
                 <Flex key={index}>
                     <Flex.Item style={{textAlign: 'left'}}>{showPrice(item.price, 18)}</Flex.Item>
                     <Flex.Item
-                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 3)}</Flex.Item>
+                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 5)}</Flex.Item>
                 </Flex>)
         });
 
