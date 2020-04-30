@@ -12,8 +12,6 @@ import mAbi from './abi'
 import {showPrice, showPK, showValueP, showValue, hashKey, formatDate} from "./common";
 import MTabbar from "./tabbar";
 import language from './language'
-import pairs from "./pairs";
-import Depthmap from "./depthmap";
 
 class Trade extends Component {
     constructor(props) {
@@ -60,10 +58,8 @@ class Trade extends Component {
         });
 
         mAbi.pairInfo(self.state.mainPKr, self.state.key, function (info) {
-
-            console.log("pairInfo", info);
             let base = 1e18;
-            if (info.buyList[0].price < base) {
+            if (info.buyList.length > 0 && info.buyList[0].price < base) {
                 base = 1e15
             }
             let buyList = new Array();
@@ -84,7 +80,7 @@ class Trade extends Component {
             info.sellList.filter(function (item, index, list) {
                 return item.status == 0;
             }).sort(function (a, b) {
-                return b.price - a.price;
+                return a.price - b.price;
             }).forEach(function (item, index) {
                 let sellPrice = item.price - item.price % base
                 if (sellList.length == 0 || sellPrice != sellList[sellList.length - 1].price) {
@@ -108,7 +104,11 @@ class Trade extends Component {
                 info.lastOp = volumes[volumes.length - 1].opType;
                 info.amountOfIncrease = (info.lastPrice - volumes[0].price) / volumes[0].price * 100;
             }
-            self.setState({pairInfo: info, showBuyList: buyList.slice(0, 5), showSellList: sellList.slice(0, 5)});
+            self.setState({
+                pairInfo: info,
+                showBuyList: buyList.slice(0, 5),
+                showSellList: sellList.slice(0, 5).reverse()
+            });
         });
 
         mAbi.orders(mainPkr, this.state.key, function (orders) {
@@ -147,24 +147,24 @@ class Trade extends Component {
     }
 
     submit() {
-        if (this.state.isOffLine) {
+        if (this.state.pairInfo.offline) {
             return;
         }
-        let price = Number(this.priceValue.value) * 1e18;
-        console.log("price", price);
-        let value = new BigNumber(this.numValue.value).multipliedBy(new BigNumber(10).pow(pairs.getInfo(this.state.pair[0]).decimals));
-        if (price === 0 || value.isZero()) {
+        let decimals = localStorage.getItem("D_" + this.state.pair[0]);
+        let price = new BigNumber(this.priceValue.value).multipliedBy(1e18);
+        let value = new BigNumber(this.numValue.value).multipliedBy(new BigNumber(10).pow(decimals));
+        if (price.isZero() || value.isZero()) {
             return;
         }
 
         if (this.state.type) {
-            if (Number(this.numValue.value) * price / 1e18 > Number(this.balanceOf(this.state.pair[1]))) {
+            if (price.multipliedBy(this.numValue.value).dividedBy(1e18).toNumber() > Number(this.balanceOf(this.state.pair[1]))) {
                 Modal.alert('', '余额不足，请充值', [
                     {text: 'OK', onPress: () => console.log('ok')},
                 ])
                 return;
             }
-            mAbi.buy(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
+            mAbi.buy(this.state.pk, this.state.mainPKr, this.state.key, price.toNumber(), value.toFixed(0));
         } else {
             if (Number(this.numValue.value) > Number(this.balanceOf(this.state.pair[0]))) {
                 Modal.alert('', '余额不足，请充值', [
@@ -172,7 +172,7 @@ class Trade extends Component {
                 ])
                 return;
             }
-            mAbi.sell(this.state.pk, this.state.mainPKr, this.state.key, price, value.toFixed(0));
+            mAbi.sell(this.state.pk, this.state.mainPKr, this.state.key, price.toNumber(), value.toFixed(0));
         }
     }
 
@@ -185,7 +185,8 @@ class Trade extends Component {
 
     balanceOf(token) {
         if (this.state.balances[token]) {
-            return showValue(this.state.balances[token][0], pairs.getInfo(token).decimals, 9);
+            let decimals = localStorage.getItem("D_" + token);
+            return showValue(this.state.balances[token][0], decimals, 9);
         }
         return 0;
     }
@@ -197,16 +198,13 @@ class Trade extends Component {
 
     render() {
         let self = this;
-
-        let info = pairs.getInfo(this.state.pair[0]);
-        let decimals = info.decimals;
-        let symbol = info.symbol;
-
+        let decmails = localStorage.getItem("D_" + self.state.pair[0])
         let buyOrderItems = this.state.showBuyList.map((item, index) => {
             return (
                 <Flex key={index}>
                     <Flex.Item style={{textAlign: 'left'}}>{showPrice(item.price, 18)}</Flex.Item>
-                    <Flex.Item style={{textAlign: 'right'}}>{showValueP((item.value), decimals, 3)}</Flex.Item>
+                    <Flex.Item
+                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 3)}</Flex.Item>
                 </Flex>)
         });
 
@@ -214,7 +212,8 @@ class Trade extends Component {
             return (
                 <Flex key={index}>
                     <Flex.Item style={{textAlign: 'left'}}>{showPrice(item.price, 18)}</Flex.Item>
-                    <Flex.Item style={{textAlign: 'right'}}>{showValueP((item.value), decimals, 3)}</Flex.Item>
+                    <Flex.Item
+                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 3)}</Flex.Item>
                 </Flex>)
         });
 
@@ -246,7 +245,7 @@ class Trade extends Component {
                                     paddingLeft: '3px',
                                     fontSize: '18px',
                                     fontWeight: 'bold'
-                                }}>{symbol}/{self.state.pair[1]}</span>
+                                }}>{this.state.pair[0]}/{self.state.pair[1]}</span>
                                 <span style={{
                                     fontSize: '15px',
                                     paddingLeft: '5px'
@@ -286,17 +285,17 @@ class Trade extends Component {
                                     <div style={{
                                         color: '#A8A8A8',
                                         fontSize: '13px',
-                                    }}>{language.e().trade.total}({symbol})
+                                    }}>{language.e().trade.total}({this.state.pair[0]})
                                     </div>
-                                    <div>{showValue(item.value, decimals, 3)}</div>
+                                    <div>{showValue(item.value, decmails, 3)}</div>
                                 </Flex.Item>
                                 <Flex.Item style={{textAlign: 'right'}}>
                                     <div style={{
                                         color: '#A8A8A8',
                                         fontSize: '13px',
-                                    }}>{language.e().trade.volume}({symbol})
+                                    }}>{language.e().trade.volume}({this.state.pair[0]})
                                     </div>
-                                    <div>{showValue(item.dealValue, decimals, 3)}</div>
+                                    <div>{showValue(item.dealValue, decmails, 3)}</div>
                                 </Flex.Item>
                             </Flex>
                         </div>
@@ -316,7 +315,7 @@ class Trade extends Component {
                                                                          className="ui avatar image"/>
                                     </div>
                                     <div className="active section"><span
-                                        className="header">{symbol}/{this.state.pair[1]}</span>
+                                        className="header">{this.state.pair[0]}/{this.state.pair[1]}</span>
                                     </div>
                                 </div>
                             </Flex>
@@ -411,13 +410,13 @@ class Trade extends Component {
                                                    this.spanValue.innerHTML = showValue(value * Number(this.priceValue.value), 0, 6);
                                                }}/>
                                         <div className="ui basic label label"
-                                             style={{width: '30%'}}>{symbol}</div>
+                                             style={{width: '30%'}}>{this.state.pair[0]}</div>
                                     </div>
                                     <div style={{paddingTop: '5px', fontSize: '12px', color: '#A8A8A8'}}>
                                         {
                                             this.state.type ?
                                                 <span>{language.e().trade.available} {this.balanceOf(this.state.pair[1])} {this.state.pair[1]}</span> :
-                                                <span>{language.e().trade.available} {this.balanceOf(this.state.pair[0])} {symbol}</span>
+                                                <span>{language.e().trade.available} {this.balanceOf(this.state.pair[0])} {this.state.pair[0]}</span>
                                         }
                                     </div>
 
@@ -502,7 +501,7 @@ class Trade extends Component {
                                             color: '#21BA45',
                                             fontSize: '13px'
                                         }}>{showPrice(this.state.pairInfo.lastPrice, 3)}</span></Flex.Item>
-                                    <Flex.Item style={{textAlign: 'right',paddingRight:'3px'}}><span>
+                                    <Flex.Item style={{textAlign: 'right', paddingRight: '3px'}}><span>
                                         {this.state.pairInfo.amountOfIncrease >= 0 && "+"}
                                         {showValue(this.state.pairInfo.amountOfIncrease, 0, 2)}%</span></Flex.Item>
                                 </Flex>

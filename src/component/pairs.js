@@ -64,9 +64,9 @@ class Pairs {
         }]
     ])
 
-    getInfo(token) {
-        return this.TOKENS.get(token)
-    }
+    // getInfo(token) {
+    //     return this.TOKENS.get(token)
+    // }
 }
 
 const pairs = new Pairs();

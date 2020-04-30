@@ -5,7 +5,6 @@ import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
 import {createHashHistory} from 'history'
 
-import pairs from "./pairs";
 import mAbi from "./abi";
 import {showValue, showPK, tokenToBytes} from "./common";
 import language from './language'
@@ -13,18 +12,12 @@ import language from './language'
 class Assets extends Component {
     constructor(props) {
         super(props);
-
-        let tokens = new Array();
-        pairs.TOKENS.forEach(function (val, token) {
-            tokens.push(token);
-        });
-
         this.state = {
             pk: localStorage.getItem("PK"),
             mainPKr: "",
-            tokens: tokens,
+            tokens: [],
             filter: false,
-            balanceMap: {}
+            balanceMap: {},
         };
     }
 
@@ -43,7 +36,7 @@ class Assets extends Component {
 
                 self.timer = setInterval(function () {
                     self.initBalances(self.state.mainPKr);
-                }, 60 * 1000)
+                }, 30 * 1000)
             });
             mAbi.initLanguage(function (_lang) {
                 language.set(_lang);
@@ -53,15 +46,24 @@ class Assets extends Component {
 
     initBalances(mainPKr) {
         let self = this;
-        mAbi.balanceOf(mainPKr, this.state.tokens, function (maps) {
-            self.setState({balanceMap: maps});
+        mAbi.tokenList(mainPKr, "", function (tokens) {
+            let list = [];
+            let decimalsMap = {};
+            tokens.forEach(each => {
+                list.push(each.token);
+                localStorage.setItem("D_" + each.token, each.decimals);
+            });
+
+            mAbi.balanceOf(mainPKr, list, function (maps) {
+                self.setState({balanceMap: maps, tokens: tokens});
+            });
         })
     }
 
-    op(token, symbol, type) {
+    op(token, type) {
         let self = this;
 
-        let title = (type === "recharge" ? language.e().assets.rechange : language.e().assets.withdrawal) + " " + symbol;
+        let title = (type === "recharge" ? language.e().assets.rechange : language.e().assets.withdrawal) + " " + token;
         let input = <div className="ui input">
             <input type="number" placeholder={language.e().trade.num}
                    ref={el => this.valueInput = el}
@@ -81,9 +83,8 @@ class Assets extends Component {
                 {text: <span>取消</span>},
                 {
                     text: <span>确定</span>, onPress: () => {
-                        let info = pairs.getInfo(token);
-                        console.log(this.valueInput);
-                        let value = new BigNumber(this.valueInput.value).multipliedBy(new BigNumber(10).pow(info.decimals));
+                        let decimals = localStorage.getItem("D_" + token);
+                        let value = new BigNumber(this.valueInput.value).multipliedBy(new BigNumber(10).pow(decimals));
                         if (type === "recharge") {
                             mAbi.recharge(self.state.pk, self.state.mainPKr, token, value);
                         } else {
@@ -97,18 +98,15 @@ class Assets extends Component {
 
     render() {
         let self = this;
-        let rows = this.state.tokens.map((token, index) => {
-            let balance = this.state.balanceMap[token];
-            if (!this.state.balanceMap[token]) {
+        let rows = this.state.tokens.map((each, index) => {
+            let balance = this.state.balanceMap[each.token];
+            if (!this.state.balanceMap[each.token]) {
                 balance = [0, 0];
             }
-            let info = pairs.getInfo(token);
-            let decimals = info.decimals;
-            let symbol = info.symbol;
 
             if (self.state.filter) {
                 let temp = {};
-                let val = new BigNumber(balance[0]).dividedBy(new BigNumber(10).pow(decimals));
+                let val = new BigNumber(balance[0]).dividedBy(new BigNumber(10).pow(each.decimals));
                 if (val.isZero()) {
                     return
                 }
@@ -116,24 +114,26 @@ class Assets extends Component {
 
             return (<div key={index} className="ui card" style={{width: '100%'}}>
                 <div className="content">
-                    <img src={require('../icon/' + token + '.png')} style={{width: '30px', height: '30px'}}
+                    <img src={'https://edenworkroom.gitee.io/logo/static/' + each.token + '.png'}
+                         style={{width: '30px', height: '30px'}}
                          className="ui mini left floated image"/>
-                    <div className="header">{symbol}</div>
-                    <div className="meta">{token}</div>
+                    <div className="header">{each.token}</div>
+                    {/*<div className="meta">{token}</div>*/}
                     <div className="description">
                         <div className="ui three column grid aligned container">
                             <div className="row">
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.total}</div>
-                                    <div className="ui aligned">{showValue(balance[0] + balance[1], decimals, 3)}</div>
+                                    <div
+                                        className="ui aligned">{showValue(balance[0] + balance[1], each.decimals, 3)}</div>
                                 </div>
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.available}</div>
-                                    <div className="ui aligned">{showValue(balance[0], decimals, 3)}</div>
+                                    <div className="ui aligned">{showValue(balance[0], each.decimals, 3)}</div>
                                 </div>
                                 <div className="column">
                                     <div className="ui aligned">{language.e().assets.locked}</div>
-                                    <div className="ui aligned">{showValue(balance[1], decimals, 3)}</div>
+                                    <div className="ui aligned">{showValue(balance[1], each.decimals, 3)}</div>
                                 </div>
                             </div>
                         </div>
@@ -142,19 +142,19 @@ class Assets extends Component {
                 <div className="extra content">
                     <div className="ui four buttons">
                         <button className="ui green basic button"
-                                onClick={self.op.bind(self, token, symbol, "recharge")}>{language.e().assets.rechange}
+                                onClick={self.op.bind(self, each.token, "recharge")}>{language.e().assets.rechange}
                         </button>
                         <button className="ui green basic button"
-                                onClick={self.op.bind(self, token, symbol, "withdraw")}>{language.e().assets.withdrawal}
+                                onClick={self.op.bind(self, each.token, "withdraw")}>{language.e().assets.withdrawal}
                         </button>
                         <button className="ui green basic button"
                                 onClick={() => {
-                                    createHashHistory().push("/bills/" + token);
+                                    createHashHistory().push("/bills/" + each.token);
                                 }}>账单
                         </button>
-                        <button disabled={token == "SERO"} className="ui green basic button" onClick={() => {
-                            if (token !== "SERO") {
-                                localStorage.setItem("TOKEN", token);
+                        <button disabled={each.token == "SERO"} className="ui green basic button" onClick={() => {
+                            if (each.token !== "SERO") {
+                                localStorage.setItem("TOKEN", each.token);
                                 localStorage.setItem("STANDARD", "SERO");
                                 createHashHistory().push("/trade");
                             }
@@ -168,10 +168,11 @@ class Assets extends Component {
             <div>
                 <WingBlank>
                     <div style={{textAlign: 'right', paddingRight: '5px', paddingTop: '5px'}}>
-                        <label><input className="my-radio" checked={this.state.filter} type="radio" onClick={() => {
-                            this.setState({filter: !this.state.filter});
-                            this.initBalances(this.state.mainPKr);
-                        }}/><span>&nbsp;&nbsp;隐藏小额资产</span> </label>
+                        <label><input className="my-radio" readOnly={true} checked={this.state.filter} type="radio"
+                                      onClick={() => {
+                                          this.setState({filter: !this.state.filter});
+                                          this.initBalances(this.state.mainPKr);
+                                      }}/><span>&nbsp;&nbsp;隐藏小额资产</span> </label>
                     </div>
                     <div className="ui cards" style={{paddingTop: '15px', paddingBottom: '40px'}}>
                         {/*<div className="ui card green" style={{width: '100%'}}>*/}
