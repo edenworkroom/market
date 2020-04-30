@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import mAbi from "./abi";
 import {showValue, formatDate, hashKey, showPrice} from "./common";
 import {Flex, List, WingBlank} from "antd-mobile";
-import pairs from "./pairs";
 import MTabbar from "./tabbar";
 import language from "./language";
 
@@ -15,7 +14,6 @@ class BillList extends Component {
             token: this.props.match.params.token,
             bills: [],
         }
-        console.log("BillList", props);
     }
 
     componentDidMount() {
@@ -38,9 +36,7 @@ class BillList extends Component {
 
     render() {
         let self = this;
-        let info = pairs.getInfo(this.state.token);
-        let decimals = info.decimals;
-        let symbol = info.symbol;
+        let decimals = localStorage.getItem("D_"+this.state.token);
         let bills = this.state.bills.map((item, index) => {
             let opText = language.e().assets.rechange;
             let sign = "+";
