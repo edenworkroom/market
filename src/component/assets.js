@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Modal, Radio, WingBlank} from 'antd-mobile';
+import {Modal, Radio, WhiteSpace, WingBlank} from 'antd-mobile';
 import MTabbar from "./tabbar";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
@@ -166,24 +166,21 @@ class Assets extends Component {
         });
         return (
             <div>
+                <WhiteSpace size="sm"/>
                 <WingBlank>
-                    <div style={{textAlign: 'right', paddingRight: '5px', paddingTop: '5px'}}>
+                    <div style={{textAlign: 'right', paddingRight: '5px'}}>
                         <label><input className="my-radio" readOnly={true} checked={this.state.filter} type="radio"
                                       onClick={() => {
                                           this.setState({filter: !this.state.filter});
                                           this.initBalances(this.state.mainPKr);
                                       }}/><span>&nbsp;&nbsp;隐藏小额资产</span> </label>
                     </div>
-                    <div className="ui cards" style={{paddingTop: '15px', paddingBottom: '40px'}}>
-                        {/*<div className="ui card green" style={{width: '100%'}}>*/}
-                        {/*    <div className="content">*/}
-                        {/*        <div className="header">账号: <span*/}
-                        {/*            style={{paddingLeft: '10px'}}>{showPK(this.state.pk, 12)}</span></div>*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
+                </WingBlank>
+                <WhiteSpace size="sm"/>
+                <WingBlank>
+                    <div className="ui cards" style={{paddingBottom: '40px'}}>
                         {rows}
                     </div>
-
                 </WingBlank>
                 <MTabbar selectedTab="asset" pk={this.state.pk}/>
             </div>

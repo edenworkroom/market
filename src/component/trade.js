@@ -12,6 +12,7 @@ import mAbi from './abi'
 import {showPrice, showPK, showValueP, showValue, hashKey, formatDate} from "./common";
 import MTabbar from "./tabbar";
 import language from './language'
+import Depthmap from "./depthmap";
 
 class Trade extends Component {
     constructor(props) {
@@ -204,7 +205,7 @@ class Trade extends Component {
                 <Flex key={index}>
                     <Flex.Item style={{textAlign: 'left'}}>{showPrice(item.price, 18)}</Flex.Item>
                     <Flex.Item
-                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 5)}</Flex.Item>
+                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 2)}</Flex.Item>
                 </Flex>)
         });
 
@@ -213,7 +214,7 @@ class Trade extends Component {
                 <Flex key={index}>
                     <Flex.Item style={{textAlign: 'left'}}>{showPrice(item.price, 18)}</Flex.Item>
                     <Flex.Item
-                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 5)}</Flex.Item>
+                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 2)}</Flex.Item>
                 </Flex>)
         });
 
@@ -306,7 +307,8 @@ class Trade extends Component {
 
         return (
             <div style={{minHeight: document.documentElement.clientHeight}}>
-                <WingBlank style={{paddingTop: '2px'}}>
+                <WhiteSpace size="sm" />
+                <WingBlank>
                     <Flex>
                         <Flex.Item style={{flex: 67, height: "310px"}}>
                             <Flex>
@@ -515,29 +517,29 @@ class Trade extends Component {
                 </WingBlank>
                 <WhiteSpace size="lg"/>
                 <WingBlank style={{paddingTop: '15px', paddingBottom: '100px'}}>
-                    <div>
-                                <span><a onClick={() => {
-                                    createHashHistory().push("/orders");
-                                }}>{language.e().trade.all}</a></span>
-                        {myOrders}
-                        {
-                            orderIds.length > 0 && <div className="item" style={{paddingTop: '15px'}}>
-                                <button className="ui fluid button"
-                                        onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>
-                            </div>
-                        }
-                    </div>
-                    {/*<Tabs tabs={[{title: language.e().trade.openOrders, sub: '0'}, {*/}
-                    {/*    title: language.e().trade.depth,*/}
-                    {/*    sub: '1'*/}
-                    {/*}]}*/}
-                    {/*      initialPage={0}*/}
-                    {/*>*/}
-                    {/*    */}
-                    {/*    <div>*/}
-                    {/*        <Depthmap sellList={this.state.pairInfo.sellList} buyList={this.state.pairInfo.buyList}/>*/}
-                    {/*    </div>*/}
-                    {/*</Tabs>*/}
+                    {/*<div>*/}
+                    {/*            <span><a onClick={() => {*/}
+                    {/*                createHashHistory().push("/orders");*/}
+                    {/*            }}>{language.e().trade.all}</a></span>*/}
+                    {/*    {myOrders}*/}
+                    {/*    {*/}
+                    {/*        orderIds.length > 0 && <div className="item" style={{paddingTop: '15px'}}>*/}
+                    {/*            <button className="ui fluid button"*/}
+                    {/*                    onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>*/}
+                    {/*        </div>*/}
+                    {/*    }*/}
+                    {/*</div>*/}
+                    <Tabs tabs={[{title: language.e().trade.openOrders, sub: '0'}, {
+                        title: language.e().trade.depth,
+                        sub: '1'
+                    }]}
+                          initialPage={0}
+                    >
+
+                        <div>
+                            <Depthmap sellList={this.state.pairInfo.sellList} buyList={this.state.pairInfo.buyList}/>
+                        </div>
+                    </Tabs>
 
                 </WingBlank>
                 <MTabbar selectedTab="trade"/>

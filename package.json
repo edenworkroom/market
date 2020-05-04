@@ -10,7 +10,8 @@
     "antd-mobile": "^2.3.1",
     "bignumber.js": "^9.0.0",
     "copy-text-to-clipboard": "^2.2.0",
-    "highcharts": "^8.0.4",
+    "echarts": "^4.7.0",
+    "echarts-for-react": "^2.0.15-beta.1",
     "http": "0.0.1-security",
     "iconv-lite": "^0.5.1",
     "keccak256": "^1.0.0",
@@ -23,8 +24,7 @@
     "semantic-ui-css": "^2.4.1",
     "sero-pp": "^1.0.2",
     "sero-web3": "^0.3.3",
-    "serojs": "0.0.2",
-    "socket.io-client": "^2.3.0"
+    "serojs": "0.0.2"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -50,6 +50,6 @@
   "devDependencies": {
     "babel-plugin-import": "^1.13.0",
     "customize-cra": "^0.9.1",
-    "react-app-rewired": "^2.1.5"
+    "react-app-rewired": "^2.1.6"
   }
 }
