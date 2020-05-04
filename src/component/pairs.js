@@ -8,18 +8,21 @@ class Pairs {
     USDS = {
         symbol: "USDS",
         decimals: 18,
-        tokens: ["NBHBOS"]
+        tokens: ["NBHBOS"],
+        offline: true
     }
     TOKENS = new Map([
         ["SERO", {
             symbol: "SERO",
             decimals: 18,
-            name: "超零"
+            name: "超零",
+            offline: true
         }],
         ["THE_FIRST_PRIVACY_COIN", {
             symbol: "TFPC",
             decimals: 18,
-            name: "纪念币"
+            name: "纪念币",
+            offline: true
         }],
         ["ASNOW", {
             symbol: "ASNOW",
@@ -30,42 +33,50 @@ class Pairs {
         ["NBHBOS", {
             symbol: "NBHBOS",
             decimals: 18,
-            name: "牛比特支付"
+            name: "牛比特支付",
+            offline: true
         }],
         ["ORIGO", {
             symbol: "OGO",
             decimals: 18,
-            name: ""
+            name: "",
+            offline: true
         }],
         ["USDS", {
             symbol: "USDS",
             decimals: 18,
-            name: "存储币"
+            name: "存储币",
+            offline: true
         }],
         ["HAPY", {
             symbol: "HAPY",
             decimals: 18,
-            name: ""
+            name: "",
+            offline: true
         }],
         ["AIPP", {
             symbol: "AIPP",
             decimals: 18,
-            name: ""
+            name: "",
+            offline: true
         }],
         ["SVVC", {
             symbol: "SVVC",
             decimals: 4,
-            name: ""
+            name: "",
+            offline: true
         }],
         ["NEWBITS", {
             symbol: "NBS",
             decimals: 8,
-            name: ""
+            name: "",
+            offline: true
         }],
         ["VIRTUE", {
             symbol: "VRT",
             decimals: 18,
-            name: "积德币"
+            name: "积德币",
+            offline: true
         }]
     ])
 
