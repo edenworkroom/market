@@ -4,7 +4,6 @@ import ReactEcharts from 'echarts-for-react';
 import BigNumber from "bignumber.js";
 import language from './language'
 import {showPK, showPrice, showValue, showValueP} from "./common";
-import Highcharts from 'highcharts';
 
 
 export class Depthmap extends Component {
@@ -72,38 +71,94 @@ export class Depthmap extends Component {
     render() {
         const {buyList, sellList} = this.props;
         let dataX = [];
-        let dataY = [];
+        let dataY_buy = [];
+        let dataY_sell = [];
 
-        // console.log("componentDidMount", this.state.buyList, this.state.sellList);
-        this.props.buyList.forEach(each => {
+        console.log(buyList, sellList);
+        this.props.buyList.reverse().forEach(each => {
             dataX.push(new BigNumber(each.price).dividedBy(1e18).toNumber())
-            dataY.push(new BigNumber(each.value).dividedBy(1e18).toNumber())
+            dataY_buy.push(new BigNumber(each.value).dividedBy(1e18).toNumber())
+            dataY_sell.push('');
         });
         this.props.sellList.forEach(each => {
             dataX.push(new BigNumber(each.price).dividedBy(1e18).toNumber())
-            dataY.push(new BigNumber(each.value).dividedBy(1e18).toNumber())
+            dataY_buy.push('');
+            dataY_sell.push(new BigNumber(each.value).dividedBy(1e18).toNumber())
         });
-        console.log(dataX, dataY);
+
         let option = {
+            grid: {left: 10, top: 30, right: 10, bottom: 10},
+            tooltip: {
+                confine: true,
+                trigger: 'axis',
+                axisPointer: {type: 'line', lineStyle: {color: 'rgba(0, 0, 0, 0)'}},
+                backgroundColor: '#355475',
+                textStyle: {color: '#fff', fontSize: '14px'},
+                extraCssText: 'box-shadow: 0 0 16px 0 rgba(0, 0, 0, .2);border-radius: 4px;'
+            },
+            // legend: {
+            //     data: [
+            //         {name: '买单', icon: 'rect'},
+            //         {name: '卖单', icon: 'rect'}
+            //     ],
+            //     selected: {
+            //         '买单': true,
+            //         '卖单': true
+            //     },
+            //     itemWidth: 10,
+            //     itemHeight: 10,
+            //     textStyle: {color: '#fff'},
+            //     pageIconColor: '#4CC453'
+            // },
             xAxis: {
                 type: 'category',
+                // axisLine: {show: false},
+                // axisTick: {show: false},
+                // axisLabel: {show: false},
                 boundaryGap: false,
                 data: dataX
             },
-            yAxis: {
-                type: 'value'
-            },
-            series: [{
-                data: dataY,
-                type: 'line',
-                areaStyle: {}
-            }]
+            yAxis: [{
+                type: 'value',
+                // axisLine: {show: false},
+                // axisTick: {show: false},
+                // axisLabel: {show: false},
+                // splitLine: {show: false}
+            }],
+            series: [
+                {
+                    name: '买单',
+                    type: 'line',
+                    // smooth: true,
+                    // symbol: 'circle',
+                    // showSymbol: false,
+                    // symbolSize: 3,
+                    // sampling: 'average',
+                    itemStyle: {normal: {color: '#21BA45'}},
+                    lineStyle: {normal: {color: '#21BA45'}},
+                    areaStyle: {color: '#21BA45'},
+                    data: dataY_buy
+                },
+                {
+                    name: '卖单',
+                    type: 'line',
+                    // smooth: true,
+                    // // symbol: 'circle',
+                    // showSymbol: false,
+                    // symbolSize: 3,
+                    // sampling: 'average',
+                    itemStyle: {normal: {color: '#D01919'}},
+                    lineStyle: {normal: {color: '#D01919'}},
+                    areaStyle: {color: '#D01919'},
+                    data: dataY_sell
+                }
+            ]
         };
         return (
             <WingBlank>
                 <ReactEcharts
                     option={option}
-                    style={{height: '350px', width: '100%'}}
+                    style={{height: '300px', width: '100%'}}
                     className='react_for_echarts'/>
                 {/*<div id="container" style={{width: '100%', height: '400px'}}></div>*/}
 

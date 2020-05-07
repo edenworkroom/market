@@ -517,29 +517,29 @@ class Trade extends Component {
                 </WingBlank>
                 <WhiteSpace size="lg"/>
                 <WingBlank style={{paddingTop: '15px', paddingBottom: '100px'}}>
-                    {/*<div>*/}
-                    {/*            <span><a onClick={() => {*/}
-                    {/*                createHashHistory().push("/orders");*/}
-                    {/*            }}>{language.e().trade.all}</a></span>*/}
-                    {/*    {myOrders}*/}
-                    {/*    {*/}
-                    {/*        orderIds.length > 0 && <div className="item" style={{paddingTop: '15px'}}>*/}
-                    {/*            <button className="ui fluid button"*/}
-                    {/*                    onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>*/}
-                    {/*        </div>*/}
-                    {/*    }*/}
-                    {/*</div>*/}
-                    <Tabs tabs={[{title: language.e().trade.openOrders, sub: '0'}, {
-                        title: language.e().trade.depth,
-                        sub: '1'
-                    }]}
-                          initialPage={0}
-                    >
+                    <div>
+                                <span><a onClick={() => {
+                                    createHashHistory().push("/orders");
+                                }}>{language.e().trade.all}</a></span>
+                        {myOrders}
+                        {
+                            orderIds.length > 0 && <div className="item" style={{paddingTop: '15px'}}>
+                                <button className="ui fluid button"
+                                        onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>
+                            </div>
+                        }
+                    </div>
+                    {/*<Tabs tabs={[{title: language.e().trade.openOrders, sub: '0'}, {*/}
+                    {/*    title: language.e().trade.depth,*/}
+                    {/*    sub: '1'*/}
+                    {/*}]}*/}
+                    {/*      initialPage={0}*/}
+                    {/*>*/}
 
-                        <div>
-                            <Depthmap sellList={this.state.pairInfo.sellList} buyList={this.state.pairInfo.buyList}/>
-                        </div>
-                    </Tabs>
+                    {/*    <div>*/}
+                    {/*        <Depthmap sellList={this.state.pairInfo.sellList} buyList={this.state.pairInfo.buyList}/>*/}
+                    {/*    </div>*/}
+                    {/*</Tabs>*/}
 
                 </WingBlank>
                 <MTabbar selectedTab="trade"/>
