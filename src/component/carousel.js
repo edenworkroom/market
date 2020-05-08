@@ -6,7 +6,7 @@ class MCarousel extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: ['1', '2'],
+            data: ["2", '1', '2'],
             imgHeight: 176,
         }
     }
