@@ -113,6 +113,7 @@ class Trade extends Component {
         });
 
         mAbi.orders(mainPkr, this.state.key, function (orders) {
+
             self.setState({orders: orders});
         })
     }

@@ -6,7 +6,7 @@ import {decimals, tokenToBytes} from "./common";
 
 const config = {
     name: "Rhino Market",
-    contractAddress: "6JHmAATYvJ2qkzxm6iW31e77iwSqfANRui7cYJpKNSPn27VzERXx6bpuafzu43gFK1UeuBNaKF75Qbx9UjfJyxD",
+    contractAddress: "41fu6ohxjPUwAYr5xXkqkj6WzBUMruQ8sFciqLkM83GZse6r4p7nT3rJWnMbbKksJtRuHGr1s5wXy7QCd9nSVyHa",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
@@ -208,6 +208,7 @@ class MAbi {
     }
 
     tokenList(from, standard, callback) {
+        console.log("tokenList", standard);
         this.callMethod('tokenList', from, [tokenToBytes(standard)], function (json) {
             callback(JSON.parse(json));
         });
@@ -215,12 +216,15 @@ class MAbi {
 
     orders(from, key, callback) {
         this.callMethod('orders', from, [key], function (json) {
-            callback(JSON.parse(json));
+            let orders = JSON.parse(json);
+            orders.sort(function (a, b) {
+                return b.createTime - a.createTime;
+            });
+            callback(orders);
         });
     }
 
     getBills(from, token, callback) {
-
         this.callMethod('getBills', from, [tokenToBytes(token)], function (json) {
             callback(JSON.parse(json));
         });

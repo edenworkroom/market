@@ -44,6 +44,8 @@ class Market extends Component {
         let self = this;
         mAbi.tokenList("2JurSKqbpUMMrpxfzHNajLec6QQ3E7XrhrYCQfDPNBxfXcsgytr5xaB63984AEBAuHRV3h5KwKazNmBTA5PYFTiDSLSeFqq2FvoaXZnCyMburKSe5wk43Yid8DWa48214BuT",
             standard, function (tokens) {
+
+                console.log("pairList", tokens);
                 const pairList = new Array();
                 tokens.forEach(each => {
                     let firstPrice = each.firstPrice;
@@ -66,6 +68,7 @@ class Market extends Component {
                     });
                     localStorage.setItem("D_" + each.token, each.decimals);
                 });
+
                 pairList.sort(function (a, b) {
                     return b.volume - a.volume;
                 });
@@ -176,7 +179,8 @@ class Market extends Component {
                         <div style={{float: "clear"}}></div>
                         {
                             this.isIOS() ? <div>
-                                <img style={{width: '100%', height: '180px'}} src={require('../icon/1.png')}/>
+                                <img style={{width: '100%', height: '180px'}}
+                                     src={'https://edenworkroom.gitee.io/logo/static/banner_2.png'}/>
                             </div> : <MCarousel/>
                         }
                     </WingBlank>
