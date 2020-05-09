@@ -60,7 +60,7 @@ class Trade extends Component {
 
         mAbi.pairInfo(self.state.mainPKr, self.state.key, function (info) {
             let base = 1e18;
-            if (info.buyList.length > 0 && info.buyList[0].price < base) {
+            if ((info.buyList.length > 0 && info.buyList[0].price < base) || (info.sellList.length > 0 && info.sellList[0].price < base)) {
                 base = 1e13
             }
             let buyList = new Array();
