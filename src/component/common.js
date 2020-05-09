@@ -75,16 +75,26 @@ export function hashKey(token1, token2) {
 }
 
 function trimNumber(numberStr, decimalPlaces) {
-    if (numberStr.indexOf(".") > -1 && numberStr.charAt(numberStr.length - 1) == '0') {
-        for (var i = numberStr.length - 1; i > 0; i--) {
-            if (numberStr.charAt(i) != '0') {
-                if (numberStr.charAt(i) == '.') {
-                    return numberStr.substring(0, i) + "." + zeros.substring(0, decimalPlaces);
-                } else {
-                    return numberStr.substring(0, i + 1);
-                }
+    let vals = numberStr.split(".")
+    if (vals.length < 2) {
+        return numberStr;
+    } else {
+        let index = -1;
+        let decimal = vals[1]
+        for (var i = decimal.length - 1; i > 0; i--) {
+            if (decimal.charAt(i) != '0') {
+                index = i;
+                break;
             }
         }
+        decimal = decimal.substring(0, index+1);
+        let numStr = vals[0];
+        if (decimal.length > decimalPlaces) {
+            decimal = decimal.substring(0, decimalPlaces);
+        }
+        if (decimal.length > 0) {
+            numStr += "." + decimal;
+        }
+        return numStr
     }
-    return numberStr;
 }
