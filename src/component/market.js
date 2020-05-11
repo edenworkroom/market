@@ -189,7 +189,7 @@ class Market extends Component {
 
                         <div>
                             <p role="listitem" className="item">公告：老版本用户提现请用加载 <a
-                                href="http://edenworkroom.gitee.io/market_bak">老版本</a>
+                                href="http://edenworkroom.gitee.io/old">老版本</a>
                             </p>
                         </div>
                         <Flex style={{paddingTop: '15px'}}>
