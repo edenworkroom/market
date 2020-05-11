@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import mAbi from "./abi";
-import {decimals, formatDate, hashKey, showPrice} from "./common";
+import {showValue, formatDate, hashKey, showPrice} from "./common";
 import {WingBlank} from "antd-mobile";
-import pairs from "./pairs";
 import MTabbar from "./tabbar";
 import language from "./language";
 
@@ -15,7 +14,7 @@ class OrderList extends Component {
         let standard = localStorage.getItem("STANDARD");
 
         if (!token || !standard) {
-            token = pairs.SERO.tokens[0];
+            token = "THE_FIRST_PRIVACY_COIN";
             standard = "SERO";
         }
         let key = hashKey(token, standard);
@@ -43,8 +42,7 @@ class OrderList extends Component {
 
     render() {
         let self = this;
-        let symbol = pairs.getSymbol(this.state.pair[0]);
-        let decimal = pairs.getDecimals(this.state.pair[0]);
+        let decimals = localStorage.getItem("D_" + this.state.pair[0]);
         let myOrders = this.state.orders.map((item, index) => {
             return <div key={index} className="item" style={{
                 paddingTop: '15px', clear: 'both',
@@ -69,7 +67,7 @@ class OrderList extends Component {
                             paddingLeft: '3px',
                             fontSize: '18px',
                             fontWeight: 'bold'
-                        }}>{symbol}/{self.state.pair[1]}</span>
+                        }}>{this.state.pair[0]}/{self.state.pair[1]}</span>
                         <span style={{
                             fontSize: '15px',
                             paddingLeft: '5px'
@@ -95,15 +93,21 @@ class OrderList extends Component {
                             </div>
                             <div style={{float: 'left'}}>
                                 <div
-                                    style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.total}({symbol})
+                                    style={{
+                                        color: '#A8A8A8',
+                                        fontSize: '13px',
+                                    }}>{language.e().trade.total}({this.state.pair[0]})
                                 </div>
-                                <div>{decimals(item.value, decimal, 3)}</div>
+                                <div>{showValue(item.value, decimals, 3)}</div>
                             </div>
                             <div style={{float: 'right', textAlign: 'right'}}>
                                 <div
-                                    style={{color: '#A8A8A8', fontSize: '13px',}}>{language.e().trade.volume}({symbol})
+                                    style={{
+                                        color: '#A8A8A8',
+                                        fontSize: '13px',
+                                    }}>{language.e().trade.volume}({this.state.pair[0]})
                                 </div>
-                                <div>{decimals(item.dealValue, decimal, 3)}</div>
+                                <div>{showValue(item.dealValue, decimals, 3)}</div>
                             </div>
                         </div>
                     </div>

@@ -69,7 +69,8 @@ class Language {
             finished: "已完成",
             canceled: "已撤消",
             total: "数量",
-            volume: "交易量"
+            volume: "交易量",
+            depth: "深度图",
         },
         assets: {
             total: "总量",
@@ -119,7 +120,8 @@ class Language {
             finished: "Completed",
             canceled: "Canceled",
             total: "Total",
-            volume: "Volume"
+            volume: "Volume",
+            depth: "depth map",
         },
 
         assets: {
@@ -171,7 +173,8 @@ class Language {
             finished: "Завершенный",
             canceled: "отменен",
             total: "общее количество",
-            volume: "объем"
+            volume: "объем",
+            depth: "depth map",
         },
 
         assets: {
@@ -222,7 +225,8 @@ class Language {
             finished: "完成した",
             canceled: "キャンセル",
             total: "合計",
-            volume: "ボリューム"
+            volume: "ボリューム",
+            depth: "depth map",
         },
 
         assets: {
@@ -273,7 +277,8 @@ class Language {
             finished: "완성됨",
             canceled: "취소 된",
             total: "합계",
-            volume: "음량"
+            volume: "음량",
+            depth: "depth map",
         },
 
         assets: {

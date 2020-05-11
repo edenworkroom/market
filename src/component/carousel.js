@@ -6,7 +6,7 @@ class MCarousel extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: ['1', '1', '1'],
+            data: ["2", '1', '2'],
             imgHeight: 176,
         }
     }
@@ -39,7 +39,7 @@ class MCarousel extends Component {
                         }}
                     >
                         <img
-                            src={require(`../icon/${val}.png`)}
+                            src={'https://edenworkroom.gitee.io/logo/static/banner_' + val + '.png'}
                             alt=""
                             style={{width: '100%', verticalAlign: 'top'}}
                             onLoad={() => {

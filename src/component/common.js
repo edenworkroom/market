@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 
 const keccak256 = require("keccak256");
-
+const zeros = "000000000000000000";
 
 function getDate(num) {
     if (num < 10) {
@@ -18,36 +18,44 @@ export function formatDate(time) {
     const h = getDate(time.getHours());
     const m = getDate(time.getMinutes());
     // var s =getDate(time.getSeconds());
-    return `${h}:${m} ${Y}/${M}/${d}`;
+    return `${Y}/${M}/${d} ${h}:${m}`;
 
 }
 
-export function showPrice(price, decimalPlaces) {
+export function showToken(token) {
+    if (token.length > 15) {
+        return token.slice(0, 10) + "..." + token.slice(-5)
+    } else {
+        return token
+    }
+}
+
+export function showPrice(price) {
     if (price) {
-        let ret = new BigNumber(price).dividedBy(new BigNumber("1000")).toFixed(decimalPlaces);
-        return trimNumber(ret);
+        let ret = new BigNumber(price).dividedBy(new BigNumber(1e18)).toFixed(18);
+        return trimNumber(ret, 18);
     } else {
         return "0.000";
     }
 }
 
-export function showValue(val, decimal, decimalPlaces) {
+export function showValueP(val, decimal, decimalPlaces) {
     let num = new BigNumber(val).dividedBy(new BigNumber(10).pow(decimal));
     if (num.comparedTo(1000000) >= 0) {
         let text = num.dividedBy(1000000).toFixed(decimalPlaces);
-        return trimNumber(text) + "M";
+        return trimNumber(text, decimalPlaces) + "M";
     } else if (num.comparedTo(1000) >= 0) {
         let text = num.dividedBy(1000).toFixed(decimalPlaces);
-        return trimNumber(text) + "K";
+        return trimNumber(text, decimalPlaces) + "K";
     } else {
-        return trimNumber(num.toFixed(decimalPlaces));
+        return trimNumber(num.toFixed(decimalPlaces), decimalPlaces);
     }
 
 }
 
-export function decimals(val, decimal, decimalPlaces) {
+export function showValue(val, decimal, decimalPlaces) {
     let text = new BigNumber(val).dividedBy(new BigNumber(10).pow(decimal)).toFixed(decimalPlaces);
-    return trimNumber(text)
+    return trimNumber(text, decimalPlaces)
 }
 
 export function showPK(pk, len) {
@@ -74,17 +82,27 @@ export function hashKey(token1, token2) {
     return "0x" + Buffer.from(keccak256(Buffer.concat([data1, data2]))).toString('hex')
 }
 
-function trimNumber(numberStr) {
-    if (numberStr.indexOf(".") > -1 && numberStr.charAt(numberStr.length - 1) == '0') {
-        for (var i = numberStr.length - 1; i > 0; i--) {
-            if (numberStr.charAt(i) != '0') {
-                if (numberStr.charAt(i) == '.') {
-                    return numberStr.substring(0, i);
-                } else {
-                    return numberStr.substring(0, i + 1);
-                }
+function trimNumber(numberStr, decimalPlaces) {
+    let vals = numberStr.split(".")
+    if (vals.length < 2) {
+        return numberStr;
+    } else {
+        let index = -1;
+        let decimal = vals[1];
+        for (let i = decimal.length - 1; i >= 0; i--) {
+            if (decimal.charAt(i) != '0') {
+                index = i;
+                break;
             }
         }
+        decimal = decimal.substring(0, index + 1);
+        let numStr = vals[0];
+        if (decimal.length > decimalPlaces) {
+            decimal = decimal.substring(0, decimalPlaces);
+        }
+        if (decimal.length > 0) {
+            numStr += "." + decimal;
+        }
+        return numStr
     }
-    return numberStr;
 }

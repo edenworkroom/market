@@ -5,17 +5,18 @@ import {Toast} from "antd-mobile";
 import {decimals, tokenToBytes} from "./common";
 
 const config = {
-    name: "Rhino Market",
-    contractAddress: "5iyXFQEmfefYr1MkK3sj645cExYvGYfT2yDPWnVL9m3rkh5GNrAYHgQCkvDFkfDxekXoX9v3hycMQ5eRdqUpryZg",
+    name: "Rhino DEX",
+    contractAddress: "Y5GRme4CYQXoJd8RabeEaSKdoE14QEQE2ULg4nV652MGFRsdQDkGrBE5tRYRfMy1PHWCaUw6Ec4B1nieXxDe6Yk",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
     logo: document.location.protocol + '//' + document.location.host + '/market/logo.png'
 }
 
-const abiJson = [{"constant":false,"inputs":[{"name":"tokenStr","type":"string"},{"name":"standardStr","type":"string"}],"name":"addPair","outputs":[{"name":"key","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"tokenStr","type":"string"},{"name":"value","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"recharge","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"keys","type":"bytes32[]"}],"name":"lastPrice","outputs":[{"name":"json","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"price","type":"uint256"},{"name":"value","type":"uint256"}],"name":"sell","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tokens","type":"bytes32[]"}],"name":"balanceOf","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"bytes32"}],"name":"orders","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"bytes32"}],"name":"pairInfo","outputs":[{"name":"price","type":"uint256"},{"name":"buyListJson","type":"string"},{"name":"sellListJson","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"orderIds","type":"bytes32[]"}],"name":"cancel","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"price","type":"uint256"},{"name":"value","type":"uint256"}],"name":"buy","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"}];
+const abiJson = [{"constant":true,"inputs":[{"name":"token","type":"bytes32"}],"name":"getBills","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"}],"name":"on","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"tokenStr","type":"string"},{"name":"value","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[],"name":"recharge","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"}],"name":"off","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"price","type":"uint256"},{"name":"value","type":"uint256"}],"name":"sell","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"token","type":"bytes32"},{"name":"tokenD","type":"uint256"},{"name":"standard","type":"bytes32"},{"name":"standardD","type":"uint256"}],"name":"addPair","outputs":[{"name":"key","type":"bytes32"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"token","type":"bytes32"},{"name":"decimals","type":"uint256"}],"name":"setDecimals","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"tkns","type":"bytes32[]"}],"name":"balanceOf","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"bytes32"}],"name":"orders","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"key","type":"bytes32"}],"name":"pairInfo","outputs":[{"name":"","type":"string"},{"name":"","type":"string"},{"name":"","type":"string"},{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"orderIds","type":"bytes32[]"}],"name":"cancel","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"standard","type":"bytes32"}],"name":"tokenList","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"price","type":"uint256"},{"name":"value","type":"uint256"}],"name":"buy","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"name":"previousOwner","type":"address"},{"indexed":true,"name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"}];
 const caddress = config.contractAddress;
 const contract = serojs.callContract(abiJson, caddress);
+
 
 class MAbi {
 
@@ -35,7 +36,7 @@ class MAbi {
     }
 
     initLanguage(callback) {
-        seropp.getInfo(function(info) {
+        seropp.getInfo(function (info) {
             callback(info.language);
         });
     }
@@ -57,56 +58,39 @@ class MAbi {
         });
     }
 
+    tokenList(from, standard, callback) {
+        this.callMethod('tokenList', from, [tokenToBytes(standard)], function (json) {
+            console.log("tokenList", tokenToBytes(standard), json);
+            callback(JSON.parse(json));
+        });
+    }
+
     orders(from, key, callback) {
         this.callMethod('orders', from, [key], function (json) {
+            let orders = JSON.parse(json);
+            orders.sort(function (a, b) {
+                return b.createTime - a.createTime;
+            });
+            callback(orders);
+        });
+    }
+
+    getBills(from, token, callback) {
+        this.callMethod('getBills', from, [tokenToBytes(token)], function (json) {
             callback(JSON.parse(json));
         });
     }
 
-    pairInfo(from, key, level, callback) {
+    pairInfo(from, key, callback) {
         this.callMethod('pairInfo', from, [key], function (vals) {
-            let buyList = new Array();
-            JSON.parse(vals[1]).filter(function (item, index, list) {
-                return item.status == 0;
-            }).sort(function (a, b) {
-                return b.price - a.price;
-            }).forEach(function (item, index) {
-                let buyPrice = item.price - item.price % level
-                if (buyList.length == 0 || buyPrice != buyList[buyList.length - 1].price) {
-                    buyList.push({price: buyPrice, value: item.value - item.dealValue});
-                } else {
-                    buyList[buyList.length - 1].value += item.value - item.dealValue;
-                }
-            });
-
-            let sellList = new Array()
-            JSON.parse(vals[2]).filter(function (item, index, list) {
-                return item.status == 0;
-            }).sort(function (a, b) {
-                return b.price - a.price;
-            }).forEach(function (item, index) {
-                let sellPrice = item.price - item.price % level
-                if (sellList.length == 0 || sellPrice != sellList[sellList.length - 1].price) {
-                    sellList.push({price: sellPrice, value: item.value - item.dealValue});
-                } else {
-                    sellList[sellList.length - 1].value += item.value - item.dealValue;
-                }
-            });
-
             callback({
-                lastPrice: vals[0],
-                buyList: buyList.slice(0, 5),
-                sellList: sellList.slice(-5)
+                volumes: JSON.parse(vals[0]),
+                buyList: JSON.parse(vals[1]),
+                sellList: JSON.parse(vals[2]),
+                offline: vals[3],
             });
         });
     }
-
-    lastPrice(from, keys, callback) {
-        this.callMethod('lastPrice', from, [keys], function (json) {
-            callback(JSON.parse(json));
-        });
-    }
-
 
     balanceOf(from, tokens, callback) {
         let list = new Array();
@@ -116,6 +100,18 @@ class MAbi {
         this.callMethod('balanceOf', from, [list], function (json) {
             callback(JSON.parse(json));
         });
+    }
+
+    addPair(pk, mainPKr, token, tokenD, standard, standardD, callback) {
+        this.executeMethod('addPair', pk, mainPKr, [token, tokenD, standard, standardD], "SERO", 0, callback);
+    }
+
+    off(pk, mainPKr, key, callback) {
+        this.executeMethod('off', pk, mainPKr, [key], "SERO", 0, callback);
+    }
+
+    on(pk, mainPKr, key, callback) {
+        this.executeMethod('on', pk, mainPKr, [key], "SERO", 0, callback);
     }
 
     buy(pk, mainPKr, key, price, value, callback) {

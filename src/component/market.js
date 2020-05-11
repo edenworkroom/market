@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
-import {Button, List, Modal, WingBlank, TabBar, Tabs} from "antd-mobile";
+import {Button, List, Modal, WingBlank, TabBar, Tabs, InputItem, Flex} from "antd-mobile";
 import {createHashHistory} from 'history'
 
 import mAbi from './abi'
-import pairs from "./pairs";
-import {hashKey, showPK, showPrice} from "./common";
+import {showValue, hashKey, showPK, showPrice, showToken} from "./common";
 
 import MCarousel from './carousel'
 import language from './language'
@@ -14,8 +13,10 @@ const operation = Modal.operation;
 
 const tabs = [
     {title: 'SERO', sub: '1'},
-    {title: 'USDS', sub: '2'},
+    {title: '....', sub: '2'},
 ];
+
+const onwer = "27HNFfDDxPxP34wceqRyJ4DD4qZrCBLwVEzbqerscRwAFase4zdzcqECr1kFHtWwueMEM7zgEbo1ts5SftZDVGKeMZ4FEWQBca9J56Nr19m2Z3aJJGzCZ3MVfR47NcxF8buT";
 
 class Market extends Component {
     constructor(props) {
@@ -23,7 +24,8 @@ class Market extends Component {
         let self = this;
         this.state = {
             pairList: [],
-            pk: localStorage.getItem("PK")
+            pk: localStorage.getItem("PK"),
+            mainPKr: localStorage.getItem("MAINPKR")
         }
 
         let pk = localStorage.getItem("PK");
@@ -32,7 +34,8 @@ class Market extends Component {
                 .then(() => {
                     mAbi.accountList(function (accounts) {
                         localStorage.setItem("PK", accounts[0].pk);
-                        self.setState({pk: accounts[0].pk});
+                        localStorage.setItem("MAINPKR", accounts[0].mainPKr);
+                        self.setState({pk: accounts[0].pk, mainPKr: accounts[0].mainPKr});
                     });
                 })
         }
@@ -40,36 +43,44 @@ class Market extends Component {
 
     initPairList(standard) {
         let self = this;
-        const keys = new Array();
-        const map = new Map();
-        pairs.getTokens(standard).forEach(function (token) {
-            let key = hashKey(token, standard);
-            keys.push(key);
-            map[key] = token;
-        });
+        mAbi.tokenList("2JurSKqbpUMMrpxfzHNajLec6QQ3E7XrhrYCQfDPNBxfXcsgytr5xaB63984AEBAuHRV3h5KwKazNmBTA5PYFTiDSLSeFqq2FvoaXZnCyMburKSe5wk43Yid8DWa48214BuT",
+            standard, function (tokens) {
 
-        mAbi.lastPrice("2JurSKqbpUMMrpxfzHNajLec6QQ3E7XrhrYCQfDPNBxfXcsgytr5xaB63984AEBAuHRV3h5KwKazNmBTA5PYFTiDSLSeFqq2FvoaXZnCyMburKSe5wk43Yid8DWa48214BuT", keys, function (pairMap) {
-            const pairList = new Array();
-            keys.forEach(key => {
-                let lastPrice = 0;
-                if (pairMap[key]) {
-                    lastPrice = pairMap[key];
-                }
-                pairList.push({
-                    symbol: pairs.getSymbol(map[key]),
-                    tokenName: map[key],
-                    name: pairs.getName(map[key]),
-                    lastPrice: lastPrice,
-                    decimals: pairs.getDecimals(map[key]),
-                    standard: standard
-                })
+                console.log("pairList", tokens);
+                const pairList = new Array();
+                tokens.forEach(each => {
+                    let firstPrice = each.firstPrice;
+                    let lastPrice = each.lastPrice;
+                    let amountOfIncrease = 0;
+                    if (firstPrice != 0) {
+                        amountOfIncrease = (lastPrice - firstPrice) / firstPrice * 100;
+                    }
+
+                    pairList.push({
+                        // symbol: info.symbol,
+                        tokenName: each.token,
+                        // name: info.name,
+                        lastPrice: each.lastPrice,
+                        decimals: each.decimals,
+                        standard: standard,
+                        volume: each.volume,
+                        amountOfIncrease: amountOfIncrease,
+                        offline: each.offline
+                    });
+                    localStorage.setItem("D_" + each.token, each.decimals);
+                });
+
+                pairList.sort(function (a, b) {
+                    return b.volume - a.volume;
+                });
+                self.setState({pairList: pairList});
             });
-            self.setState({pairList: pairList});
-        });
     }
 
     componentWillUnmount() {
-        clearInterval(this.timer);
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
     }
 
     componentDidMount() {
@@ -93,8 +104,9 @@ class Market extends Component {
                 actions.push(
                     {
                         text: <span>{account.name + ":" + showPK(account.pk)}</span>, onPress: () => {
-                            self.setState({pk: account.pk});
+                            self.setState({pk: account.pk, mainPKr: account.mainPKr});
                             localStorage.setItem("PK", account.pk);
+                            localStorage.setItem("MAINPKR", account.mainPKr);
                         }
                     }
                 );
@@ -113,24 +125,50 @@ class Market extends Component {
     render() {
         let self = this;
         const tokenPairs = this.state.pairList.map((item, index) => {
+
             return (
                 <List.Item key={item.tokenName}>
-                    <div style={{float: "left", width: "50%"}}>
-                        {item.symbol} <span style={{fontSize: '14px'}}>{item.name} </span>
-                        <div style={{fontSize: '10px', color: '#A8A8A8'}}>
-                            {item.tokenName}
+                    <Flex>
+                        <Flex.Item style={{flex: 45}}>
+                            <span style={{fontSize: '14px'}}>{showToken(item.tokenName)} </span>
+                            <div style={{fontSize: '10px', color: '#A8A8A8'}}>
+                                {item.tokenName}
+                            </div>
+                        </Flex.Item>
+                        <Flex.Item style={{flex: 28}}>
+                            {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
+                            <div style={{fontSize: '10px', color: '#A8A8A8'}}>
+                                {showValue(item.volume, item.decimals, 6)}{item.standard}
+                            </div>
+                        </Flex.Item>
+                        <Flex.Item style={{flex: 27, textAlign: "right"}}>
+                            <Button inline size="small" style={item.amountOfIncrease < 0 ? {
+                                backgroundColor: '#D01919',
+                                color: 'white'
+                            } : {backgroundColor: '#21BA45', color: 'white'}} onClick={() => {
+                                localStorage.setItem("TOKEN", item.tokenName);
+                                localStorage.setItem("STANDARD", item.standard);
+                                createHashHistory().push("/trade");
+                            }}><span>
+                            {item.amountOfIncrease >= 0 && "+"}
+                                {showValue(item.amountOfIncrease, 0, 2)}%</span>
+                            </Button>
+                        </Flex.Item>
+                    </Flex>
+                    {
+                        this.state.mainPKr === onwer &&
+                        <div>
+                            <Button inline type="primary" size="small" onClick={() => {
+                                let key = hashKey(item.tokenName, item.standard);
+                                if (item.offline === 1) {
+                                    mAbi.on(this.state.pk, this.state.mainPKr, key)
+                                } else {
+                                    mAbi.off(this.state.pk, this.state.mainPKr, key)
+                                }
+                            }}><span>{item.offline === 1 ? "上线" : "下线"}</span>
+                            </Button>
                         </div>
-                    </div>
-                    <div style={{float: "left", width: "30%"}}>
-                        {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
-                    </div>
-                    <div style={{float: "right", width: "20%", textAlign: "right"}}>
-                        <Button type="primary" inline size="small" onClick={() => {
-                            localStorage.setItem("TOKEN", item.tokenName);
-                            localStorage.setItem("STANDARD", item.standard);
-                            createHashHistory().push("/trade");
-                        }}>{language.e().home.trade}</Button>
-                    </div>
+                    }
                 </List.Item>
             )
         });
@@ -142,26 +180,61 @@ class Market extends Component {
                         <div style={{float: "clear"}}></div>
                         {
                             this.isIOS() ? <div>
-                                <img style={{width: '100%', height: '180px'}} src={require('../icon/1.png')}/>
+                                <img style={{width: '100%', height: '180px'}}
+                                     src={'https://edenworkroom.gitee.io/logo/static/banner_2.png'}/>
                             </div> : <MCarousel/>
-
                         }
                     </WingBlank>
                     <WingBlank>
+
                         <div>
                             <p role="listitem" className="item">公告：老版本用户提现请用加载 <a
-                                href="http://edenworkroom.gitee.io/market_bak">老版本</a>
+                                href="http://edenworkroom.gitee.io/old">老版本</a>
                             </p>
                         </div>
-                        <div style={{paddingTop: '15px'}}>
-                            <div style={{padding: '0px 15px'}}>
-                                <span
-                                    style={{float: 'left'}}>{language.e().home.account} : {showPK(this.state.pk, 12)}</span>
-                            </div>
-                            <div style={{float: 'right'}}><a
-                                onClick={this.changAccount.bind(this)}>{language.e().home.change}</a></div>
-                        </div>
+                        <Flex style={{paddingTop: '15px'}}>
+                            <Flex.Item style={{flex: 85, padding: '0px 15px'}}>
+                                <span>{language.e().home.account} : {showPK(this.state.pk, 12)}</span>
+                            </Flex.Item>
+                            <Flex.Item style={{flex: 15}}>
+                                <div><a onClick={this.changAccount.bind(this)}>{language.e().home.change}</a></div>
+                            </Flex.Item>
+                        </Flex>
+
                         <div style={{clear: 'both'}}></div>
+                        {
+                            this.state.mainPKr === onwer &&
+                            <List renderHeader={() => ''}>
+                                <InputItem
+                                    clear
+                                    placeholder="token"
+                                    ref={el => this.tokenInput = el}
+                                >Token</InputItem>
+                                <InputItem
+                                    clear
+                                    placeholder="standard"
+                                    ref={el => this.standardInput = el}
+                                >Standard</InputItem>
+                                <List.Item>
+                                    <div
+                                        style={{width: '100%', color: '#108ee9', textAlign: 'center'}}
+                                        onClick={() => {
+                                            let tokenInput = this.tokenInput.state.value;
+                                            let tokenVals = tokenInput.split(",");
+                                            let token = tokenVals[0].trim();
+                                            let tokenD = parseInt(tokenVals[1].trim());
+                                            let standardInput = this.standardInput.state.value;
+                                            let standardVals = standardInput.split(",");
+                                            let standard = standardVals[0].trim();
+                                            let standarD = parseInt(standardVals[1].trim());
+                                            mAbi.addPair(this.state.pk, this.state.mainPKr, token, tokenD, standard, standarD);
+                                        }}
+                                    >
+                                        提交
+                                    </div>
+                                </List.Item>
+                            </List>
+                        }
 
 
                         <List style={{paddingTop: '15px'}} renderHeader={() => {
@@ -170,7 +243,6 @@ class Market extends Component {
                                       initialPage={0}
                                       renderTab={tab => <span style={{}}>{tab.title}</span>}
                                       onChange={(tab, index) => {
-                                          console.log("initPairList", tab.title);
                                           self.initPairList(tab.title);
                                       }}
                                 >
@@ -179,9 +251,9 @@ class Market extends Component {
                         }
                         }>
                             <List.Item>
-                                <div style={{float: "left", width: "50%"}}>{language.e().home.name}</div>
+                                <div style={{float: "left", width: "45%"}}>{language.e().home.name}</div>
                                 <div style={{float: "left", width: "30%"}}>{language.e().home.lastPrice}</div>
-                                <div style={{float: "right", width: "20%", textAlign: "right"}}></div>
+                                <div style={{float: "right", width: "23%", textAlign: "right"}}>24H涨跌</div>
                             </List.Item>
                             {tokenPairs}
                         </List>
