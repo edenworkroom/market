@@ -37,7 +37,7 @@ class Trade extends Component {
                 buyList: [],
                 sellList: [],
                 lastPrice: 0.000,
-                offline: false
+                offline: true
             },
             showBuyList: [],
             showSellList: [],

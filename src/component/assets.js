@@ -98,6 +98,7 @@ class Assets extends Component {
 
     render() {
         let self = this;
+
         let rows = this.state.tokens.map((each, index) => {
             let balance = this.state.balanceMap[each.token];
             if (!this.state.balanceMap[each.token]) {
