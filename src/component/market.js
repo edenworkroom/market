@@ -253,7 +253,7 @@ class Market extends Component {
                             <List.Item>
                                 <div style={{float: "left", width: "45%"}}>{language.e().home.name}</div>
                                 <div style={{float: "left", width: "30%"}}>{language.e().home.lastPrice}</div>
-                                <div style={{float: "right", width: "23%", textAlign: "right"}}>24H涨跌</div>
+                                <div style={{float: "right", width: "23%", textAlign: "right"}}>24H<img src={require("../icon/24h.png")}/></div>
                             </List.Item>
                             {tokenPairs}
                         </List>
