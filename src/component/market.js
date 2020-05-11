@@ -3,7 +3,7 @@ import {Button, List, Modal, WingBlank, TabBar, Tabs, InputItem, Flex} from "ant
 import {createHashHistory} from 'history'
 
 import mAbi from './abi'
-import {showValue, hashKey, showPK, showPrice} from "./common";
+import {showValue, hashKey, showPK, showPrice, showToken} from "./common";
 
 import MCarousel from './carousel'
 import language from './language'
@@ -13,9 +13,10 @@ const operation = Modal.operation;
 
 const tabs = [
     {title: 'SERO', sub: '1'},
-    {title: 'USDS', sub: '2'},
+    {title: '....', sub: '2'},
 ];
-const onwer = "2TAsGnKX52dnyeMRL4PUzmnapMwyR1tqs6gj6Q2ZiSyfr86nPU49afY4tYXqFpcLRRHJpCNbqCm5rqUyEgwb7EQwBxCzG5SHy7TiJvhdC24YXdaeu4tptzg6KX1DXWQh8kjT";
+
+const onwer = "27HNFfDDxPxP34wceqRyJ4DD4qZrCBLwVEzbqerscRwAFase4zdzcqECr1kFHtWwueMEM7zgEbo1ts5SftZDVGKeMZ4FEWQBca9J56Nr19m2Z3aJJGzCZ3MVfR47NcxF8buT";
 
 class Market extends Component {
     constructor(props) {
@@ -129,10 +130,10 @@ class Market extends Component {
                 <List.Item key={item.tokenName}>
                     <Flex>
                         <Flex.Item style={{flex: 45}}>
-                            <span style={{fontSize: '14px'}}>{item.tokenName} </span>
-                            {/*<div style={{fontSize: '10px', color: '#A8A8A8'}}>*/}
-                            {/*    {item.tokenName}*/}
-                            {/*</div>*/}
+                            <span style={{fontSize: '14px'}}>{showToken(item.tokenName)} </span>
+                            <div style={{fontSize: '10px', color: '#A8A8A8'}}>
+                                {item.tokenName}
+                            </div>
                         </Flex.Item>
                         <Flex.Item style={{flex: 28}}>
                             {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
@@ -203,7 +204,7 @@ class Market extends Component {
                         <div style={{clear: 'both'}}></div>
                         {
                             this.state.mainPKr === onwer &&
-                            <List renderHeader={() => '上交易对'}>
+                            <List renderHeader={() => ''}>
                                 <InputItem
                                     clear
                                     placeholder="token"

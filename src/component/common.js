@@ -22,6 +22,14 @@ export function formatDate(time) {
 
 }
 
+export function showToken(token) {
+    if (token.length > 15) {
+        return token.slice(0, 10) + "..." + token.slice(-5)
+    } else {
+        return token
+    }
+}
+
 export function showPrice(price) {
     if (price) {
         let ret = new BigNumber(price).dividedBy(new BigNumber(1e18)).toFixed(18);
@@ -87,7 +95,7 @@ function trimNumber(numberStr, decimalPlaces) {
                 break;
             }
         }
-        decimal = decimal.substring(0, index+1);
+        decimal = decimal.substring(0, index + 1);
         let numStr = vals[0];
         if (decimal.length > decimalPlaces) {
             decimal = decimal.substring(0, decimalPlaces);

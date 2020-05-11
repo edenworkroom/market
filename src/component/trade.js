@@ -9,7 +9,7 @@ import trade_price_add from '../icon/trade_price_add.png'
 import trade_price_reduce from '../icon/trade_price_reduce.png'
 
 import mAbi from './abi'
-import {showPrice, showPK, showValueP, showValue, hashKey, formatDate} from "./common";
+import {showPrice, showPK, showValueP, showValue, hashKey, formatDate, showToken} from "./common";
 import MTabbar from "./tabbar";
 import language from './language'
 import Depthmap from "./depthmap";
@@ -22,7 +22,7 @@ class Trade extends Component {
         let standard = localStorage.getItem("STANDARD");
 
         if (!token || !standard) {
-            token = "TTTT";
+            token = "THE_FIRST_PRIVACY_COIN";
             standard = "SERO";
         }
 
@@ -318,7 +318,7 @@ class Trade extends Component {
                                                                          className="ui avatar image"/>
                                     </div>
                                     <div className="active section"><span
-                                        className="header">{this.state.pair[0]}/{this.state.pair[1]}</span>
+                                        className="header">{showToken(this.state.pair[0])}/{this.state.pair[1]}</span>
                                     </div>
                                 </div>
                             </Flex>

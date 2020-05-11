@@ -6,7 +6,7 @@ import {decimals, tokenToBytes} from "./common";
 
 const config = {
     name: "Rhino Market",
-    contractAddress: "59j7y1suhUsSfTdwSjdg8VykcTAszfNPWsnMc8D3NAycbsk8Tro6RgUGKBL7ViSgGWuwt4GzcdWCgaYpzns1uciX",
+    contractAddress: "Y5GRme4CYQXoJd8RabeEaSKdoE14QEQE2ULg4nV652MGFRsdQDkGrBE5tRYRfMy1PHWCaUw6Ec4B1nieXxDe6Yk",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
