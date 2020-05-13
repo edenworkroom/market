@@ -53,6 +53,7 @@ class Trade extends Component {
         if (!mainPkr) {
             mainPkr = self.state.mainPKr;
         }
+        let decmails = localStorage.getItem("D_" + self.state.pair[0])
 
         mAbi.balanceOf(self.state.mainPKr, self.state.pair, function (maps) {
             self.setState({balances: maps});
@@ -68,7 +69,10 @@ class Trade extends Component {
                 return item.status == 0;
             }).sort(function (a, b) {
                 return b.price - a.price;
-            }).forEach(function (item, index) {
+            }).forEach(function (item, index){
+                if (new BigNumber(item.value - item.dealValue).dividedBy(new BigNumber(10).pow(decmails)).toNumber() < 0.00001) {
+                    return
+                }
                 let buyPrice = item.price - item.price % base
                 if (buyList.length == 0 || buyPrice != buyList[buyList.length - 1].price) {
                     buyList.push({price: buyPrice, value: item.value - item.dealValue});
@@ -83,6 +87,10 @@ class Trade extends Component {
             }).sort(function (a, b) {
                 return a.price - b.price;
             }).forEach(function (item, index) {
+                if (new BigNumber(item.value - item.dealValue).dividedBy(new BigNumber(10).pow(decmails)).toNumber() < 0.00001) {
+                    return
+                }
+                
                 let sellPrice = item.price - item.price % base
                 if (sellList.length == 0 || sellPrice != sellList[sellList.length - 1].price) {
                     sellList.push({price: sellPrice, value: item.value - item.dealValue});
@@ -206,7 +214,7 @@ class Trade extends Component {
                 <Flex key={index}>
                     <Flex.Item style={{textAlign: 'left'}}>{showPrice(item.price, 18)}</Flex.Item>
                     <Flex.Item
-                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 2)}</Flex.Item>
+                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 5)}</Flex.Item>
                 </Flex>)
         });
 
@@ -215,7 +223,7 @@ class Trade extends Component {
                 <Flex key={index}>
                     <Flex.Item style={{textAlign: 'left'}}>{showPrice(item.price, 18)}</Flex.Item>
                     <Flex.Item
-                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 2)}</Flex.Item>
+                        style={{textAlign: 'right'}}>{showValueP((item.value), decmails, 5)}</Flex.Item>
                 </Flex>)
         });
 
