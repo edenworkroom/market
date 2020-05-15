@@ -42,11 +42,11 @@ export function showPrice(price) {
 export function showValueP(val, decimal, decimalPlaces) {
     let num = new BigNumber(val).dividedBy(new BigNumber(10).pow(decimal));
     if (num.comparedTo(1000000) >= 0) {
-        let text = num.dividedBy(1000000).toFixed(decimalPlaces);
-        return trimNumber(text, decimalPlaces) + "M";
+        let text = num.dividedBy(1000000).toFixed(2);
+        return trimNumber(text, 2) + "M";
     } else if (num.comparedTo(1000) >= 0) {
-        let text = num.dividedBy(1000).toFixed(decimalPlaces);
-        return trimNumber(text, decimalPlaces) + "K";
+        let text = num.dividedBy(1000).toFixed(2);
+        return trimNumber(text, 2) + "K";
     } else {
         return trimNumber(num.toFixed(decimalPlaces), decimalPlaces);
     }

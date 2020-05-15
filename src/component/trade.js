@@ -255,7 +255,7 @@ class Trade extends Component {
                                     paddingLeft: '3px',
                                     fontSize: '18px',
                                     fontWeight: 'bold'
-                                }}>{this.state.pair[0]}/{self.state.pair[1]}</span>
+                                }}>{showToken(this.state.pair[0])}/{self.state.pair[1]}</span>
                                 <span style={{
                                     fontSize: '15px',
                                     paddingLeft: '5px'
