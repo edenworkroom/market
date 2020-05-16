@@ -59,6 +59,15 @@ class MTabbar extends Component {
                                  }}
                     >
                     </TabBar.Item>
+                    <TabBar.Item title={"一键发币"}
+                                 key="stoken"
+                                 icon={<img src={require('../icon/coins.png')}
+                                            style={{width: '22px', height: '22px'}}/>}
+                                 onPress={() => {
+                                     window.location.href = "http://edenworkroom.gitee.io/stoken";
+                                 }}
+                    >
+                    </TabBar.Item>
                 </TabBar>
             </div>
         )

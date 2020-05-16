@@ -90,7 +90,7 @@ class Trade extends Component {
                 if (new BigNumber(item.value - item.dealValue).dividedBy(new BigNumber(10).pow(decmails)).toNumber() < 0.00001) {
                     return
                 }
-                
+
                 let sellPrice = item.price - item.price % base
                 if (sellList.length == 0 || sellPrice != sellList[sellList.length - 1].price) {
                     sellList.push({price: sellPrice, value: item.value - item.dealValue});
