@@ -64,7 +64,7 @@ class MTabbar extends Component {
                                  icon={<img src={require('../icon/coins.png')}
                                             style={{width: '22px', height: '22px'}}/>}
                                  onPress={() => {
-                                     window.location.href = "http://edenworkroom.gitee.io/stoken";
+                                     window.location.href = "https://edenworkroom.gitee.io/stoken";
                                  }}
                     >
                     </TabBar.Item>
