@@ -58,20 +58,25 @@ export function showValue(val, decimal, decimalPlaces) {
     return trimNumber(text, decimalPlaces)
 }
 
-export function showPK(pk, len) {
-    if (!pk) {
+export function showAccount(account, len) {
+    if (!account) {
         return "";
     }
     if (!len) {
         len = 8;
     }
-    return pk.slice(0, len) + "..." + pk.slice(-len)
+    return account.mainPKr.slice(0, len) + "..." + account.mainPKr.slice(-len)
 }
 
 export function tokenToBytes(token) {
     let bytes = Buffer.alloc(32);
     bytes.fill(token, 0, token.length);
     return "0x" + bytes.toString('hex');
+}
+
+export function bytesToToken(data) {
+    let bytes = Buffer.from(data.substring(2, data.indexOf("00")), "hex");
+    return String.fromCharCode.apply(String, bytes).trim();
 }
 
 export function hashKey(token1, token2) {

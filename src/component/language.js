@@ -71,6 +71,9 @@ class Language {
             total: "数量",
             volume: "交易量",
             depth: "深度图",
+            fee: "手续费",
+            dealBuy: "成交支付",
+            dealSell: "成交收入"
         },
         assets: {
             total: "总量",
@@ -122,6 +125,9 @@ class Language {
             total: "Total",
             volume: "Volume",
             depth: "depth map",
+            fee: "手续费",
+            dealBuy: "成交支付",
+            dealSell: "成交收入"
         },
 
         assets: {
@@ -175,6 +181,9 @@ class Language {
             total: "общее количество",
             volume: "объем",
             depth: "depth map",
+            fee: "手续费",
+            dealBuy: "成交支付",
+            dealSell: "成交收入"
         },
 
         assets: {
@@ -227,6 +236,9 @@ class Language {
             total: "合計",
             volume: "ボリューム",
             depth: "depth map",
+            fee: "手续费",
+            dealBuy: "成交支付",
+            dealSell: "成交收入"
         },
 
         assets: {
@@ -279,6 +291,9 @@ class Language {
             total: "합계",
             volume: "음량",
             depth: "depth map",
+            fee: "手续费",
+            dealBuy: "成交支付",
+            dealSell: "成交收入"
         },
 
         assets: {

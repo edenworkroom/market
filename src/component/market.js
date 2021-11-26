@@ -1,160 +1,108 @@
-import React, {Component} from 'react';
-import {Button, List, Modal, WingBlank, TabBar, Tabs, InputItem, Flex} from "antd-mobile";
-import {createHashHistory} from 'history'
+import React, { } from 'react';
+import { Button, List, Card, WingBlank, WhiteSpace, Tabs, Flex, Icon, Modal, Toast } from "antd-mobile";
+import { createHashHistory } from 'history'
+import 'semantic-ui-css/semantic.min.css';
 
 import mAbi from './abi'
-import {showValue, hashKey, showPK, showPrice, showToken} from "./common";
+import { showValue, showPrice, showToken } from "./common";
 
-import MCarousel from './carousel'
 import language from './language'
-import MTabbar from "./tabbar";
+import Base from './base.js';
 
 const operation = Modal.operation;
 
-const tabs = [
-    {title: 'SERO', sub: '1'},
-    {title: '....', sub: '2'},
-];
-
-const onwer = "27HNFfDDxPxP34wceqRyJ4DD4qZrCBLwVEzbqerscRwAFase4zdzcqECr1kFHtWwueMEM7zgEbo1ts5SftZDVGKeMZ4FEWQBca9J56Nr19m2Z3aJJGzCZ3MVfR47NcxF8buT";
-
-class Market extends Component {
+class Market extends Base {
     constructor(props) {
         super(props);
-        let self = this;
-        this.state = {
-            pairList: [],
-            pk: localStorage.getItem("PK"),
-            mainPKr: localStorage.getItem("MAINPKR")
-        }
 
-        let pk = localStorage.getItem("PK");
-        if (!pk) {
-            mAbi.init
-                .then(() => {
-                    mAbi.accountList(function (accounts) {
-                        localStorage.setItem("PK", accounts[0].pk);
-                        localStorage.setItem("MAINPKR", accounts[0].mainPKr);
-                        self.setState({pk: accounts[0].pk, mainPKr: accounts[0].mainPKr});
-                    });
-                })
+        this.state = {
+            selectedTab: "market",
+            pairList: [],
+            tabs: [],
+            baseToken: "",
         }
     }
 
-    initPairList(standard) {
+    _init(_baseToken) {
         let self = this;
-        mAbi.tokenList("2JurSKqbpUMMrpxfzHNajLec6QQ3E7XrhrYCQfDPNBxfXcsgytr5xaB63984AEBAuHRV3h5KwKazNmBTA5PYFTiDSLSeFqq2FvoaXZnCyMburKSe5wk43Yid8DWa48214BuT",
-            standard, function (tokens) {
+        mAbi.baseTokens(self.state.account.mainPKr, function (tokens) {
+            let tabs = [];
+            tokens.forEach((each, index) => {
+                tabs.push({ title: each, sub: index + 1 });
+            });
 
-                const pairList = new Array();
+            let baseToken = self.state.baseToken;
+            if (baseToken) {
+                baseToken = _baseToken;
+            }
+
+            if (!baseToken) {
+                baseToken = tokens[0];
+            }
+
+            mAbi.pairList(self.state.account.mainPKr, baseToken, function (tokens) {
+
+                const pairList = [];
                 tokens.forEach(each => {
-                    let firstPrice = each.firstPrice;
-                    let lastPrice = each.lastPrice;
+                    let firstPrice = parseInt(each.firstPrice);
+                    let lastPrice = parseInt(each.lastPrice);
                     let amountOfIncrease = 0;
-                    if (firstPrice != 0) {
+                    if (firstPrice !== 0) {
                         amountOfIncrease = (lastPrice - firstPrice) / firstPrice * 100;
                     }
 
                     pairList.push({
-                        // symbol: info.symbol,
-                        tokenName: each.token,
-                        // name: info.name,
+                        token: each.token,
+                        baseToken: baseToken,
                         lastPrice: each.lastPrice,
-                        decimals: each.decimals,
-                        standard: standard,
                         volume: each.volume,
+                        decimals: each.decimals,
                         amountOfIncrease: amountOfIncrease,
                         offline: each.offline
                     });
-                    localStorage.setItem("D_" + each.token, each.decimals);
                 });
-
                 pairList.sort(function (a, b) {
                     return b.volume - a.volume;
                 });
-                self.setState({pairList: pairList});
+
+                self.setState({ baseToken: baseToken, tabs: tabs, pairList: pairList });
             });
-    }
-
-    componentWillUnmount() {
-        if (this.timer) {
-            clearInterval(this.timer);
-        }
-    }
-
-    componentDidMount() {
-        let self = this;
-        mAbi.init
-            .then(() => {
-                self.initPairList("SERO");
-                // self.timer = setInterval(self.initPairList(), 10 * 1000);
-                mAbi.initLanguage(function (_lang) {
-                    language.set(_lang);
-                });
-            })
-
-    }
-
-    changAccount() {
-        let self = this;
-        mAbi.accountList(function (accounts) {
-            let actions = [];
-            accounts.forEach(function (account, index) {
-                actions.push(
-                    {
-                        text: <span>{account.name + ":" + showPK(account.pk)}</span>, onPress: () => {
-                            self.setState({pk: account.pk, mainPKr: account.mainPKr});
-                            localStorage.setItem("PK", account.pk);
-                            localStorage.setItem("MAINPKR", account.mainPKr);
-                        }
-                    }
-                );
-            });
-            operation(actions);
         });
     }
 
-    isIOS() {
-        var u = navigator.userAgent, app = navigator.appVersion;
-        var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
-        var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
-        return isIOS;
-    }
-
-    render() {
+    _render() {
         let self = this;
         const tokenPairs = this.state.pairList.map((item, index) => {
-
             return (
-                <List.Item key={item.tokenName}>
+                <List.Item key={item.token}>
                     <Flex>
-                        <Flex.Item style={{flex: 45}}>
-                            <span style={{fontSize: '14px'}}>{showToken(item.tokenName)} </span>
-                            <div style={{fontSize: '10px', color: '#A8A8A8'}}>
-                                {item.tokenName}
+                        <Flex.Item style={{ flex: 45 }}>
+                            <span style={{ fontSize: '14px' }}>{showToken(item.token)} </span>
+                            <div style={{ fontSize: '10px', color: '#A8A8A8' }}>
+                                {item.token}
                             </div>
                         </Flex.Item>
-                        <Flex.Item style={{flex: 28}}>
+                        <Flex.Item style={{ flex: 28 }}>
                             {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
-                            <div style={{fontSize: '10px', color: '#A8A8A8'}}>
+                            <div style={{ fontSize: '10px', color: '#A8A8A8' }}>
                                 {showValue(item.volume, item.decimals, 6)}{item.standard}
                             </div>
                         </Flex.Item>
-                        <Flex.Item style={{flex: 27, textAlign: "right"}}>
+                        <Flex.Item style={{ flex: 27, textAlign: "right" }}>
                             <Button inline size="small" style={item.amountOfIncrease < 0 ? {
                                 backgroundColor: '#D01919',
                                 color: 'white'
-                            } : {backgroundColor: '#21BA45', color: 'white'}} onClick={() => {
-                                localStorage.setItem("TOKEN", item.tokenName);
-                                localStorage.setItem("STANDARD", item.standard);
+                            } : { backgroundColor: '#21BA45', color: 'white' }} onClick={() => {
+                                localStorage.setItem("TOKEN", item.token);
+                                localStorage.setItem("BASETOKEN", item.baseToken);
                                 createHashHistory().push("/trade");
                             }}><span>
-                            {item.amountOfIncrease >= 0 && "+"}
-                                {showValue(item.amountOfIncrease, 0, 2)}%</span>
+                                    {item.amountOfIncrease >= 0 && "+"}
+                                    {showValue(item.amountOfIncrease, 0, 2)}%</span>
                             </Button>
                         </Flex.Item>
                     </Flex>
-                    {
+                    {/* {
                         this.state.mainPKr === onwer &&
                         <div>
                             <Button inline type="primary" size="small" onClick={() => {
@@ -167,99 +115,78 @@ class Market extends Component {
                             }}><span>{item.offline === 1 ? "上线" : "下线"}</span>
                             </Button>
                         </div>
-                    }
+                    } */}
                 </List.Item>
             )
         });
 
         return (
-            <div>
-                <div style={{paddingTop: "10px", paddingBottom: '40px'}}>
-                    <WingBlank>
-                        <div style={{float: "clear"}}></div>
-                        {
-                            this.isIOS() ? <div>
-                                <img style={{width: '100%', height: '180px'}}
-                                     src={'https://edenworkroom.gitee.io/logo/static/banner_2.png'}/>
-                            </div> : <MCarousel/>
-                        }
-                    </WingBlank>
-                    <WingBlank>
-
-                        <div>
-                            <p role="listitem" className="item">公告：老版本用户提现请用加载 <a
-                                href="http://edenworkroom.gitee.io/old">老版本</a>
-                            </p>
-                        </div>
-                        <Flex style={{paddingTop: '15px'}}>
-                            <Flex.Item style={{flex: 85, padding: '0px 15px'}}>
-                                <span>{language.e().home.account} : {showPK(this.state.pk, 12)}</span>
+            <WingBlank>
+                <Card>
+                    <Card.Header
+                        title="自助上币"
+                        extra={<Button inline size="small"
+                            onClick={() => {
+                                mAbi.addPair(this.state.account.pk, this.state.account.mainPKr, this.tokenInput.value, this.state.baseToken, function (hash, err) {
+                                    self.checkTxReceipt(hash);
+                                });
+                            }}>提交</Button>}
+                    />
+                    <Card.Body>
+                        <Flex>
+                            <Flex.Item style={{ flex: 2 }}>
+                                <div className="ui input">
+                                    <input type="text" placeholder="token" ref={el => this.tokenInput = el} onChange={
+                                        (e) => {
+                                            let value = e.target.value;
+                                            this.tokenInput.value = value.toUpperCase();
+                                        }
+                                    } />
+                                </div>
                             </Flex.Item>
-                            <Flex.Item style={{flex: 15}}>
-                                <div><a onClick={this.changAccount.bind(this)}>{language.e().home.change}</a></div>
+                            <Flex.Item style={{ flex: 1 }}>
+                                <button className="ui button" onClick={() => {
+                                    if (this.state.tabs.length <= 1) {
+                                        return;
+                                    }
+                                    let list = [];
+                                    this.state.tabs.forEach(function (each, index) {
+                                        list.push(
+                                            {
+                                                text: <span>{each.title}</span>, onPress: () => {
+                                                    self.setState({ baseToken: each.title });
+                                                }
+                                            }
+                                        );
+                                    });
+                                    operation(list);
+                                }}><span>{this.state.baseToken}</span><Icon type={"down"} size="xxs" /></button>
                             </Flex.Item>
                         </Flex>
+                    </Card.Body>
+                </Card>
+                <WhiteSpace size="sm" />
 
-                        <div style={{clear: 'both'}}></div>
-                        {
-                            this.state.mainPKr === onwer &&
-                            <List renderHeader={() => ''}>
-                                <InputItem
-                                    clear
-                                    placeholder="token"
-                                    ref={el => this.tokenInput = el}
-                                >Token</InputItem>
-                                <InputItem
-                                    clear
-                                    placeholder="standard"
-                                    ref={el => this.standardInput = el}
-                                >Standard</InputItem>
-                                <List.Item>
-                                    <div
-                                        style={{width: '100%', color: '#108ee9', textAlign: 'center'}}
-                                        onClick={() => {
-                                            let tokenInput = this.tokenInput.state.value;
-                                            let tokenVals = tokenInput.split(",");
-                                            let token = tokenVals[0].trim();
-                                            let tokenD = parseInt(tokenVals[1].trim());
-                                            let standardInput = this.standardInput.state.value;
-                                            let standardVals = standardInput.split(",");
-                                            let standard = standardVals[0].trim();
-                                            let standarD = parseInt(standardVals[1].trim());
-                                            mAbi.addPair(this.state.pk, this.state.mainPKr, token, tokenD, standard, standarD);
-                                        }}
-                                    >
-                                        提交
-                                    </div>
-                                </List.Item>
-                            </List>
-                        }
-
-
-                        <List style={{paddingTop: '15px'}} renderHeader={() => {
-                            return (
-                                <Tabs tabs={tabs}
-                                      initialPage={0}
-                                      renderTab={tab => <span style={{}}>{tab.title}</span>}
-                                      onChange={(tab, index) => {
-                                          self.initPairList(tab.title);
-                                      }}
-                                >
-                                </Tabs>
-                            )
-                        }
-                        }>
-                            <List.Item>
-                                <div style={{float: "left", width: "45%"}}>{language.e().home.name}</div>
-                                <div style={{float: "left", width: "30%"}}>{language.e().home.lastPrice}</div>
-                                <div style={{float: "right", width: "23%", textAlign: "right"}}>24H<img src={require("../icon/24h.png")}/></div>
-                            </List.Item>
-                            {tokenPairs}
-                        </List>
-                    </WingBlank>
-                </div>
-                <MTabbar selectedTab="market"/>
-            </div>)
+                <List renderHeader={() => {
+                    return (
+                        <Tabs tabs={this.state.tabs}
+                            initialPage={0}
+                            renderTab={tab => <span style={{}}>{tab.title}</span>}
+                            onChange={(tab, index) => {
+                                self._init(tab.title);
+                            }}
+                        >
+                        </Tabs>
+                    )
+                }}>
+                    <List.Item>
+                        <div style={{ float: "left", width: "45%" }}>{language.e().home.name}</div>
+                        <div style={{ float: "left", width: "30%" }}>{language.e().home.lastPrice}</div>
+                        <div style={{ float: "right", width: "23%", textAlign: "right" }}>24H<img src={require("../icon/24h.png")} /></div>
+                    </List.Item>
+                    {tokenPairs}
+                </List>
+            </WingBlank>)
     }
 }
 

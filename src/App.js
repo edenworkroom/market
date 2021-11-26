@@ -17,7 +17,8 @@ class App extends Component {
                 <Switch>
                     <Route exact path="/" component={Market}/>
                     <Route exact path="/market/" component={Market}/>
-                    <Route exact path="/trade/" component={Trade}/>
+                    <Route exact path="/trade/" component={Trade} />
+                    <Route exact path="/trade/:pair" component={Trade} />
                     <Route exact path="/asset/" component={Assets}/>
                     <Route exact path="/orders" component={OrderList}/>
                     <Route exact path="/bills/:token" component={BillList}/>

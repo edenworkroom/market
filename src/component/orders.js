@@ -11,15 +11,16 @@ class OrderList extends Component {
         super(props);
 
         let token = localStorage.getItem("TOKEN");
-        let standard = localStorage.getItem("STANDARD");
+        let baseToken = localStorage.getItem("BASETOKEN");
 
-        if (!token || !standard) {
-            token = "THE_FIRST_PRIVACY_COIN";
-            standard = "SERO";
+        if (!token || !baseToken) {
+            token = "SERO";
+            baseToken = "USDT";
         }
-        let key = hashKey(token, standard);
+
+        let key = hashKey(token, baseToken);
         this.state = {
-            pair: [token, standard],
+            pair: [token, baseToken],
             key: key,
             orders: []
         }
