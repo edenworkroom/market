@@ -10,8 +10,10 @@ import MTabbar from "./tabbar";
 const operation = Modal.operation;
 
 class Base extends Component {
-    constructor(props) {
+
+    constructor(props, params) {
         super();
+        this.params = params;
     }
 
     componentWillUnmount() {
@@ -27,8 +29,11 @@ class Base extends Component {
         self.setState({ account: account }, function () {
             if (self._init) {
                 self._init();
-            
-                self.timer = setInterval(self._init(), 10 * 1000);
+                if (self.params && self.params.interval > 0) {
+                    setTimeout(function () {
+                        self.timer = setInterval(self._init(), self.params.interval * 1000);
+                    }, 5 * 1000);
+                }
             }
         });
     }
@@ -49,7 +54,7 @@ class Base extends Component {
                     });
                 }
 
-                
+
                 mAbi.initLanguage(function (_lang) {
                     language.set(_lang);
                 });

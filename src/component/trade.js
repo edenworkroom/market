@@ -2,6 +2,7 @@ import React, { } from 'react';
 import { Modal, WhiteSpace, WingBlank, Flex, Slider, Tabs, NavBar, Icon } from "antd-mobile";
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
+import { Scrollbars } from 'react-custom-scrollbars-2';
 
 import trade_buy from '../icon/trade_buy.png';
 import trade_price_add from '../icon/trade_price_add.png'
@@ -14,14 +15,13 @@ import Base from './base.js';
 
 class Trade extends Base {
     constructor(props) {
-        super();
+        super(props, { interval: 10 });
 
         let token = localStorage.getItem("TOKEN");
         let baseToken = localStorage.getItem("BASETOKEN");
-
         if (!token || !baseToken) {
             token = "SERO";
-            baseToken = "SUSD";
+            baseToken = "TUSDT";
         }
 
         let key = hashKey(token, baseToken);
@@ -34,11 +34,11 @@ class Trade extends Base {
             pairInfo: {
                 buyList: [],
                 sellList: [],
+                offline: false,
                 lastPrice: 0.000,
-                offline: false
+                lastOp: "0",
+                amountOfIncrease: 0
             },
-            showBuyList: [],
-            showSellList: [],
             lastPrice: 0,
             lastOp: 0,
             amountOfIncrease: 0,
@@ -47,79 +47,75 @@ class Trade extends Base {
         }
     }
 
+    filterList(list, sortType) {
+        let arr = [];
+        list.filter(function (item, index, list) {
+            return item.status === "0";
+        }).sort(function (a, b) {
+            if (sortType) {
+                return Number(b.price) - Number(a.price);
+            } else {
+                return Number(a.price) - Number(b.price);
+            }
+        }).forEach(function (item, index) {
+            let value = Number(item.value) - Number(item.dealValue);
+            let price = item.price;
+
+            if (arr.length === 0 || price !== arr[arr.length - 1].price) {
+                arr.push({ price: price, value: value });
+            } else {
+                arr[arr.length - 1].value += value;
+            }
+        });
+        return arr;
+    }
+
+    componentDidUpdate() {
+        this.sellItemsRef.scrollToBottom();
+        this.buyItemsRef.scrollToTop();
+    }
+
     _init() {
 
         let self = this;
-        let decmails = mAbi.getDecimal(self.state.pair[0]);
         let account = this.state.account;
-
         mAbi.balanceOf(account.mainPKr, self.state.pair, function (maps) {
-            self.setState({ balances: maps, account: account });
+            self.setState({ balances: maps });
         });
 
+        let oneToken = new BigNumber(10).pow(mAbi.getDecimal(self.state.pair[0]));
+        let oneBaseToken = new BigNumber(10).pow(mAbi.getDecimal(self.state.pair[1]));
         mAbi.pairInfo(account.mainPKr, self.state.key, function (info) {
-            let base = 1e15;
-            if ((info.buyList.length > 0 && info.buyList[0].price < base) ||
-                (info.sellList.length > 0 && info.sellList[0].price < base)) {
-                base = 1e13
-            }
-            let buyList = [];
-            info.buyList.filter(function (item, index, list) {
-                return item.status === "0";
-            }).sort(function (a, b) {
-                return b.price - a.price;
-            }).forEach(function (item, index) {
-                if (new BigNumber(item.value - item.dealValue).dividedBy(new BigNumber(10).pow(decmails)).toNumber() < 0.00001) {
-                    return
-                }
-                let buyPrice = item.price - item.price % base
-                if (buyList.length === 0 || buyPrice !== buyList[buyList.length - 1].price) {
-                    buyList.push({ price: buyPrice, value: item.value - item.dealValue });
-                } else {
-                    buyList[buyList.length - 1].value += item.value - item.dealValue;
-                }
+            info.sellList.forEach(each => {
+                each.price = new BigNumber(each.price).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
             });
 
-            let sellList = [];
-            info.sellList.filter(function (item, index, list) {
-                return item.status === "0";
-            }).sort(function (a, b) {
-                return a.price - b.price;
-            }).forEach(function (item, index) {
-                if (new BigNumber(item.value - item.dealValue).dividedBy(new BigNumber(10).pow(decmails)).toNumber() < 0.00001) {
-                    return
-                }
-
-                let sellPrice = item.price - item.price % base
-                if (sellList.length === 0 || sellPrice !== sellList[sellList.length - 1].price) {
-                    sellList.push({ price: sellPrice, value: item.value - item.dealValue });
-                } else {
-                    sellList[sellList.length - 1].value += item.value - item.dealValue;
-                }
+            info.buyList.forEach(each => {
+                each.price = new BigNumber(each.price).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
             });
 
-            info.sellList = sellList;
-            info.buyList = buyList;
-
-            let deals = info.deals.sort(function (a, b) {
-                return a.timestamp - b.timestamp;
+            info.deals.forEach(each => {
+                each.price = new BigNumber(each.price).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
             });
-            info.lastPrice = 0;
+
+            info.deals = info.deals.sort(function (a, b) {
+                return Number(a.timestamp) - Number(b.timestamp);
+            });
+            info.lastPrice = 0.00;
             info.lastOp = 0;
             info.amountOfIncrease = 0;
-            if (deals.length > 0) {
-                info.lastPrice = deals[deals.length - 1].price;
-                info.lastOp = deals[deals.length - 1].opType;
-                info.amountOfIncrease = (info.lastPrice - deals[0].price) / deals[0].price * 100;
+            if (info.deals.length > 0) {
+                info.lastPrice = info.deals[info.deals.length - 1].price;
+                info.lastOp = info.deals[info.deals.length - 1].opType;
+                info.amountOfIncrease = (info.lastPrice - info.deals[0].price) / info.deals[0].price * 100;
             }
-            self.setState({
-                pairInfo: info,
-                showBuyList: buyList.slice(0, 5),
-                showSellList: sellList.slice(0, 5).reverse()
-            });
+            self.setState({ pairInfo: info });
         });
 
         mAbi.orders(account.mainPKr, this.state.key, function (orders) {
+            orders.forEach(each => {
+                each.price = new BigNumber(each.price).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
+            });
             self.setState({ orders: orders });
         })
     }
@@ -135,39 +131,51 @@ class Trade extends Base {
         }
 
         let self = this;
-        let base = new BigNumber(10).pow(mAbi.getDecimal(this.state.pair[0]));
-        let price = new BigNumber(this.priceValue.value);
-        let value = new BigNumber(this.numValue.value).multipliedBy(base);
+        let tokenD = mAbi.getDecimal(this.state.pair[0]);
+        let baseTokenD = mAbi.getDecimal(this.state.pair[1]);
+
+        let oneToken = new BigNumber(10).pow(tokenD);
+        let oneBaseToken = new BigNumber(10).pow(baseTokenD);
+        let price = new BigNumber(this.priceValue.value).multipliedBy(oneBaseToken).dividedBy(oneToken);
+        let value = new BigNumber(this.numValue.value).multipliedBy(oneToken);
         if (price.isZero() || value.isZero()) {
             return;
         }
 
         if (this.state.opType) {
             let amount = price.multipliedBy(value);
-            if (amount.toNumber() > Number(this.balanceOf(this.state.pair[1]))) {
+            if (amount.toNumber() > this.balanceOf(this.state.pair[1]).toNumber()) {
                 Modal.alert('', '余额不足，请充值', [
                     { text: 'OK', onPress: () => console.log('ok') },
                 ])
                 return;
             }
 
-            let payAmount = amount.minus(new BigNumber(this.state.balances[this.state.pair[1]][0]));
-            price = price.multipliedBy(new BigNumber(10).pow(18));
+            let availAmount = new BigNumber(this.state.balances[this.state.pair[1]][0]);
+            let payAmount = new BigNumber(0);
+            if (availAmount.lt(amount)) {
+                payAmount = amount.minus(availAmount);
+            }
 
+            price = price.multipliedBy(new BigNumber(10).pow(18));
             mAbi.buy(this.state.account.pk, this.state.account.mainPKr, this.state.key, price.toNumber(), value.toFixed(0), this.state.pair[1], payAmount, function (hash) {
                 self.checkTxReceipt(hash);
             });
         } else {
-
             if (Number(this.numValue.value) > Number(this.balanceOf(this.state.pair[0]))) {
                 Modal.alert('', '余额不足，请充值', [
                     { text: 'OK', onPress: () => console.log('ok') },
                 ])
                 return;
             }
-            let payAmount = value.minus(new BigNumber(this.state.balances[this.state.pair[0]][0]));
-            price = price.multipliedBy(new BigNumber(10).pow(18));
 
+            let availAmount = new BigNumber(this.state.balances[this.state.pair[0]][0]);
+            let payAmount = new BigNumber(0);
+            if (availAmount.lt(value)) {
+                payAmount = value.minus(availAmount);
+            }
+
+            price = price.multipliedBy(new BigNumber(10).pow(18));
             mAbi.sell(this.state.account.pk, this.state.account.mainPKr, this.state.key, price.toNumber(), value.toFixed(0), this.state.pair[0], payAmount, function (hash) {
                 self.checkTxReceipt(hash);
             });
@@ -203,23 +211,21 @@ class Trade extends Base {
 
     _render() {
         let self = this;
-        let decmails = localStorage.getItem("D_" + self.state.pair[0])
-        let buyOrderItems = this.state.showBuyList.map((item, index) => {
-            return (
-                <Flex key={index}>
-                    <Flex.Item style={{ textAlign: 'left' }}>{showPrice(item.price, 18)}</Flex.Item>
-                    <Flex.Item
-                        style={{ textAlign: 'right' }}>{showValueP((item.value), decmails, 5)}</Flex.Item>
-                </Flex>)
+        let decmails = mAbi.getDecimal(self.state.pair[0]);
+        let buyOrderItems = self.filterList(this.state.pairInfo.buyList, true).map((item, index) => {
+            return (<Flex key={index}>
+                <Flex.Item style={{ textAlign: 'left' }}>{showPrice(item.price, 18)}</Flex.Item>
+                <Flex.Item
+                    style={{ textAlign: 'right' }}>{showValueP((item.value), decmails, 5)}</Flex.Item>
+            </Flex>);
         });
 
-        let sellOrderItems = this.state.showSellList.map((item, index) => {
-            return (
-                <Flex key={index}>
-                    <Flex.Item style={{ textAlign: 'left' }}>{showPrice(item.price, 18)}</Flex.Item>
-                    <Flex.Item
-                        style={{ textAlign: 'right' }}>{showValueP((item.value), decmails, 5)}</Flex.Item>
-                </Flex>)
+        let sellOrderItems = self.filterList(this.state.pairInfo.sellList, true).map((item, index) => {
+            return (<Flex key={index}>
+                <Flex.Item style={{ textAlign: 'left' }}>{showPrice(item.price, 18)}</Flex.Item>
+                <Flex.Item
+                    style={{ textAlign: 'right' }}>{showValueP((item.value), decmails, 5)}</Flex.Item>
+            </Flex>);
         });
 
         let orderIds = [];
@@ -421,13 +427,13 @@ class Trade extends Base {
                                             this.state.opType ?
                                                 <span>{language.e().trade.available} {
                                                     showValue(this.balanceOf(this.state.pair[1]),
-                                                        localStorage.getItem("D_" + this.state.pair[1]),
+                                                        mAbi.getDecimal(this.state.pair[1]),
                                                         9)
 
                                                 } {this.state.pair[1]}</span> :
                                                 <span>{language.e().trade.available} {
                                                     showValue(this.balanceOf(this.state.pair[0]),
-                                                        localStorage.getItem("D_" + this.state.pair[0]),
+                                                        mAbi.getDecimal(this.state.pair[0]),
                                                         9)
                                                 } {this.state.pair[0]}</span>
                                         }
@@ -458,10 +464,10 @@ class Trade extends Base {
                                                         this.slider.value = 0;
                                                         return
                                                     }
-                                                    let balance = this.balanceOf(this.state.pair[1]).dividedBy(new BigNumber(10).pow(localStorage.getItem("D_" + this.state.pair[1])));
+                                                    let balance = this.balanceOf(this.state.pair[1]).dividedBy(new BigNumber(10).pow(mAbi.getDecimal(this.state.pair[1])));
                                                     value = new BigNumber(balance * val / 100 / this.priceValue.value).toFixed(3);
                                                 } else {
-                                                    let balance = this.balanceOf(this.state.pair[0]).dividedBy(new BigNumber(10).pow(localStorage.getItem("D_" + this.state.pair[1])));
+                                                    let balance = this.balanceOf(this.state.pair[0]).dividedBy(new BigNumber(10).pow(mAbi.getDecimal(this.state.pair[1])));
                                                     value = new BigNumber(balance * val / 100).toFixed(3);
                                                 }
 
@@ -503,30 +509,35 @@ class Trade extends Base {
                                     style={{ textAlign: 'left' }}>{language.e().trade.price}</Flex.Item>
                                 <Flex.Item style={{ textAlign: 'right' }}>{language.e().trade.num}</Flex.Item>
                             </Flex>
-                            <div role="list" className="ui list" style={{ color: '#D01919', fontSize: '13px', height: '33%', position: 'relative' }}>
-                                <div style={{ position: 'absolute', bottom: '0px' ,width:'100%'}}>
+                            <Scrollbars ref={el => this.sellItemsRef = el} style={{ color: '#D01919', fontSize: '13px', height: '33%' }}>
+                                <div role="list" className="ui list" style={{ height: '100%', position: 'relative', width: '100%' }}>
+                                    {/* <div style={{ position: 'absolute', bottom: '0px', width: '100%' }}>
+                                        
+                                    </div> */}
                                     {sellOrderItems}
                                 </div>
-                            </div>
-                            <div>
-                                <Flex>
-                                    <Flex.Item style={{ textAlign: 'left' }}><span
-                                        style={this.state.pairInfo.lastOp === 0 ? {
-                                            color: '#D01919',
-                                            fontSize: '13px'
-                                        } : {
-                                            color: '#21BA45',
-                                            fontSize: '13px'
-                                        }}>{showPrice(this.state.pairInfo.lastPrice, 3)}</span></Flex.Item>
-                                    <Flex.Item style={{ textAlign: 'right', paddingRight: '3px' }}><span>
-                                        {this.state.pairInfo.amountOfIncrease >= 0 && "+"}
-                                        {showValue(this.state.pairInfo.amountOfIncrease, 0, 2)}%</span></Flex.Item>
-                                </Flex>
-                            </div>
+                            </Scrollbars>
+                            <WhiteSpace />
+                            <Flex style={this.state.pairInfo.lastOp === "0" ? {
+                                        color: '#D01919',
+                                        fontSize: '13px'
+                                    } : {
+                                        color: '#21BA45',
+                                        fontSize: '13px'
+                                    }}>
+                                <Flex.Item style={{ textAlign: 'left' }}><span
+                                    >{showPrice(this.state.pairInfo.lastPrice, 3)}</span></Flex.Item>
+                                <Flex.Item style={{ textAlign: 'right', paddingRight: '3px' }}><span>
+                                    {this.state.pairInfo.amountOfIncrease >= 0 && "+"}
+                                    {showValue(this.state.pairInfo.amountOfIncrease, 0, 2)}%</span></Flex.Item>
+                            </Flex>
+                            <WhiteSpace />
+                            <Scrollbars ref={el => this.buyItemsRef = el} style={{ color: '#21BA45', fontSize: '13px', height: '33%' }}>
+                                <div role="list" className="ui list">
+                                    {buyOrderItems}
+                                </div>
+                            </Scrollbars>
 
-                            <div role="list" className="ui list" style={{ color: '#21BA45', fontSize: '13px', height: '33%' }}>
-                                {buyOrderItems}
-                            </div>
                         </Flex.Item>
                     </Flex>
                 </WingBlank>
@@ -543,14 +554,12 @@ class Trade extends Base {
 
                         </Tabs>
                         {myOrders}
-
-
-                        {/* {
+                        {
                             orderIds.length > 0 && <div className="item" style={{ paddingTop: '15px' }}>
                                 <button className="ui fluid button"
                                     onClick={self.cancel.bind(this, orderIds)}>{language.e().trade.cancelAll}</button>
                             </div>
-                        } */}
+                        }
                     </div>
                     {/*<Tabs tabs={[{title: language.e().trade.openOrders, sub: '0'}, {*/}
                     {/*    title: language.e().trade.depth,*/}

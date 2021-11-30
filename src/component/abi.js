@@ -7,8 +7,8 @@ import { JsonRpc } from "./jsonrpc";
 const rpc = new JsonRpc();
 
 const config = {
-    name: "S-DEX",
-    contractAddress: "3GX1MHCFGGgvyJeW2Cn8qRcSZ5xH5poxZcDNWWyGJprKzLiixHwznvcwusdYEtsSLANkyGP1Pht6Hkrwiqwa4qZH",
+    name: "Rhion DEX",
+    contractAddress: "DkesMsTYNKdpjqsP2RcF5E5gcrEKeMmNT2VsNuPwzfoCrsDUnzMw3zCECWda5CAZuLwaLMntYrL9yYU7sdNRcCW",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
     url: document.location.href,
@@ -196,7 +196,6 @@ class MAbi {
 
     getBills(from, token, callback) {
         this.callMethod('getBills', from, [tokenToBytes(token)], function (ret) {
-            console.log("bills", ret[0]);
             callback(ret[0]);
         });
     }
@@ -225,7 +224,6 @@ class MAbi {
     _balanceOf(from, tokens, callback) {
         this.callMethod('balanceOf', from, [tokens], function (ret) {
             let balanceMap = new Map();
-            console.log("balances", ret);
             tokens.forEach((token, index) => {
                 balanceMap.set(bytesToToken(token), ret[0][index]);
             });
@@ -256,7 +254,6 @@ class MAbi {
     }
 
     buy(pk, mainPKr, key, price, value, token, amount, callback) {
-        console.log("buy", price, value, amount);
         this.executeMethod('buy', pk, mainPKr, [key, price, value], token, amount, callback);
     }
 
@@ -311,7 +308,6 @@ class MAbi {
             gasPrice: "0x" + new BigNumber("1000000000").toString(16),
             cy: tokenName,
         }
-        console.log("estimateParam", estimateParam);
         seropp.estimateGas(estimateParam, function (gas, error) {
             if (error) {
                 Toast.fail("Failed to execute smart contract")

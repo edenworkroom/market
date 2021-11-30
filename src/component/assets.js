@@ -1,5 +1,5 @@
 import React, { } from 'react';
-import { Modal, WhiteSpace, WingBlank } from 'antd-mobile';
+import { Modal, Toast, WhiteSpace, WingBlank } from 'antd-mobile';
 import 'semantic-ui-css/semantic.min.css';
 import BigNumber from "bignumber.js";
 import { createHashHistory } from 'history'
@@ -22,18 +22,20 @@ class Assets extends Base {
 
     _init() {
         let self = this;
+        Toast.loading("loading");
         mAbi.balances(this.state.account.mainPKr, function (balances) {
-
             balances.sort(function (a, b) {
                 let valueA = new BigNumber(a.balance[0]).plus(new BigNumber(a.balance[1])).multipliedBy(new BigNumber(10).pow(mAbi.getDecimal(a.token))).toNumber();
                 let valueB = new BigNumber(b.balance[0]).plus(new BigNumber(b.balance[1])).multipliedBy(new BigNumber(10).pow(mAbi.getDecimal(b.token))).toNumber();
                 return valueB - valueA;
             });
-            self.setState({ balances: balances });
+            self.setState({ balances: balances }, function() {
+                Toast.hide();
+            });
         })
     }
 
-    op(token, type) {
+    op(availValue, token, type) {
         let self = this;
 
         let title = (type === "recharge" ? language.e().assets.rechange : language.e().assets.withdrawal) + " " + token;
@@ -56,14 +58,18 @@ class Assets extends Base {
                 { text: <span>取消</span> },
                 {
                     text: <span>确定</span>, onPress: () => {
-                        let decimals = localStorage.getItem("D_" + token);
+                        let decimals = mAbi.getDecimal(token);
                         let value = new BigNumber(this.valueInput.value).multipliedBy(new BigNumber(10).pow(decimals));
                         if (type === "recharge") {
-                            mAbi.recharge(self.state.pk, self.state.mainPKr, token, value);
+                            //mAbi.recharge(self.state.account.pk, self.state.account.mainPKr, token, value);
                         } else {
-                            mAbi.withdraw(self.state.pk, self.state.mainPKr, token, value, function (hash) {
-                                self.checkTxReceipt(hash);
-                            });
+                            if (Number(availValue) >= value.toNumber()) {
+                                mAbi.withdraw(self.state.account.pk, self.state.account.mainPKr, token, value, function (hash) {
+                                    self.checkTxReceipt(hash);
+                                });
+                            } else {
+                                Toast.fail("可用余额不足!");
+                            }
                         }
                     }
                 },
@@ -114,7 +120,7 @@ class Assets extends Base {
                 <div className="extra content">
                     <div className="ui four buttons">
                         <button className="ui green basic button"
-                            onClick={self.op.bind(self, each.token, "withdraw")}>{language.e().assets.withdrawal}
+                            onClick={self.op.bind(self, each.balance[0], each.token, "withdraw")}>{language.e().assets.withdrawal}
                         </button>
                         <button className="ui green basic button"
                             onClick={() => {

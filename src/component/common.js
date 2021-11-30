@@ -30,10 +30,10 @@ export function showToken(token) {
     }
 }
 
-export function showPrice(price) {
+export function showPrice(price, decimalPlaces) {
     if (price) {
-        let ret = new BigNumber(price).dividedBy(new BigNumber(1e18)).toFixed(18);
-        return trimNumber(ret, 18);
+        let ret = new BigNumber(price).dividedBy(1e18).toFixed(18);
+        return trimNumber(ret, decimalPlaces);
     } else {
         return "0.000";
     }

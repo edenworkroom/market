@@ -35,9 +35,8 @@ class BillList extends Base {
     }
 
     _render() {
-        let self = this;
         //enum BillType {recharge, withdraw, buy, sell, fee, dealBuy, dealSell}
-        let decimals = localStorage.getItem("D_" + this.state.token);
+        let decimals = mAbi.getDecimal(this.state.token);
         let bills = this.state.bills.map((item, index) => {
             let opText = language.e().assets.rechange;
             let sign = "+";
@@ -75,7 +74,7 @@ class BillList extends Base {
                             textAlign: 'right',
                             paddingRight: '2px',
                             color: '#21BA45'
-                        }}>{sign}{showValue(item.value, decimals, 2)} {this.state.token}</Flex.Item>
+                        }}>{sign}{showValue(item.value, decimals, 9)} {this.state.token}</Flex.Item>
                 </Flex>
             </List.Item>
         });

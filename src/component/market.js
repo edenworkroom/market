@@ -8,66 +8,78 @@ import { showValue, showPrice, showToken } from "./common";
 
 import language from './language'
 import Base from './base.js';
+import BigNumber from 'bignumber.js';
 
 const operation = Modal.operation;
 
 class Market extends Base {
     constructor(props) {
-        super(props);
+        super(props, { interval: 20 });
+        let baseTokens = ["TUSDT", "SUSD"];
+        let baseToken = localStorage.getItem("BASETOKEN");
+        if (!baseToken) {
+            baseToken = "TUSDT";
+        }
+        let initialPage = baseTokens.indexOf(baseToken);
 
         this.state = {
             selectedTab: "market",
+            baseTokens: ["TUSDT", "SUSD"],
+            baseToken: baseToken,
             pairList: [],
             tabs: [],
-            baseToken: "",
+            initialPage: initialPage,
         }
     }
 
-    _init(_baseToken) {
+    _init(baseToken) {
         let self = this;
-        mAbi.baseTokens(self.state.account.mainPKr, function (tokens) {
-            let tabs = [];
-            tokens.forEach((each, index) => {
-                tabs.push({ title: each, sub: index + 1 });
+        // mAbi.baseTokens(self.state.account.mainPKr, function (tokens) {
+        let tabs = [];
+        this.state.baseTokens.forEach((each, index) => {
+            tabs.push({ title: each, key: index + 1 });
+        });
+
+        if (!baseToken) {
+            baseToken = self.state.baseToken;
+        }
+
+       
+
+        mAbi.pairList(self.state.account.mainPKr, baseToken, function (tokens) {
+            const pairList = [];
+            let oneBaseToken = new BigNumber(10).pow(mAbi.getDecimal(baseToken));
+            tokens.forEach(each => {
+
+                let oneToken = new BigNumber(10).pow(mAbi.getDecimal(each.token));
+                let firstPrice = new BigNumber(each.firstPrice).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
+                let lastPrice = new BigNumber(each.lastPrice).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
+                let amountOfIncrease = 0;
+                if (firstPrice !== 0) {
+                    amountOfIncrease = (lastPrice - firstPrice) / firstPrice * 100;
+                }
+
+                pairList.push({
+                    token: each.token,
+                    baseToken: baseToken,
+                    lastPrice: lastPrice,
+                    volume: each.volume,
+                    decimals: mAbi.getDecimal(baseToken),
+                    amountOfIncrease: amountOfIncrease,
+                    offline: each.offline
+                });
+
+            });
+            pairList.sort(function (a, b) {
+                return b.volume - a.volume;
             });
 
-            let baseToken = self.state.baseToken;
-            if (baseToken) {
-                baseToken = _baseToken;
-            }
 
-            if (!baseToken) {
-                baseToken = tokens[0];
-            }
-
-            mAbi.pairList(self.state.account.mainPKr, baseToken, function (tokens) {
-
-                const pairList = [];
-                tokens.forEach(each => {
-                    let firstPrice = parseInt(each.firstPrice);
-                    let lastPrice = parseInt(each.lastPrice);
-                    let amountOfIncrease = 0;
-                    if (firstPrice !== 0) {
-                        amountOfIncrease = (lastPrice - firstPrice) / firstPrice * 100;
-                    }
-
-                    pairList.push({
-                        token: each.token,
-                        baseToken: baseToken,
-                        lastPrice: each.lastPrice,
-                        volume: each.volume,
-                        decimals: each.decimals,
-                        amountOfIncrease: amountOfIncrease,
-                        offline: each.offline
-                    });
-                });
-                pairList.sort(function (a, b) {
-                    return b.volume - a.volume;
-                });
-
-                self.setState({ baseToken: baseToken, tabs: tabs, pairList: pairList });
+            self.setState({ tabs: tabs, pairList: pairList }, function () {
+                Toast.hide();
             });
         });
+        // });
     }
 
     _render() {
@@ -85,7 +97,7 @@ class Market extends Base {
                         <Flex.Item style={{ flex: 28 }}>
                             {!item.lastPrice ? 0 : showPrice(item.lastPrice, 3)}
                             <div style={{ fontSize: '10px', color: '#A8A8A8' }}>
-                                {showValue(item.volume, item.decimals, 6)}{item.standard}
+                                {showValue(item.volume, item.decimals, 9)}{item.baseToken}
                             </div>
                         </Flex.Item>
                         <Flex.Item style={{ flex: 27, textAlign: "right" }}>
@@ -146,21 +158,24 @@ class Market extends Base {
                             </Flex.Item>
                             <Flex.Item style={{ flex: 1 }}>
                                 <button className="ui button" onClick={() => {
-                                    if (this.state.tabs.length <= 1) {
-                                        return;
-                                    }
-                                    let list = [];
-                                    this.state.tabs.forEach(function (each, index) {
-                                        list.push(
-                                            {
-                                                text: <span>{each.title}</span>, onPress: () => {
-                                                    self.setState({ baseToken: each.title });
-                                                }
-                                            }
-                                        );
-                                    });
-                                    operation(list);
-                                }}><span>{this.state.baseToken}</span><Icon type={"down"} size="xxs" /></button>
+                                    // if (this.state.tabs.length <= 1) {
+                                    //     return;
+                                    // }
+                                    // let list = [];
+                                    // this.state.tabs.forEach(function (each, index) {
+                                    //     list.push(
+                                    //         {
+                                    //             text: <span>{each.title}</span>, onPress: () => {
+                                    //                 // self.tabs.activeTab(index);
+                                    //                 // self._init(each.title);
+                                    //             }
+                                    //         }
+                                    //     );
+                                    // });
+                                    // operation(list);
+                                }}><span>{this.state.baseToken}</span>
+                                    {/* <Icon type={"down"} size="xxs" /> */}
+                                </button>
                             </Flex.Item>
                         </Flex>
                     </Card.Body>
@@ -169,20 +184,21 @@ class Market extends Base {
 
                 <List renderHeader={() => {
                     return (
-                        <Tabs tabs={this.state.tabs}
-                            initialPage={0}
+                        <Tabs ref={el => this.tabs = el} tabs={this.state.tabs}
+                            initialPage={this.state.initialPage}
                             renderTab={tab => <span style={{}}>{tab.title}</span>}
                             onChange={(tab, index) => {
-                                self._init(tab.title);
-                            }}
-                        >
-                        </Tabs>
+                                self.setState({ baseToken: tab.title }, function () {
+                                    Toast.loading("loading");
+                                    self._init(tab.title);
+                                });
+                            }}></Tabs>
                     )
                 }}>
                     <List.Item>
                         <div style={{ float: "left", width: "45%" }}>{language.e().home.name}</div>
                         <div style={{ float: "left", width: "30%" }}>{language.e().home.lastPrice}</div>
-                        <div style={{ float: "right", width: "23%", textAlign: "right" }}>24H<img src={require("../icon/24h.png")} /></div>
+                        <div style={{ float: "right", width: "23%", textAlign: "right" }}>24H<img alt="" src={require("../icon/24h.png")} /></div>
                     </List.Item>
                     {tokenPairs}
                 </List>
