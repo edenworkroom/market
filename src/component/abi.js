@@ -7,7 +7,7 @@ import { JsonRpc } from "./jsonrpc";
 const rpc = new JsonRpc();
 
 const config = {
-    name: "Rhion DEX",
+    name: "Rhino DEX",
     contractAddress: "DkesMsTYNKdpjqsP2RcF5E5gcrEKeMmNT2VsNuPwzfoCrsDUnzMw3zCECWda5CAZuLwaLMntYrL9yYU7sdNRcCW",
     github: "https://gitee.com/edenworkroom/market",
     author: "edenworkroom@163.com",
