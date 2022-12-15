@@ -24,12 +24,18 @@ class Assets extends Base {
         let self = this;
         Toast.loading("loading");
         mAbi.balances(this.state.account.mainPKr, function (balances) {
-            balances.sort(function (a, b) {
+            let list = [];
+            balances.forEach(each => {
+                if(each.token != "") {
+                    list.push(each);
+                }
+            });
+            list.sort(function (a, b) {
                 let valueA = new BigNumber(a.balance[0]).plus(new BigNumber(a.balance[1])).multipliedBy(new BigNumber(10).pow(mAbi.getDecimal(a.token))).toNumber();
                 let valueB = new BigNumber(b.balance[0]).plus(new BigNumber(b.balance[1])).multipliedBy(new BigNumber(10).pow(mAbi.getDecimal(b.token))).toNumber();
                 return valueB - valueA;
             });
-            self.setState({ balances: balances }, function() {
+            self.setState({ balances: list }, function() {
                 Toast.hide();
             });
         })

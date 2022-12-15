@@ -49,25 +49,28 @@ class Market extends Base {
         mAbi.pairList(self.state.account.mainPKr, baseToken, function (tokens) {
             const pairList = [];
             let oneBaseToken = new BigNumber(10).pow(mAbi.getDecimal(baseToken));
+            console.log("tokens", tokens);
             tokens.forEach(each => {
 
-                let oneToken = new BigNumber(10).pow(mAbi.getDecimal(each.token));
-                let firstPrice = new BigNumber(each.firstPrice).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
-                let lastPrice = new BigNumber(each.lastPrice).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
-                let amountOfIncrease = 0;
-                if (firstPrice !== 0) {
-                    amountOfIncrease = (lastPrice - firstPrice) / firstPrice * 100;
-                }
+                if(each.token != "") {
+                    let oneToken = new BigNumber(10).pow(mAbi.getDecimal(each.token));
+                    let firstPrice = new BigNumber(each.firstPrice).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
+                    let lastPrice = new BigNumber(each.lastPrice).multipliedBy(oneToken).dividedBy(oneBaseToken).toNumber();
+                    let amountOfIncrease = 0;
+                    if (firstPrice !== 0) {
+                        amountOfIncrease = (lastPrice - firstPrice) / firstPrice * 100;
+                    }
 
-                pairList.push({
-                    token: each.token,
-                    baseToken: baseToken,
-                    lastPrice: lastPrice,
-                    volume: each.volume,
-                    decimals: mAbi.getDecimal(baseToken),
-                    amountOfIncrease: amountOfIncrease,
-                    offline: each.offline
-                });
+                    pairList.push({
+                        token: each.token,
+                        baseToken: baseToken,
+                        lastPrice: lastPrice,
+                        volume: each.volume,
+                        decimals: mAbi.getDecimal(baseToken),
+                        amountOfIncrease: amountOfIncrease,
+                        offline: each.offline
+                    });
+                }
 
             });
             pairList.sort(function (a, b) {
@@ -139,6 +142,10 @@ class Market extends Base {
                         title="自助上币"
                         extra={<Button inline size="small"
                             onClick={() => {
+                                if(this.tokenInput.value == "") {
+                                    Toast.fail("token error");
+                                    return;
+                                }
                                 mAbi.addPair(this.state.account.pk, this.state.account.mainPKr, this.tokenInput.value, this.state.baseToken, function (hash, err) {
                                     self.checkTxReceipt(hash);
                                 });
